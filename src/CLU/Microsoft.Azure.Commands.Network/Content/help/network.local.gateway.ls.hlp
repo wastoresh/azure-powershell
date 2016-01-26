@@ -1,0 +1,16 @@
+az network local gateway ls
+
+Get Local Network Gateway details.
+
+USAGE:
+
+az network local gateway ls --resourceGroupName <resourceGroupName> [--name <name>]
+
+PARAMETERS:
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+

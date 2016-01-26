@@ -1,0 +1,20 @@
+az ad group ls
+
+Get Active Directory Group details.
+
+USAGE:
+
+az ad group ls [--objectId <objectId>]
+
+az ad group ls -s <searchString>
+
+az ad group ls --objectId <objectId>
+
+PARAMETERS:
+
+--objectId (--id)
+  [guid] The group id.
+
+-s (--searchString)
+  [string] The user or group name.
+

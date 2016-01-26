@@ -1,0 +1,19 @@
+az vnet gateway vpn client package get
+
+Get Vpn Client Package details.
+
+USAGE:
+
+az vnet gateway vpn client package get --resourceGroupName <resourceGroupName> --virtualNetworkGatewayName <virtualNetworkGatewayName> --processorArchitecture <processorArchitecture>
+
+PARAMETERS:
+
+--processorArchitecture
+  [string] ProcessorArchitecture
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--virtualNetworkGatewayName
+  [string] VirtualNetworkGateway name
+

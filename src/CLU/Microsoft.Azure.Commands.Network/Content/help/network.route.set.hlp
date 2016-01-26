@@ -1,0 +1,38 @@
+az network route set
+
+Update a Route Config.
+
+USAGE:
+
+az network route set --routeTable <routeTable> --name <name> --nextHopType <nextHopType> [--addressPrefix <addressPrefix>] [--nextHopIpAddress <nextHopIpAddress>]
+
+PARAMETERS:
+
+--addressPrefix
+  [string] The destination CIDR to which the route applies
+
+--name
+  [string] The name of the route
+
+--nextHopIpAddress
+  [string] The IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance.
+
+--nextHopType
+  [string] The type of Azure hop the packet should be sent to.
+
+--routeTable
+  [object] The RouteTable. You may use commands including 'az network route table create' or 'az newtork route table ls' or 'az network route table set' or 'az network route add' to produce a RouteTable. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network route set --RouteTable @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+RELATED COMMANDS:
+az network route table create (produces RouteTable)
+
+az newtork route table ls (produces RouteTable)
+
+az network route table set (produces RouteTable)
+
+az network route add (produces RouteTable)
+
+az network route rm (produces RouteTable)
+
+az network route set (produces RouteTable)
+

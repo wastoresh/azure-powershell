@@ -1,0 +1,16 @@
+az ad app rm
+
+Remove an Active Directory Application.
+
+USAGE:
+
+az ad app rm --applicationObjectId <applicationObjectId> [-f]
+
+PARAMETERS:
+
+--applicationObjectId (--id)
+  [guid] The application object id.
+
+-f (--force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+

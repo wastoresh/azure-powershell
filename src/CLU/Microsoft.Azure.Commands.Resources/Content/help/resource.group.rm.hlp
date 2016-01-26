@@ -1,0 +1,21 @@
+az resource group rm
+
+Remove a Resource Group.
+
+USAGE:
+
+az resource group rm -n <name> [-f]
+
+az resource group rm --id <id> [-f]
+
+PARAMETERS:
+
+-f (--force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--id (--resourceGroupId, --resourceId)
+  [string] The identity of this resource. Resource identity is a Uri path that uniquely identifies the resource.
+
+-n (--resourceGroupName, --name)
+  [string] The name of the resource group.
+

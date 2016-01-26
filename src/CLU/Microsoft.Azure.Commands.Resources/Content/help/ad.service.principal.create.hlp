@@ -1,0 +1,16 @@
+az ad service principal create
+
+Create an Active Directory Service Principal.
+
+USAGE:
+
+az ad service principal create --applicationId <applicationId> [-d]
+
+PARAMETERS:
+
+--applicationId (--id)
+  [guid] The application id for which service principal is created.
+
+-d (--disableAccount)
+  [flag] Create the service principal with account disabled.
+

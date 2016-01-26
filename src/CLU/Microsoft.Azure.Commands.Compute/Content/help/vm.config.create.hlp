@@ -1,0 +1,19 @@
+az vm config create
+
+Create a VM Config.
+
+USAGE:
+
+az vm config create [--vmName] <vmName> [--vmSize] <vmSize> [[--availabilitySetId] <availabilitySetId>]
+
+PARAMETERS:
+
+--availabilitySetId
+  [string] The Availability Set Id.
+
+--vmName (--resourceName, --name)
+  [string] The VM name.
+
+--vmSize
+  [string] The virtual machine size.
+

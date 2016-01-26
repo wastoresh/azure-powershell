@@ -1,0 +1,21 @@
+az resource provider ls
+
+Get Resource Provider details.
+
+USAGE:
+
+az resource provider ls [-l <location>] [-a]
+
+az resource provider ls -m <providerNamespace> [-l <location>]
+
+PARAMETERS:
+
+-a (--listAvailable)
+  [flag] When specified, lists all the resource providers available, including those not registered with the current subscription.
+
+-l (--location)
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+-m (--namespace, --providerNamespace)
+  [string] The resource provider namespace.
+

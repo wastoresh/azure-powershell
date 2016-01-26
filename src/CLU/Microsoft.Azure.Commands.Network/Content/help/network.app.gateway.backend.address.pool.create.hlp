@@ -1,0 +1,28 @@
+az network app gateway backend address pool create
+
+Create an Application Gateway Backend Address Pool.
+
+USAGE:
+
+az network app gateway backend address pool create --name <name>
+
+az network app gateway backend address pool create --name <name> [--backendIPConfigurationIds <backendIPConfigurationIds>]
+
+az network app gateway backend address pool create --name <name> [--backendIPAddresses <backendIPAddresses>]
+
+az network app gateway backend address pool create --name <name> [--backendFqdns <backendFqdns>]
+
+PARAMETERS:
+
+--backendFqdns
+  [string[]] FQDNs of application gateway backend servers
+
+--backendIPAddresses
+  [string[]] IP addresses of application gateway backend servers
+
+--backendIPConfigurationIds
+  [string[]] Resource IDs of the application gateway backend servers
+
+--name
+  [string] The name of the Backend Address Pool
+

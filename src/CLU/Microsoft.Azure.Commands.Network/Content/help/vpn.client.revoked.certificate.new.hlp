@@ -1,8 +1,0 @@
-
-New-AzureRmVpnClientRevokedCertificate
-
-
-Command syntax
-
-az vpn client revoked certificate new
-

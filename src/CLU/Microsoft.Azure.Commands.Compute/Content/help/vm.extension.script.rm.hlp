@@ -1,0 +1,22 @@
+az vm extension script rm
+
+Remove a VM Custom Script Extension.
+
+USAGE:
+
+az vm extension script rm [--resourceGroupName] <resourceGroupName> [--vmName] <vmName> [--name] <name> [--force]
+
+PARAMETERS:
+
+--force
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--name (--extensionName)
+  [string] The extension name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--vmName (--resourceName)
+  [string] The virtual machine name.
+

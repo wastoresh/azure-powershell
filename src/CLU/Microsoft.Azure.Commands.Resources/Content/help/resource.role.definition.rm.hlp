@@ -1,0 +1,29 @@
+az resource role definition rm
+
+Remove a Role Definition.
+
+USAGE:
+
+az resource role definition rm [-f] [--passThru]
+
+az resource role definition rm [--id] <id> [--scope <scope>] [-f] [--passThru]
+
+az resource role definition rm [[-n] <name>] [--scope <scope>] [-f] [--passThru]
+
+PARAMETERS:
+
+-f (--force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--id
+  [guid] The identity of this resource. Resource identity is a Uri path that uniquely identifies the resource.
+
+-n (--name)
+  [string] Role definition name. For e.g. Reader, Contributor, Virtual Machine Contributor.
+
+--passThru
+  [flag] Forces true or false output.  Without this flag, the command will return nothing if successful.
+
+--scope
+  [string] Scope of the existing role definition.
+

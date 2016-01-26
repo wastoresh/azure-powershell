@@ -1,0 +1,16 @@
+az storage account rm
+
+Remove a Storage Account.
+
+USAGE:
+
+az storage account rm [-g] <resourceGroupName> [-n] <name>
+
+PARAMETERS:
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+-n (--storageAccountName, --accountName, --name)
+  [string] Storage Account Name.
+

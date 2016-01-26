@@ -1,0 +1,27 @@
+az vm bootdiagnostics ls
+
+Get VM Boot Diagnostics Data details.
+
+USAGE:
+
+az vm bootdiagnostics ls [--resourceGroupName] <resourceGroupName> [--name] <name> --windows [--localPath] <localPath>
+
+az vm bootdiagnostics ls [--resourceGroupName] <resourceGroupName> [--name] <name> --linux [[--localPath] <localPath>]
+
+PARAMETERS:
+
+--linux
+  [flag] 
+
+--localPath
+  [string] Path and name of the output RDP file.
+
+--name (--resourceName, --vmName)
+  [string] The virtual machine boot diagnostics data name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--windows
+  [flag] 
+

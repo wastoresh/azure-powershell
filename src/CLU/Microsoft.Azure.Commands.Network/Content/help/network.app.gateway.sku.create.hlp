@@ -1,0 +1,19 @@
+az network app gateway sku create
+
+Create an Application Gateway Sku.
+
+USAGE:
+
+az network app gateway sku create --name <name> --tier <tier> --capacity <capacity>
+
+PARAMETERS:
+
+--capacity
+  [int32] Application gateway instance count
+
+--name
+  [string] The name of the SKU
+
+--tier
+  [string] Application gateway tier
+

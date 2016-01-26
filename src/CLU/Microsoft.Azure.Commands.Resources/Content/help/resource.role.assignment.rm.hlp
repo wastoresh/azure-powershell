@@ -1,0 +1,66 @@
+az resource role assignment rm
+
+Remove a Role Assignment.
+
+USAGE:
+
+az resource role assignment rm --objectId <objectId> --roleDefinitionName <roleDefinitionName> [--scope <scope>] [-f] [--passThru]
+
+az resource role assignment rm --objectId <objectId> -g <resourceGroupName> -r <resourceName> -t <resourceType> --roleDefinitionName <roleDefinitionName> [--parentResource <parentResource>] [-f] [--passThru]
+
+az resource role assignment rm --objectId <objectId> -g <resourceGroupName> --roleDefinitionName <roleDefinitionName> [-f] [--passThru]
+
+az resource role assignment rm --objectId <objectId> --roleDefinitionName <roleDefinitionName> [--scope <scope>] [-f] [--passThru]
+
+az resource role assignment rm --objectId <objectId> --roleDefinitionId <roleDefinitionId> [--scope <scope>] [-f] [--passThru]
+
+az resource role assignment rm --signInName <signInName> -g <resourceGroupName> -r <resourceName> -t <resourceType> --roleDefinitionName <roleDefinitionName> [--parentResource <parentResource>] [-f] [--passThru]
+
+az resource role assignment rm --signInName <signInName> -g <resourceGroupName> --roleDefinitionName <roleDefinitionName> [-f] [--passThru]
+
+az resource role assignment rm --signInName <signInName> --roleDefinitionName <roleDefinitionName> [--scope <scope>] [-f] [--passThru]
+
+az resource role assignment rm --servicePrincipalName <servicePrincipalName> -g <resourceGroupName> -r <resourceName> -t <resourceType> --roleDefinitionName <roleDefinitionName> [--parentResource <parentResource>] [-f] [--passThru]
+
+az resource role assignment rm --servicePrincipalName <servicePrincipalName> -g <resourceGroupName> --roleDefinitionName <roleDefinitionName> [-f] [--passThru]
+
+az resource role assignment rm --servicePrincipalName <servicePrincipalName> --roleDefinitionName <roleDefinitionName> [--scope <scope>] [-f] [--passThru]
+
+PARAMETERS:
+
+-f (--force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+--objectId (--id, --principalId)
+  [guid] The user or group object id
+
+--parentResource
+  [string] Parent resource of the resource to assign the role to, if there is any.
+
+--passThru
+  [flag] Forces true or false output.  Without this flag, the command will return nothing if successful.
+
+-r (--resource, --resourceName)
+  [string] Resource to assign the role to.
+
+--roleDefinitionId
+  [guid] Role Id the principal is assigned to.
+
+--roleDefinitionName
+  [string] Role name the principal is assigned to.
+
+--scope
+  [string] Role to assign the principals with.
+
+--servicePrincipalName (--spn)
+  [string] The app SPN.
+
+--signInName (--email, --userPrincipalName)
+  [string] The user SignInName.
+
+-t (--type, --resourceType)
+  [string] Type of the resource to assign the role to.
+

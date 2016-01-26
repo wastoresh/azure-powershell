@@ -1,0 +1,65 @@
+az vm config datadisk add
+
+Add a VM Data Disk.
+
+USAGE:
+
+az vm config datadisk add [--vm] <vm> [--name] <name> [--vhdUri] <vhdUri> [[--caching] <caching>] [--diskSizeInGB] <diskSizeInGB> [[--lun] <lun>] [--createOption] <createOption> [[--sourceImageUri] <sourceImageUri>]
+
+PARAMETERS:
+
+--caching
+  [string] The virtual machine data disk's caching.
+
+--createOption
+  [string] The virtual machine data disk's create option.
+
+--diskSizeInGB
+  [int32] The virtual machine data disk's size in GB.
+
+--lun
+  [int32] The virtual machine data disk's Lun.
+
+--name
+  [string] The virtual machine data disk's name.
+
+--sourceImageUri (--sourceImage)
+  [string] The virtual machine OS disk's source image Uri.
+
+--vhdUri
+  [string] The virtual machine data disk's Vhd Uri.
+
+--vm (--vmProfile)
+  [object] The virtual machine profile. You may use commands including 'az vm config create' or 'az vm bootdiagnostics ls' or 'az vm ls' or 'az vm config additionalunattendcontent add' to produce a VM. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az vm config datadisk add --VM @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+RELATED COMMANDS:
+az vm config create (produces VM)
+
+az vm bootdiagnostics ls (produces VM)
+
+az vm ls (produces VM)
+
+az vm config additionalunattendcontent add (produces VM)
+
+az vm config datadisk add (produces VM)
+
+az vm config network interface add (produces VM)
+
+az vm config secret add (produces VM)
+
+az vm config ssh public key add (produces VM)
+
+az vm config datadisk rm (produces VM)
+
+az vm config network interface rm (produces VM)
+
+az vm config bootdiagnostics set (produces VM)
+
+az vm config datadisk set (produces VM)
+
+az vm config os set (produces VM)
+
+az vm config osdisk set (produces VM)
+
+az vm config source image set (produces VM)
+

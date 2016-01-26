@@ -1,0 +1,97 @@
+az network interface create
+
+Create a Network Interface.
+
+USAGE:
+
+az network interface create --name <name> --resourceGroupName <resourceGroupName> --location <location> [--privateIpAddress <privateIpAddress>] [--ipConfigurationName <ipConfigurationName>] [--dnsServer <dnsServer>] [--internalDnsNameLabel <internalDnsNameLabel>] [--enableIPForwarding] [--tag <tag>] [--force]
+
+az network interface create --name <name> --resourceGroupName <resourceGroupName> --location <location> --subnetId <subnetId> [--privateIpAddress <privateIpAddress>] [--publicIpAddressId <publicIpAddressId>] [--networkSecurityGroupId <networkSecurityGroupId>] [--loadBalancerBackendAddressPoolId <loadBalancerBackendAddressPoolId>] [--loadBalancerInboundNatRuleId <loadBalancerInboundNatRuleId>] [--ipConfigurationName <ipConfigurationName>] [--dnsServer <dnsServer>] [--internalDnsNameLabel <internalDnsNameLabel>] [--enableIPForwarding] [--tag <tag>] [--force]
+
+az network interface create --name <name> --resourceGroupName <resourceGroupName> --location <location> --subnet <subnet> [--privateIpAddress <privateIpAddress>] [--publicIpAddress <publicIpAddress>] [--networkSecurityGroup <networkSecurityGroup>] [--loadBalancerBackendAddressPool <loadBalancerBackendAddressPool>] [--loadBalancerInboundNatRule <loadBalancerInboundNatRule>] [--ipConfigurationName <ipConfigurationName>] [--dnsServer <dnsServer>] [--internalDnsNameLabel <internalDnsNameLabel>] [--enableIPForwarding] [--tag <tag>] [--force]
+
+PARAMETERS:
+
+--dnsServer
+  [string[]] The list of Dns Servers
+
+--enableIPForwarding
+  [flag] EnableIPForwarding
+
+--force
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--internalDnsNameLabel
+  [string] The Internal Dns name
+
+--ipConfigurationName
+  [string] The IpConfiguration name.default value: ipconfig1
+
+--loadBalancerBackendAddressPool
+  [object[]] LoadBalancerBackendAddressPools
+
+--loadBalancerBackendAddressPoolId
+  [string[]] LoadBalancerBackendAddressPoolId
+
+--loadBalancerInboundNatRule
+  [object[]] LoadBalancerInboundNatRule
+
+--loadBalancerInboundNatRuleId
+  [string[]] LoadBalancerInboundNatRuleId
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--resourceName)
+  [string] The resource name.
+
+--networkSecurityGroup
+  [object] NetworkSecurityGroup. You may use commands including 'az network security group create' or 'az network security group ls' or 'az network security group set' or 'az network security rule add' to produce a NetworkSecurityGroup. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network interface create --NetworkSecurityGroup @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--networkSecurityGroupId
+  [string] NetworkSecurityGroupId
+
+--privateIpAddress
+  [string] The private ip address of the Network Interface if static allocation is specified.
+
+--publicIpAddress
+  [object] PublicIpAddress. You may use commands including 'az network ip create' or 'az network ip ls' or 'az network ip set' to produce a PublicIpAddress. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network interface create --PublicIpAddress @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--publicIpAddressId
+  [string] PublicIpAddressId
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--subnet
+  [object] Subnet. You may use commands including 'az vnet subnet create' or 'az vnet subnet ls' to produce a Subnet. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network interface create --Subnet @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--subnetId
+  [string] SubnetId
+
+--tag
+  [hashtable[]] An array of hashtables which represents resource tags.
+
+RELATED COMMANDS:
+az vnet subnet create (produces Subnet)
+
+az vnet subnet ls (produces Subnet)
+
+az network ip create (produces PublicIpAddress)
+
+az network ip ls (produces PublicIpAddress)
+
+az network ip set (produces PublicIpAddress)
+
+az network security group create (produces NetworkSecurityGroup)
+
+az network security group ls (produces NetworkSecurityGroup)
+
+az network security group set (produces NetworkSecurityGroup)
+
+az network security rule add (produces NetworkSecurityGroup)
+
+az network security rule rm (produces NetworkSecurityGroup)
+
+az network security rule set (produces NetworkSecurityGroup)
+

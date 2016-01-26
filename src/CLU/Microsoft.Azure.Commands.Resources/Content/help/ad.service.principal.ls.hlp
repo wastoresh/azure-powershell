@@ -1,0 +1,25 @@
+az ad service principal ls
+
+Get Active Directory Service Principal details.
+
+USAGE:
+
+az ad service principal ls [--servicePrincipalName <servicePrincipalName>]
+
+az ad service principal ls -s <searchString>
+
+az ad service principal ls --objectId <objectId>
+
+az ad service principal ls --servicePrincipalName <servicePrincipalName>
+
+PARAMETERS:
+
+--objectId (--id)
+  [guid] The service principal object id.
+
+-s (--searchString)
+  [string] The service principal search string.
+
+--servicePrincipalName (--spn)
+  [string] The user SPN.
+

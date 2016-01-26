@@ -1,0 +1,63 @@
+az network app gateway http listener create
+
+Create an Application Gateway Http Listener.
+
+USAGE:
+
+az network app gateway http listener create --name <name> --protocol <protocol> [--hostName <hostName>] [--requireServerNameIndication <requireServerNameIndication>]
+
+az network app gateway http listener create --name <name> --protocol <protocol> [--frontendIPConfigurationId <frontendIPConfigurationId>] [--frontendPortId <frontendPortId>] [--sslCertificateId <sslCertificateId>] [--hostName <hostName>] [--requireServerNameIndication <requireServerNameIndication>]
+
+az network app gateway http listener create --name <name> --protocol <protocol> [--frontendIPConfiguration <frontendIPConfiguration>] [--frontendPort <frontendPort>] [--sslCertificate <sslCertificate>] [--hostName <hostName>] [--requireServerNameIndication <requireServerNameIndication>]
+
+PARAMETERS:
+
+--frontendIPConfiguration
+  [object] Application gateway FrontendIPConfiguration. You may use commands including 'az network app gateway frontend ipconfig create' or 'az network app gateway frontend ipconfig ls' or 'az network app gateway frontend ipconfig ls' to produce a FrontendIPConfiguration. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network app gateway http listener create --FrontendIPConfiguration @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--frontendIPConfigurationId
+  [string] ID of the application gateway FrontendIPConfiguration
+
+--frontendPort
+  [object] Application gateway FrontendPort. You may use commands including 'az network app gateway frontend port create' or 'az network app gateway frontend port ls' or 'az network app gateway frontend port ls' to produce a FrontendPort. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network app gateway http listener create --FrontendPort @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--frontendPortId
+  [string] ID of the application gateway FrontendPort
+
+--hostName
+  [string] Host name
+
+--name
+  [string] The name of the HTTP listener
+
+--protocol
+  [string] Protocol
+
+--requireServerNameIndication
+  [string] RequireServerNameIndication
+
+--sslCertificate
+  [object] Application gateway SslCertificate. You may use commands including 'az network app gateway ssl cert create' or 'az network app gateway ssl cert ls' or 'az network app gateway ssl cert ls' to produce a SslCertificate. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network app gateway http listener create --SslCertificate @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--sslCertificateId
+  [string] ID of the application gateway SslCertificate
+
+RELATED COMMANDS:
+az network app gateway frontend ipconfig create (produces FrontendIPConfiguration)
+
+az network app gateway frontend ipconfig ls (produces FrontendIPConfiguration)
+
+az network app gateway frontend ipconfig ls (produces FrontendIPConfiguration)
+
+az network app gateway frontend port create (produces FrontendPort)
+
+az network app gateway frontend port ls (produces FrontendPort)
+
+az network app gateway frontend port ls (produces FrontendPort)
+
+az network app gateway ssl cert create (produces SslCertificate)
+
+az network app gateway ssl cert ls (produces SslCertificate)
+
+az network app gateway ssl cert ls (produces SslCertificate)
+

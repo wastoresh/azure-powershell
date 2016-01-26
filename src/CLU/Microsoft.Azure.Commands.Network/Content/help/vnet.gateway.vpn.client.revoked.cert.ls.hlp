@@ -1,0 +1,19 @@
+az vnet gateway vpn client revoked cert ls
+
+Get Vpn Client Revoked Certificate details.
+
+USAGE:
+
+az vnet gateway vpn client revoked cert ls --virtualNetworkGatewayName <virtualNetworkGatewayName> --resourceGroupName <resourceGroupName> [--vpnClientRevokedCertificateName <vpnClientRevokedCertificateName>]
+
+PARAMETERS:
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--virtualNetworkGatewayName
+  [string] The virtual network gateway name.
+
+--vpnClientRevokedCertificateName (--resourceName)
+  [string] The vpnclient revoked certificate name.
+

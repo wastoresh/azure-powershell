@@ -1,0 +1,25 @@
+az vm availabilityset create
+
+Create an Availability Set.
+
+USAGE:
+
+az vm availabilityset create [--resourceGroupName] <resourceGroupName> [--name] <name> [--location] <location> [[--platformUpdateDomainCount] <platformUpdateDomainCount>] [[--platformFaultDomainCount] <platformFaultDomainCount>]
+
+PARAMETERS:
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--resourceName, --availabilitySetName)
+  [string] The resource name.
+
+--platformFaultDomainCount
+  [int32] The Platform Fault Domain Count.
+
+--platformUpdateDomainCount
+  [int32] The Platform Update Domain Count.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+

@@ -1,8 +1,0 @@
-
-New-AzureRmExpressRouteCircuitAuthorization
-
-
-Command syntax
-
-az expressroute circuit authorization new
-

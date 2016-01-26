@@ -1,0 +1,27 @@
+az resource role definition set
+
+Update a Role Definition.
+
+USAGE:
+
+az resource role definition set 
+
+az resource role definition set --inputFile <inputFile>
+
+az resource role definition set --role <role>
+
+PARAMETERS:
+
+--inputFile
+  [string] File name containing a single role definition.
+
+--role
+  [object] Role definition. You may use commands including 'az resource role definition create' or 'az resource role definition ls' or 'az resource role definition set' to produce a Role. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az resource role definition set --Role @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+RELATED COMMANDS:
+az resource role definition create (produces Role)
+
+az resource role definition ls (produces Role)
+
+az resource role definition set (produces Role)
+

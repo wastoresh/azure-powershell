@@ -1,8 +1,0 @@
-
-New-AzureRmVpnClientRootCertificate
-
-
-Command syntax
-
-az vpn client root certificate new
-

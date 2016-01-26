@@ -1,0 +1,28 @@
+az network app gateway ipconfig create
+
+Create an Application Gateway IPConfiguration.
+
+USAGE:
+
+az network app gateway ipconfig create --name <name>
+
+az network app gateway ipconfig create --name <name> [--subnetId <subnetId>]
+
+az network app gateway ipconfig create --name <name> [--subnet <subnet>]
+
+PARAMETERS:
+
+--name
+  [string] The name of the application gateway IP configuration
+
+--subnet
+  [object] Subnet where application gateway gets its address from. You may use commands including 'az vnet subnet create' or 'az vnet subnet ls' to produce a Subnet. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network app gateway ipconfig create --Subnet @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+--subnetId
+  [string] ID of subnet where application gateway gets its address from
+
+RELATED COMMANDS:
+az vnet subnet create (produces Subnet)
+
+az vnet subnet ls (produces Subnet)
+

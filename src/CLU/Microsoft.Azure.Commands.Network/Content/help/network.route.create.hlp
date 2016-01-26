@@ -1,0 +1,22 @@
+az network route create
+
+Create a Route Config.
+
+USAGE:
+
+az network route create --name <name> --nextHopType <nextHopType> [--addressPrefix <addressPrefix>] [--nextHopIpAddress <nextHopIpAddress>]
+
+PARAMETERS:
+
+--addressPrefix
+  [string] The destination CIDR to which the route applies
+
+--name
+  [string] The name of the route
+
+--nextHopIpAddress
+  [string] The IP address packets should be forwarded to. Next hop values are only allowed in routes where the next hop type is VirtualAppliance.
+
+--nextHopType
+  [string] The type of Azure hop the packet should be sent to.
+

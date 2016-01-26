@@ -1,0 +1,16 @@
+az network app gateway frontend port create
+
+Create an Application Gateway Frontend Port.
+
+USAGE:
+
+az network app gateway frontend port create --name <name> --port <port>
+
+PARAMETERS:
+
+--name
+  [string] The name of the frontend port
+
+--port
+  [int32] Frontend port
+

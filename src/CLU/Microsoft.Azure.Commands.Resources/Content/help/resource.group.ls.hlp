@@ -1,0 +1,21 @@
+az resource group ls
+
+Get Resource Group details.
+
+USAGE:
+
+az resource group ls [-n <name>] [-l <location>]
+
+az resource group ls [-l <location>] [--id <id>]
+
+PARAMETERS:
+
+--id (--resourceGroupId, --resourceId)
+  [string] The identity of this resource. Resource identity is a Uri path that uniquely identifies the resource.
+
+-l (--location)
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+-n (--resourceGroupName, --name)
+  [string] The resource group name.
+

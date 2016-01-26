@@ -1,0 +1,21 @@
+az resource provider feature ls
+
+Get Provider Feature details.
+
+USAGE:
+
+az resource provider feature ls [-m <providerNamespace>] [-a]
+
+az resource provider feature ls -m <providerNamespace> -n <featureName>
+
+PARAMETERS:
+
+-a (--listAvailable)
+  [flag] When set, lists all available features including those not registered with the current subscription.
+
+-m (--namespace, --providerNamespace)
+  [string] The resource provider namespace.
+
+-n (--name, --featureName)
+  [string] The feature name.
+

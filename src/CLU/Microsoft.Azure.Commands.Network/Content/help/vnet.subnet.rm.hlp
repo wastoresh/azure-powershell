@@ -1,0 +1,29 @@
+az vnet subnet rm
+
+Remove a Virtual Network Subnet Config.
+
+USAGE:
+
+az vnet subnet rm --virtualNetwork <virtualNetwork> [--name <name>]
+
+PARAMETERS:
+
+--name
+  [string] The name of the subnet
+
+--virtualNetwork
+  [object] The virtualNetwork. You may use commands including 'az vnet create' or 'az vnet ls' or 'az vnet set' or 'az vnet subnet add' to produce a VirtualNetwork. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az vnet subnet rm --VirtualNetwork @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+RELATED COMMANDS:
+az vnet create (produces VirtualNetwork)
+
+az vnet ls (produces VirtualNetwork)
+
+az vnet set (produces VirtualNetwork)
+
+az vnet subnet add (produces VirtualNetwork)
+
+az vnet subnet rm (produces VirtualNetwork)
+
+az vnet subnet set (produces VirtualNetwork)
+

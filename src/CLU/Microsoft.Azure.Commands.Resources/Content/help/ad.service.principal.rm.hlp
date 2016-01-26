@@ -1,0 +1,21 @@
+az ad service principal rm
+
+Remove an Active Directory Service Principal.
+
+USAGE:
+
+az ad service principal rm [-f] [--passThru]
+
+az ad service principal rm --objectId <objectId> [-f] [--passThru]
+
+PARAMETERS:
+
+-f (--force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--objectId (--principalId, --id)
+  [guid] The service principal object id.
+
+--passThru
+  [flag] Forces true or false output.  Without this flag, the command will return nothing if successful.
+

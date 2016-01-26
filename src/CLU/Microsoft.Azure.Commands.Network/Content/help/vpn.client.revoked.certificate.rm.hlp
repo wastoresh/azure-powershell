@@ -1,8 +1,0 @@
-
-Remove-AzureRmVpnClientRevokedCertificate
-
-
-Command syntax
-
-az vpn client revoked certificate rm
-

@@ -1,0 +1,13 @@
+az resource provider operation ls
+
+Get Provider Operation details.
+
+USAGE:
+
+az resource provider operation ls [-s] <operationSearchString>
+
+PARAMETERS:
+
+-s (--operationSearchString)
+  [string] The action string.
+

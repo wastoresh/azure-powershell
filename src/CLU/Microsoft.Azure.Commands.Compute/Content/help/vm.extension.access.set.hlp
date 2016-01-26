@@ -1,0 +1,31 @@
+az vm extension access set
+
+Update a VM Access Extension.
+
+USAGE:
+
+az vm extension access set [--resourceGroupName] <resourceGroupName> [--vmName] <vmName> [--name] <name> [[--typeHandlerVersion] <typeHandlerVersion>] [[--userName] <userName>] [[--password] <password>] [[--location] <location>]
+
+PARAMETERS:
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--extensionName)
+  [string] The extension name.
+
+--password
+  [string] New or Existing User Password
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--typeHandlerVersion (--handlerVersion, --version)
+  [string] The type handler version.
+
+--userName
+  [string] New or Existing User Name
+
+--vmName (--resourceName)
+  [string] The virtual machine name.
+

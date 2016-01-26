@@ -1,0 +1,23 @@
+az network ip ls
+
+Get Public Ip Address details.
+
+USAGE:
+
+az network ip ls 
+
+az network ip ls [--name <name>] [--resourceGroupName <resourceGroupName>]
+
+az network ip ls --name <name> --resourceGroupName <resourceGroupName> --expandResource <expandResource>
+
+PARAMETERS:
+
+--expandResource
+  [string] The resource reference to be expanded.
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+

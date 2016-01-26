@@ -1,0 +1,60 @@
+az resource role assignment create
+
+Create a Role Assignment.
+
+USAGE:
+
+az resource role assignment create --objectId <objectId> --scope <scope> --roleDefinitionName <roleDefinitionName>
+
+az resource role assignment create --objectId <objectId> -g <resourceGroupName> --roleDefinitionName <roleDefinitionName>
+
+az resource role assignment create --objectId <objectId> -g <resourceGroupName> -r <resourceName> -t <resourceType> --roleDefinitionName <roleDefinitionName> [--parentResource <parentResource>]
+
+az resource role assignment create --objectId <objectId> --roleDefinitionName <roleDefinitionName> [--scope <scope>]
+
+az resource role assignment create --objectId <objectId> --scope <scope> --roleDefinitionId <roleDefinitionId>
+
+az resource role assignment create --signInName <signInName> -g <resourceGroupName> --roleDefinitionName <roleDefinitionName>
+
+az resource role assignment create --signInName <signInName> -g <resourceGroupName> -r <resourceName> -t <resourceType> --roleDefinitionName <roleDefinitionName> [--parentResource <parentResource>]
+
+az resource role assignment create --signInName <signInName> --roleDefinitionName <roleDefinitionName> [--scope <scope>]
+
+az resource role assignment create --servicePrincipalName <servicePrincipalName> -g <resourceGroupName> --roleDefinitionName <roleDefinitionName>
+
+az resource role assignment create --servicePrincipalName <servicePrincipalName> -g <resourceGroupName> -r <resourceName> -t <resourceType> --roleDefinitionName <roleDefinitionName> [--parentResource <parentResource>]
+
+az resource role assignment create --servicePrincipalName <servicePrincipalName> --roleDefinitionName <roleDefinitionName> [--scope <scope>]
+
+PARAMETERS:
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+--objectId (--id, --principalId)
+  [guid] The user or group object id.
+
+--parentResource (--parent)
+  [string] Parent resource of the resource to assign the role to, if there is any.
+
+-r (--resource, --resourceName)
+  [string] Resource to assign the role to.
+
+--roleDefinitionId
+  [guid] Role Id the principal is assigned to.
+
+--roleDefinitionName
+  [string] Role name to assign the principals with.
+
+--scope
+  [string] Scope of the role assignment. In the format of relative URI. If not specified, will assign the role at subscription level. If specified, it can either start with "/subscriptions/<id>" or the part after that. If it's latter, the current subscription id will be used.
+
+--servicePrincipalName (--spn)
+  [string] The app SPN.
+
+--signInName (--email, --userPrincipalName)
+  [string] The user SignInName.
+
+-t (--type, --resourceType)
+  [string] Type of the resource to assign the role to.
+

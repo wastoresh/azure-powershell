@@ -1,0 +1,19 @@
+az network app gateway ssl cert create
+
+Create an Application Gateway Ssl Certificate.
+
+USAGE:
+
+az network app gateway ssl cert create --name <name> --certificateFile <certificateFile> --password <password>
+
+PARAMETERS:
+
+--certificateFile
+  [string] Path of certificate PFX file
+
+--name
+  [string] The name of the ssl certificate
+
+--password
+  [string] Certificate password
+

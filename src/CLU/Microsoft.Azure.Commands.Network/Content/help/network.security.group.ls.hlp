@@ -1,0 +1,23 @@
+az network security group ls
+
+Get Network Security Group details.
+
+USAGE:
+
+az network security group ls 
+
+az network security group ls [--name <name>] [--resourceGroupName <resourceGroupName>]
+
+az network security group ls --name <name> --resourceGroupName <resourceGroupName> --expandResource <expandResource>
+
+PARAMETERS:
+
+--expandResource
+  [string] The resource reference to be expanded.
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+

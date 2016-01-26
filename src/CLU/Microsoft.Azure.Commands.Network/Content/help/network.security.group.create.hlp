@@ -1,0 +1,28 @@
+az network security group create
+
+Create a Network Security Group.
+
+USAGE:
+
+az network security group create --name <name> --resourceGroupName <resourceGroupName> --location <location> [--securityRules <securityRules>] [--tag <tag>] [--force]
+
+PARAMETERS:
+
+--force
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--securityRules
+  [object[]] The list of NetworkSecurityRules
+
+--tag
+  [hashtable[]] An array of hashtables which represents resource tags.
+

@@ -1,0 +1,13 @@
+az ad group member ls
+
+Get Active Directory Group Member details.
+
+USAGE:
+
+az ad group member ls [--groupObjectId <groupObjectId>]
+
+PARAMETERS:
+
+--groupObjectId (--id)
+  [guid] The user email address.
+

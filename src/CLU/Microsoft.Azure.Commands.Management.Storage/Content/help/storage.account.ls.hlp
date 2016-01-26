@@ -1,0 +1,16 @@
+az storage account ls
+
+Get Storage Account details.
+
+USAGE:
+
+az storage account ls [[-g] <resourceGroupName>] [[-n] <name>]
+
+PARAMETERS:
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+-n (--storageAccountName, --accountName, --name)
+  [string] Storage Account Name.
+

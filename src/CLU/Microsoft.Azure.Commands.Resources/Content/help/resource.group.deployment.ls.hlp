@@ -1,0 +1,21 @@
+az resource group deployment ls
+
+Get Resource Group Deployment details.
+
+USAGE:
+
+az resource group deployment ls [-g] <resourceGroupName> [[-n] <name>]
+
+az resource group deployment ls --id <id>
+
+PARAMETERS:
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+--id (--deploymentId, --resourceId)
+  [string] The identity of this resource. Resource identity is a Uri path that uniquely identifies the resource.
+
+-n (--deploymentName, --name)
+  [string] The name of the resource group deployment.
+

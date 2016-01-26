@@ -1,0 +1,37 @@
+az network ip create
+
+Create a Public Ip Address.
+
+USAGE:
+
+az network ip create --resourceGroupName <resourceGroupName> --allocationMethod <allocationMethod> [--name <name>] [--location <location>] [--domainNameLabel <domainNameLabel>] [--reverseFqdn <reverseFqdn>] [--idleTimeoutInMinutes <idleTimeoutInMinutes>] [--tag <tag>] [--force]
+
+PARAMETERS:
+
+--allocationMethod
+  [string] The public IP address allocation method.
+
+--domainNameLabel
+  [string] The Domain Name label.
+
+--force
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--idleTimeoutInMinutes
+  [int32] IdleTimeoutInMinutes
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--reverseFqdn
+  [string] The Reverse FQDN.
+
+--tag
+  [hashtable[]] An array of hashtables which represents resource tags.
+

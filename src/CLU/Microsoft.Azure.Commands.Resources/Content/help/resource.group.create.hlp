@@ -1,0 +1,22 @@
+az resource group create
+
+Create a Resource Group.
+
+USAGE:
+
+az resource group create -n <name> -l <location> [-t <tag>] [-f]
+
+PARAMETERS:
+
+-f (--force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+-l (--location)
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+-n (--resourceGroupName, --name)
+  [string] The resource group name.
+
+-t (--tags, --tag)
+  [hashtable[]] An array of hashtables which represents resource tags.
+

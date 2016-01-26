@@ -1,0 +1,21 @@
+az resource group set
+
+Update a Resource Group.
+
+USAGE:
+
+az resource group set [-t] <tag> -n <name>
+
+az resource group set [-t] <tag> --id <id>
+
+PARAMETERS:
+
+--id (--resourceGroupId, --resourceId)
+  [string] The identity of this resource. Resource identity is a Uri path that uniquely identifies the resource.
+
+-n (--resourceGroupName, --name)
+  [string] The resource group name.
+
+-t (--tags, --tag)
+  [hashtable[]] An array of hashtables which represents resource tags.
+

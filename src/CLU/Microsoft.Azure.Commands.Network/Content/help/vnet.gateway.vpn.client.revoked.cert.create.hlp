@@ -1,0 +1,16 @@
+az vnet gateway vpn client revoked cert create
+
+Create a Vpn Client Revoked Certificate.
+
+USAGE:
+
+az vnet gateway vpn client revoked cert create --name <name> --thumbprint <thumbprint>
+
+PARAMETERS:
+
+--name
+  [string] The name of the VpnClient certificate to be revoked.
+
+--thumbprint
+  [string] The thumbprint of the VpnClient certificate to be revoked.
+

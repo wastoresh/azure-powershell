@@ -1,0 +1,31 @@
+az resource role definition ls
+
+Get Role Definition details.
+
+USAGE:
+
+az resource role definition ls 
+
+az resource role definition ls [[-n] <name>] [--scope <scope>] [--atScopeAndBelow]
+
+az resource role definition ls [--id] <id> [--scope <scope>]
+
+az resource role definition ls --custom [--scope <scope>] [--atScopeAndBelow]
+
+PARAMETERS:
+
+--atScopeAndBelow
+  [flag] If specified, displays the roles at and below scope.
+
+--custom
+  [flag] If specified, only displays the custom created roles in the directory.
+
+--id
+  [guid] The identity of this resource. Resource identity is a Uri path that uniquely identifies the resource.
+
+-n (--name)
+  [string] Role definition name. For e.g. Reader, Contributor, Virtual Machine Contributor.
+
+--scope
+  [string] Scope of the existing role definition.
+

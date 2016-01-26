@@ -1,0 +1,53 @@
+az resource group deployment create
+
+Create a Resource Group Deployment.
+
+USAGE:
+
+az resource group deployment create -g <resourceGroupName> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateParameterObject <templateParameterObject> --templateFile <templateFile> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateParameterObject <templateParameterObject> --templateUri <templateUri> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateParameterFile <templateParameterFile> --templateFile <templateFile> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateParameterFile <templateParameterFile> --templateUri <templateUri> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateParameterUri <templateParameterUri> --templateFile <templateFile> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateParameterUri <templateParameterUri> --templateUri <templateUri> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateFile <templateFile> [-n <name>] [--mode <mode>] [-f]
+
+az resource group deployment create -g <resourceGroupName> --templateUri <templateUri> [-n <name>] [--mode <mode>] [-f]
+
+PARAMETERS:
+
+-f (--deploymentName, --force)
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+--mode
+  [object] The deployment mode.
+
+-n (--deploymentName, --name)
+  [string] The name of the deployment it's going to create. Only valid when a template is used. When a template is used, if the user doesn't specify a deployment name, use the current time, like "20131223140835".
+
+--templateFile
+  [string] Local path to the template file.
+
+--templateParameterFile
+  [string] A file that has the template parameters.
+
+--templateParameterObject
+  [hashtable] A hash table which represents the parameters.
+
+--templateParameterUri
+  [string] Uri to the template parameter file.
+
+--templateUri
+  [string] Uri to the template file.
+

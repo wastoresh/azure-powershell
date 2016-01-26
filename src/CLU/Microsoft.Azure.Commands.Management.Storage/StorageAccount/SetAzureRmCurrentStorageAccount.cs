@@ -22,13 +22,14 @@ namespace Microsoft.Azure.Commands.Management.Storage
 {
     [Cmdlet(VerbsCommon.Set, "AzureRmCurrentStorageAccount", DefaultParameterSetName=ResourceNameParameterSet), 
     OutputType(typeof(string))]
+    [CliCommandAlias("storage account current set")]
     public class SetAzureRmCurrentStorageAccount : StorageAccountBaseCmdlet
     {
         private const string StorageContextParameterSet = "UsingStorageContext";
         private const string ResourceNameParameterSet = "UsingResourceGroupAndNameParameterSet";
 
         [Parameter(Mandatory=true, ParameterSetName=StorageContextParameterSet, ValueFromPipeline=true, 
-            ValueFromPipelineByPropertyName = true)]
+            ValueFromPipelineByPropertyName = true, HelpMessage = "The Storage context for the storage account.")]
         [ValidateNotNull]
         public AzureStorageContext Context { get; set; }
 

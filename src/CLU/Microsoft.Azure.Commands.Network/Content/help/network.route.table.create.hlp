@@ -1,0 +1,28 @@
+az network route table create
+
+Create a Route Table.
+
+USAGE:
+
+az network route table create --name <name> --resourceGroupName <resourceGroupName> --location <location> [--route <route>] [--tag <tag>] [--force]
+
+PARAMETERS:
+
+--force
+  [flag] Perform this action without prompting, even if permanent changes are made.
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--route
+  [object[]] The list of Routes
+
+--tag
+  [hashtable[]] An array of hashtables which represents resource tags.
+

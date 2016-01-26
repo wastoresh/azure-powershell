@@ -1,0 +1,16 @@
+az network expressroute circuit ls
+
+Get Express Route Circuit details.
+
+USAGE:
+
+az network expressroute circuit ls [--name <name>] [--resourceGroupName <resourceGroupName>]
+
+PARAMETERS:
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+

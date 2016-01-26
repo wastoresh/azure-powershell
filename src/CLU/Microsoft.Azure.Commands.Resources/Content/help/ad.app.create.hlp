@@ -1,0 +1,51 @@
+az ad app create
+
+Create an Active Directory Application.
+
+USAGE:
+
+az ad app create --displayName <displayName> --homePage <homePage> --identifierUris <identifierUris>
+
+az ad app create --displayName <displayName> --homePage <homePage> --identifierUris <identifierUris> -p <password> [--startDate <startDate>] [--endDate <endDate>]
+
+az ad app create --displayName <displayName> --homePage <homePage> --identifierUris <identifierUris> --passwordCredentials <passwordCredentials>
+
+az ad app create --displayName <displayName> --homePage <homePage> --identifierUris <identifierUris> --keyValue <keyValue> [--keyType <keyType>] [--keyUsage <keyUsage>] [--startDate <startDate>] [--endDate <endDate>]
+
+az ad app create --displayName <displayName> --homePage <homePage> --identifierUris <identifierUris> --keyCredentials <keyCredentials>
+
+PARAMETERS:
+
+--displayName (--name)
+  [string] The display name for the application.
+
+--endDate
+  [dateTime] The end date till which password or key is valid. Default value is one year after current time.
+
+--homePage
+  [string] The URL to the application’s homepage.
+
+--identifierUris
+  [string[]] The URIs that identify the application.
+
+--keyCredentials
+  [object] The collection of key credentials associated with the application.
+
+--keyType
+  [string] The type of the key credentials associated with the application. Acceptable values are 'AsymmetricX509Cert', 'Password' and 'Symmetric'. Default is 'AsymmetricX509Cert'
+
+--keyUsage
+  [string] The usage of the key credentials associated with the application. Acceptable values are 'Sign' and 'Verify'. Default is 'Verify'
+
+--keyValue
+  [string] The value for the key credentials associated with the application that will be valid for one year by default.
+
+-p (--password)
+  [string] The value for the password credential associated with the application that will be valid for one year by default.
+
+--passwordCredentials
+  [object] The collection of password credentials associated with the application.
+
+--startDate
+  [dateTime] The start date after which password or key would be valid. Default value is current time.
+

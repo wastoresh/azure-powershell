@@ -1,0 +1,16 @@
+az network app gateway ls
+
+Get Application Gateway details.
+
+USAGE:
+
+az network app gateway ls [--name <name>] [--resourceGroupName <resourceGroupName>]
+
+PARAMETERS:
+
+--name (--resourceName)
+  [string] The resource name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+

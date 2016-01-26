@@ -1,0 +1,78 @@
+az resource role assignment ls
+
+Get Role Assignment details.
+
+USAGE:
+
+az resource role assignment ls [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --objectId <objectId> [--roleDefinitionName <roleDefinitionName>] [-e] [--includeClassicAdministrators]
+
+az resource role assignment ls --objectId <objectId> -g <resourceGroupName> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --objectId <objectId> -g <resourceGroupName> -r <resourceName> -t <resourceType> [--parentResource <parentResource>] [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --objectId <objectId> --scope <scope> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --roleDefinitionId <roleDefinitionId> [--objectId <objectId>] [--scope <scope>]
+
+az resource role assignment ls --signInName <signInName> -g <resourceGroupName> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --signInName <signInName> -g <resourceGroupName> -r <resourceName> -t <resourceType> [--parentResource <parentResource>] [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --signInName <signInName> --scope <scope> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --signInName <signInName> [--roleDefinitionName <roleDefinitionName>] [-e] [--includeClassicAdministrators]
+
+az resource role assignment ls --servicePrincipalName <servicePrincipalName> -g <resourceGroupName> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --servicePrincipalName <servicePrincipalName> -g <resourceGroupName> -r <resourceName> -t <resourceType> [--parentResource <parentResource>] [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --servicePrincipalName <servicePrincipalName> --scope <scope> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --servicePrincipalName <servicePrincipalName> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls -g <resourceGroupName> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls -g <resourceGroupName> -r <resourceName> -t <resourceType> [--parentResource <parentResource>] [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+az resource role assignment ls --scope <scope> [--roleDefinitionName <roleDefinitionName>] [--includeClassicAdministrators]
+
+PARAMETERS:
+
+-e (--expand, --expandPrincipalGroups)
+  [flag] If specified, returns role assignments directly assigned to the principal as well as assignments to the principal's groups (transitive). Supported only for User Principals.
+
+-g (--group, --resourceGroupName)
+  [string] The name of the resource group containing this resource
+
+--includeClassicAdministrators
+  [flag] If specified, also returns the subscription classic administrators as role assignments.
+
+--objectId (--id, --principalId)
+  [guid] The user or group object id.
+
+--parentResource (--parent)
+  [string] Parent resource of the resource to assign the role to, if there is any.
+
+-r (--resource, --resourceName)
+  [string] Resource to assign the role to.
+
+--roleDefinitionId
+  [guid] Role Id the principal is assigned to.
+
+--roleDefinitionName
+  [string] Role to assign the principals with.
+
+--scope
+  [string] Scope of the role assignment. In the format of relative URI.
+
+--servicePrincipalName (--spn)
+  [string] The app SPN.
+
+--signInName (--email, --userPrincipalName)
+  [string] The user SignInName.
+
+-t (--type, --resourceType)
+  [string] Type of the resource to assign the role to.
+

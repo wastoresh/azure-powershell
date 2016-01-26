@@ -1,0 +1,22 @@
+az vm extension access ls
+
+Get VM Access Extension details.
+
+USAGE:
+
+az vm extension access ls [--resourceGroupName] <resourceGroupName> [--vmName] <vmName> [--name] <name> [--status]
+
+PARAMETERS:
+
+--name (--extensionName)
+  [string] The extension name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--status
+  [flag] To show the status.
+
+--vmName (--resourceName)
+  [string] The virtual machine name.
+

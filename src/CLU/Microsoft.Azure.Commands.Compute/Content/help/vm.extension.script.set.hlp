@@ -1,0 +1,51 @@
+az vm extension script set
+
+Update a VM Custom Script Extension.
+
+USAGE:
+
+az vm extension script set [--resourceGroupName] <resourceGroupName> [--vmName] <vmName> [--name] <name> [[--typeHandlerVersion] <typeHandlerVersion>] [--containerName] <containerName> [--fileName] <fileName> [[--storageAccountName] <storageAccountName>] [[--storageEndpointSuffix] <storageEndpointSuffix>] [[--storageAccountKey] <storageAccountKey>] [[--run] <run>] [[--argument] <argument>] [[--location] <location>]
+
+az vm extension script set [--resourceGroupName] <resourceGroupName> [--vmName] <vmName> [--name] <name> [[--typeHandlerVersion] <typeHandlerVersion>] [[--fileUri] <fileUri>] [--run] <run> [[--argument] <argument>] [[--location] <location>]
+
+PARAMETERS:
+
+--argument
+  [string] The Argument String for the Run File.
+
+--containerName
+  [string] The Name of the Container.
+
+--fileName
+  [string[]] The Blob Files in the Container.
+
+--fileUri
+  [string[]] The File URIs.
+
+--location
+  [string] The region that will contain this resource.  Possible values include 'East US', 'North Europe', 'East Asia'
+
+--name (--extensionName)
+  [string] The extension name.
+
+--resourceGroupName
+  [string] The name of the resource group containing this resource
+
+--run (--runFile, --command)
+  [string] The Run File to Execute in PowerShell on the VM.
+
+--storageAccountKey
+  [string] The Storage Account Key.
+
+--storageAccountName
+  [string] The Storage Account Name.
+
+--storageEndpointSuffix
+  [string] The Storage Endpoint Suffix.
+
+--typeHandlerVersion (--handlerVersion, --version)
+  [string] The type handler version.
+
+--vmName (--resourceName)
+  [string] The virtual machine name.
+

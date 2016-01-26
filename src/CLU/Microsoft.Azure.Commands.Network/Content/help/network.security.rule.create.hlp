@@ -1,0 +1,40 @@
+az network security rule create
+
+Create a Network Security Rule Config.
+
+USAGE:
+
+az network security rule create --name <name> [--description <description>] [--protocol <protocol>] [--sourcePortRange <sourcePortRange>] [--destinationPortRange <destinationPortRange>] [--sourceAddressPrefix <sourceAddressPrefix>] [--destinationAddressPrefix <destinationAddressPrefix>] [--access <access>] [--priority <priority>] [--direction <direction>]
+
+PARAMETERS:
+
+--access
+  [string] The description of the rule
+
+--description
+  [string] The description of the rule
+
+--destinationAddressPrefix
+  [string] Destination Address Prefix rule
+
+--destinationPortRange
+  [string] Destination Port Range rule
+
+--direction
+  [string] The direction of the rule
+
+--name
+  [string] The name of the rule
+
+--priority
+  [int32] The prioroty of the rule
+
+--protocol
+  [string] Rule protocol
+
+--sourceAddressPrefix
+  [string] Source Address Prefix  rule
+
+--sourcePortRange
+  [string] Source Port Range rule
+

@@ -1,0 +1,13 @@
+az storage name test
+
+Get Storage Account Name Availability details.
+
+USAGE:
+
+az storage name test [-n] <name>
+
+PARAMETERS:
+
+-n (--storageAccountName, --accountName, --name)
+  [string] Storage Account Name to test for uniqueness.
+

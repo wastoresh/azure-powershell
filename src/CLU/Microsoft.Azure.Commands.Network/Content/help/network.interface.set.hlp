@@ -1,0 +1,20 @@
+az network interface set
+
+Update a Network Interface.
+
+USAGE:
+
+az network interface set --networkInterface <networkInterface>
+
+PARAMETERS:
+
+--networkInterface
+  [object] The NetworkInterface. You may use commands including 'az network interface create' or 'az network interface ls' or 'az network interface set' to produce a NetworkInterface. You can pipe the output of one of these commands to the input of this command, or you can store the ouput to a file and use 'az network interface set --NetworkInterface @@<file-name>' to pass the file contents. See 'Related Commands' for more information.
+
+RELATED COMMANDS:
+az network interface create (produces NetworkInterface)
+
+az network interface ls (produces NetworkInterface)
+
+az network interface set (produces NetworkInterface)
+
