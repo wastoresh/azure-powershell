@@ -20,6 +20,8 @@ using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using StorageModels = Microsoft.Azure.Management.Storage.Models;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -35,6 +37,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         protected const string StorageAccountTypeAlias = "StorageAccountType";
         protected const string AccountTypeAlias = "AccountType";
+        protected const string Account_TypeAlias = "Type";
 
         protected const string StorageAccountNameAvailabilityStr = "AzureRmStorageAccountNameAvailability";
 
@@ -42,11 +45,25 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         protected struct AccountTypeString
         {
-            internal const string StandardLRS = "Standard_LRS";
-            internal const string StandardZRS = "Standard_ZRS";
-            internal const string StandardGRS = "Standard_GRS";
-            internal const string StandardRAGRS = "Standard_RAGRS";
-            internal const string PremiumLRS = "Premium_LRS";
+            internal const string StandardLRS = "StandardLRS";
+            internal const string StandardZRS = "StandardZRS";
+            internal const string StandardGRS = "StandardGRS";
+            internal const string StandardRAGRS = "StandardRAGRS";
+            internal const string PremiumLRS = "PremiumLRS";
+        }
+        protected struct AccountKind
+        {
+            internal const string Storage = "Storage";
+            internal const string BlobStorage = "BlobStorage";
+        }
+        protected struct AccountAccessTier 
+        {
+            internal const string Hot = "Hot";
+            internal const string Cool = "Cool";
+        }
+        public enum EncryptionSupportServiceEnum
+        {
+            Blob = 1
         }
         
         public IStorageManagementClient StorageClient
@@ -76,29 +93,66 @@ namespace Microsoft.Azure.Commands.Management.Storage
             }
         }
 
-        protected static AccountType ParseAccountType(string accountType)
+        protected static SkuName ParseSkuName(string skuName)
         {
-            if (AccountTypeString.StandardLRS.Equals(accountType, StringComparison.OrdinalIgnoreCase))
+            return (SkuName)Enum.Parse(typeof(SkuName), skuName);
+        }
+
+        protected static Kind ParseAccountKind(string accountKind)
+        {
+            return (Kind)Enum.Parse(typeof(Kind), accountKind);
+        }
+
+        protected static Encryption ParseEncryption(EncryptionSupportServiceEnum? EnableService, EncryptionSupportServiceEnum? DisableService = null)
+        {
+            //DisableService and EnableService should not have overlap
+            if (DisableService != null && EnableService != null)
             {
-                return AccountType.StandardLRS;
+                if ((DisableService & EnableService) != 0)
+                    throw new ArgumentOutOfRangeException("EnableEncryptionService, DisableEncryptionService", String.Format("EnableEncryptionService and DisableEncryptionService should no have overlap Service: {0}", DisableService & EnableService));
             }
-            if (AccountTypeString.StandardZRS.Equals(accountType, StringComparison.OrdinalIgnoreCase))
+
+            Encryption accountEncryption = new Encryption();
+            accountEncryption.Services = new EncryptionServices();
+            if (EnableService != null && (EnableService & EncryptionSupportServiceEnum.Blob) == EncryptionSupportServiceEnum.Blob)
             {
-                return AccountType.StandardZRS;
+                accountEncryption.Services.Blob = new EncryptionService();
+                accountEncryption.Services.Blob.Enabled = true;
             }
-            if (AccountTypeString.StandardGRS.Equals(accountType, StringComparison.OrdinalIgnoreCase))
+            if (DisableService != null && (DisableService & EncryptionSupportServiceEnum.Blob) == EncryptionSupportServiceEnum.Blob)
             {
-                return AccountType.StandardGRS;
+                accountEncryption.Services.Blob = new EncryptionService();
+                accountEncryption.Services.Blob.Enabled = false;
             }
-            if (AccountTypeString.StandardRAGRS.Equals(accountType, StringComparison.OrdinalIgnoreCase))
-            {
-                return AccountType.StandardRAGRS;
-            }
-            if (AccountTypeString.PremiumLRS.Equals(accountType, StringComparison.OrdinalIgnoreCase))
-            {
-                return AccountType.PremiumLRS;
-            }
-            throw new ArgumentOutOfRangeException("accountType");
+            return accountEncryption;
+        }
+
+        public static StorageCredentials GenerateStorageCredentials(IStorageManagementClient storageClient, string resourceGroupName, string accountName)
+        {
+            var storageKeysResponse = storageClient.StorageAccounts.ListKeys(resourceGroupName, accountName);
+            return new StorageCredentials(accountName, storageKeysResponse.Keys[0].Value);
+        }
+
+        protected static CloudStorageAccount GenerateCloudStorageAccount(IStorageManagementClient storageClient, string resourceGroupName, string accountName)
+        {
+
+            var storageServiceResponse = storageClient.StorageAccounts.GetPropertiesWithHttpMessagesAsync(resourceGroupName, accountName).Result;
+            Uri blobEndpoint = GetUri(storageServiceResponse.Body.PrimaryEndpoints.Blob);
+            Uri queueEndpoint = GetUri(storageServiceResponse.Body.PrimaryEndpoints.Queue);
+            Uri tableEndpoint = GetUri(storageServiceResponse.Body.PrimaryEndpoints.Table);
+            Uri fileEndpoint = GetUri(storageServiceResponse.Body.PrimaryEndpoints.File);
+
+            return new CloudStorageAccount(
+                GenerateStorageCredentials(storageClient, resourceGroupName, accountName),
+                blobEndpoint,
+                queueEndpoint,
+                tableEndpoint,
+                fileEndpoint);
+        }
+
+        public static Uri GetUri(string uriString)
+        {
+            return uriString == null ? null : new Uri(uriString);
         }
 
         protected void WriteStorageAccount(StorageModels.StorageAccount storageAccount)
@@ -106,7 +160,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
             WriteObject(PSStorageAccount.Create(storageAccount, this.StorageClient));
         }
 
-        protected void WriteStorageAccountList(IList<StorageModels.StorageAccount> storageAccounts)
+        protected void WriteStorageAccountList(IEnumerable<StorageModels.StorageAccount> storageAccounts)
         {
             List<PSStorageAccount> output = new List<PSStorageAccount>();
             storageAccounts.ForEach(storageAccount => output.Add(PSStorageAccount.Create(storageAccount, this.StorageClient)));
