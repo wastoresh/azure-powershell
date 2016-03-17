@@ -25,18 +25,14 @@ namespace Microsoft.Azure.Commands.Management.Storage
     /// <summary>
     /// Lists all storage services underneath the subscription.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, StorageAccountNounStr, DefaultParameterSetName = UpdateAccountTypeParamSet), OutputType(typeof(StorageModels.StorageAccount))]
+    [Cmdlet(VerbsCommon.Set, StorageAccountNounStr), OutputType(typeof(StorageModels.StorageAccount))]
     public class SetAzureStorageAccountCommand : StorageAccountBaseCmdlet
     {
-        protected const string UpdateAccountTypeParamSet = "UpdateAccountType";
-        protected const string UpdateCustomDomainParamSet = "UpdateCustomDomain";
-        protected const string UpdateTagsParamSet = "UpdateTags";
-
         [Parameter(
             Position = 0,
             Mandatory = true,
             ValueFromPipelineByPropertyName = true,
-            HelpMessage = "Resource Group StorageAccountName.")]
+            HelpMessage = "Resource Group Name.")]
         [ValidateNotNullOrEmpty]
         public string ResourceGroupName { get; set; }
 
@@ -44,47 +40,68 @@ namespace Microsoft.Azure.Commands.Management.Storage
             Position = 1,
             Mandatory = true,
             ValueFromPipelineByPropertyName = true,
-            HelpMessage = "Storage Account StorageAccountName.")]
+            HelpMessage = "Storage Account Name.")]
         [Alias(StorageAccountNameAlias, AccountNameAlias)]
         [ValidateNotNullOrEmpty]
         public string Name { get; set; }
 
         [Parameter(
             Position = 2,
-            Mandatory = true,
-            ParameterSetName = UpdateAccountTypeParamSet,
+            Mandatory = false,
             ValueFromPipelineByPropertyName = true,
-            HelpMessage = "Storage Account Type.")]
+            HelpMessage = "Storage Account Sku Name.")]
+        [Alias(StorageAccountTypeAlias, AccountTypeAlias, Account_TypeAlias)]
         [ValidateSet(AccountTypeString.StandardLRS,
             AccountTypeString.StandardZRS,
             AccountTypeString.StandardGRS,
             AccountTypeString.StandardRAGRS,
             AccountTypeString.PremiumLRS,
             IgnoreCase = true)]
-        public string Type { get; set; }
+        public string SkuName { get; set; }
 
         [Parameter(
-            Position = 2,
-            Mandatory = true,
-            ParameterSetName = UpdateCustomDomainParamSet,
+            Position = 3,
+            Mandatory = false,
             ValueFromPipelineByPropertyName = true,
-            HelpMessage = "Storage Account Custom Domain StorageAccountName.")]
+            HelpMessage = "Storage Account AccessTier.")]
+        [ValidateSet(AccountAccessTier.Hot,
+            AccountAccessTier.Cool,
+            IgnoreCase = true)]
+        public string AccessTier { get; set; }
+
+        [Parameter(
+            Position =4,
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = true,
+            HelpMessage = "Storage Account Custom Domain.")]
         [AllowEmptyString]
         [ValidateNotNull]
         public string CustomDomainName { get; set; }
 
         [Parameter(
-            Position = 3,
-            ParameterSetName = UpdateCustomDomainParamSet,
+            Position = 5,
             ValueFromPipelineByPropertyName = true,
-            HelpMessage = "To Use Sub Domain StorageAccountName.")]
+            HelpMessage = "To Use Sub Domain.")]
         [ValidateNotNullOrEmpty]
         public bool? UseSubDomain { get; set; }
 
         [Parameter(
-            Position = 2,
-            Mandatory = true,
-            ParameterSetName = UpdateTagsParamSet,
+            Position = 6,
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = true,
+            HelpMessage = "Storage Service that will enable encryption.")]
+        public EncryptionSupportServiceEnum? EnableEncryptionService { get; set; }
+
+        [Parameter(
+            Position = 7,
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = true,
+            HelpMessage = "Storage Service that will disable encryption.")]
+        public EncryptionSupportServiceEnum? DisableEncryptionService { get; set; }
+
+        [Parameter(
+            Position = 8,
+            Mandatory = false,
             ValueFromPipelineByPropertyName = true,
             HelpMessage = "Storage Account Tags.")]
         [AllowEmptyCollection]
@@ -95,35 +112,35 @@ namespace Microsoft.Azure.Commands.Management.Storage
         {
             base.ExecuteCmdlet();
 
-            Dictionary<string, string> tagDictionary = null;
-            StorageAccountUpdateParameters updateParameters = null;
-
-            if (ParameterSetName == UpdateAccountTypeParamSet)
+            StorageAccountUpdateParameters updateParameters = new StorageAccountUpdateParameters();
+            if (this.SkuName != null)
             {
-                updateParameters = new StorageAccountUpdateParameters
-                    {
-                        AccountType = ParseAccountType(this.Type)
-                    };
+                updateParameters.Sku = new Sku(ParseSkuName(this.SkuName));
             }
-            else if (ParameterSetName == UpdateCustomDomainParamSet)
+            if (this.Tags != null)
             {
-                updateParameters = new StorageAccountUpdateParameters
-                    {
-                        CustomDomain = new CustomDomain
-                        {
-                            Name = CustomDomainName,
-                            UseSubDomain = UseSubDomain
-                        }
-                    };
+                Dictionary<string, string> tagDictionary = TagsConversionHelper.CreateTagDictionary(Tags, validate: true);
+                updateParameters.Tags = tagDictionary ?? new Dictionary<string, string>();
             }
-            else
+            if (this.CustomDomainName != null)
             {
-                tagDictionary = TagsConversionHelper.CreateTagDictionary(Tags, validate: true);
-
-                updateParameters = new StorageAccountUpdateParameters
-                    {
-                        Tags = tagDictionary ?? new Dictionary<string, string>()
-                    };
+                updateParameters.CustomDomain = new CustomDomain()
+                {
+                    Name = CustomDomainName,
+                    UseSubDomain = UseSubDomain
+                };                
+            }
+            else if(UseSubDomain != null)
+            {
+                throw new System.ArgumentException(string.Format("UseSubDomain must be set together with CustomDomainName."));
+            }
+            if (this.EnableEncryptionService != null || this.DisableEncryptionService != null)
+            {
+                updateParameters.Encryption = ParseEncryption(EnableEncryptionService, DisableEncryptionService);
+            }
+            if (this.AccessTier != null)
+            {
+                updateParameters.AccessTier = (AccessTier)System.Enum.Parse(typeof(AccessTier), AccessTier);
             }
 
             var updatedAccountResponse = this.StorageClient.StorageAccounts.Update(
@@ -131,7 +148,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 this.Name,
                 updateParameters);
 
-            var storageAccount = this.StorageClient.StorageAccounts.GetProperties(this.ResourceGroupName, this.Name).StorageAccount;
+            var storageAccount = this.StorageClient.StorageAccounts.GetProperties(this.ResourceGroupName, this.Name);
 
             WriteStorageAccount(storageAccount);
         }
