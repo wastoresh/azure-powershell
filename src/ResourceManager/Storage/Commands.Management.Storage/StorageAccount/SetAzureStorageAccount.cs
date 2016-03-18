@@ -73,6 +73,16 @@ namespace Microsoft.Azure.Commands.Management.Storage
             Position =4,
             Mandatory = false,
             ValueFromPipelineByPropertyName = true,
+            HelpMessage = "Storage Account AccessTier.")]
+        [ValidateSet(AccountAccessTier.Hot,
+            AccountAccessTier.Cool,
+            IgnoreCase = true)]
+        public string AccessTier { get; set; }
+
+        [Parameter(
+            Position =4,
+            Mandatory = false,
+            ValueFromPipelineByPropertyName = true,
             HelpMessage = "Storage Account Custom Domain.")]
         [AllowEmptyString]
         [ValidateNotNull]
