@@ -20,7 +20,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
     using System;
     using System.Globalization;
     using System.Net;
-
+    using WindowsAzure.Storage.File;
     internal static class Util
     {
         /// <summary>
@@ -176,6 +176,30 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             {
                 return new IPAddressOrRange(inputIPACL.Substring(0, separator), inputIPACL.Substring(separator + 1));
             }
+        }
+
+        /// <summary>
+        /// Used in DMlib ShouldOverwriteCallback, to convert object to blob/file/localpath, and return path
+        /// </summary>
+        /// <param name="instance">object instace</param>
+        /// <returns>path of the object</returns>
+        public static string ConvertToString(this object instance)
+        {
+            CloudBlob blob = instance as CloudBlob;
+
+            if (null != blob)
+            {
+                return blob.SnapshotQualifiedUri.AbsoluteUri;
+            }
+
+            CloudFile file = instance as CloudFile;
+
+            if (null != file)
+            {
+                return file.Uri.AbsoluteUri;
+            }
+
+            return instance.ToString();
         }
     }
 }

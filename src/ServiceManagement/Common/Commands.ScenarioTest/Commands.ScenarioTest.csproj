@@ -131,9 +131,10 @@
       <HintPath>..\..\..\packages\Microsoft.WindowsAzure.Management.WebSites.5.0.0-prerelease\lib\net40\Microsoft.WindowsAzure.Management.WebSites.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Storage, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.WindowsAzure.Storage, Version=7.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\WindowsAzure.Storage.6.1.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+      <HintPath>..\..\..\packages\WindowsAzure.Storage.7.2.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -204,6 +205,7 @@
     <Compile Include="Common\TestEnvironment.cs" />
     <Compile Include="Common\TestEnvironmentFactory.cs" />
     <Compile Include="Common\TokenCloudCredentialsHelper.cs" />
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\CredentialTests\AddAccountForArmTests.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
