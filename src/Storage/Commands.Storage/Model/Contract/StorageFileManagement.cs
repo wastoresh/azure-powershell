@@ -59,9 +59,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
             }
         }
 
-        public CloudFileShare GetShareReference(string shareName)
+        public CloudFileShare GetShareReference(string shareName, DateTimeOffset? snapshotTime = null)
         {
-            return this.Client.GetShareReference(shareName);
+            return this.Client.GetShareReference(shareName, snapshotTime);
         }
 
         public void FetchShareAttributes(CloudFileShare share, AccessCondition accessCondition, FileRequestOptions options, OperationContext operationContext)

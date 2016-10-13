@@ -31,7 +31,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         /// </summary>
         /// <param name="shareName">A string containing the name of the share.</param>
         /// <returns>A reference to a share.</returns>
-        CloudFileShare GetShareReference(string shareName);
+        CloudFileShare GetShareReference(string shareName, DateTimeOffset? snapshotTime = null);
 
         /// <summary>
         /// Get share permissions.

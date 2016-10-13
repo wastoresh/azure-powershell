@@ -52,9 +52,9 @@ namespace Microsoft.WindowsAzure.Management.Storage.Test.Service
             this.availableDirectoryNames.AddRange(directoryNames);
         }
 
-        public CloudFileShare GetShareReference(string shareName)
+        public CloudFileShare GetShareReference(string shareName, DateTimeOffset? snapshotTime = null)
         {
-            return client.GetShareReference(shareName);
+            return client.GetShareReference(shareName, snapshotTime);
         }
 
         public void FetchShareAttributes(CloudFileShare share, AccessCondition accessCondition, FileRequestOptions options, OperationContext operationContext)
