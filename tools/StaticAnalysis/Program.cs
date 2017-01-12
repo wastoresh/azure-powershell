@@ -31,7 +31,7 @@ namespace StaticAnalysis
             new HelpAnalyzer.HelpAnalyzer(),
             new DependencyAnalyzer.DependencyAnalyzer(),
             new SignatureVerifier.SignatureVerifier(),
-            new BreakingChangeAnalyzer.BreakingChangeAnalyzer()
+            //new BreakingChangeAnalyzer.BreakingChangeAnalyzer()
         };
 
         public static void Main(string[] args)
