@@ -318,6 +318,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         Task<string> StartCopyAsync(CloudBlob blob, Uri source, AccessCondition sourceAccessCondition, AccessCondition destAccessCondition, BlobRequestOptions options, OperationContext operationContext, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Return a task that asynchronously start Incremental copy operation to a page blob.
+        /// </summary>
+        /// <param name="blob">Dest CloudPageBlob object</param>
+        /// <param name="source">Source Page Blob snapshot</param>
+        /// <param name="destAccessCondition">Access condition to Destination blob.</param>
+        /// <param name="options">Blob request options</param>
+        /// <param name="operationContext">Operation context</param>
+        /// <param name="cmdletCancellationToken">Cancellation token</param>
+        /// <returns>Return copy id if succeeded.</returns>
+        Task<string> StartIncrementalCopyAsync(CloudPageBlob blob, CloudPageBlob source, AccessCondition destAccessCondition, BlobRequestOptions options, OperationContext operationContext, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Return a task that asynchronously set the container permission
         /// </summary>
         /// <param name="container">CloudBlobContainer object</param>

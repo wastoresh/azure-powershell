@@ -181,6 +181,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         [Parameter(HelpMessage = "Destination Storage context object", Mandatory = false)]
         public AzureStorageContext DestContext { get; set; }
+        
+        [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = UriParameterSet)]
+        [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = BlobParameterSet)]
+        [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = BlobToBlobParameterSet)]
+        public SwitchParameter IncrementalCopy { get; set; }
 
         private bool skipSourceChannelInit;
 
@@ -532,7 +537,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
             if (!destExist || this.ConfirmOverwrite(srcUri.AbsoluteUri.ToString(), destBlob.Uri.ToString()))
             {
-                string copyId = await destChannel.StartCopyAsync(destBlob, srcUri, null, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
+                string copyId;
+
+                if (!IncrementalCopy.IsPresent)
+                {
+                    copyId = await destChannel.StartCopyAsync(destBlob, srcUri, null, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
+                }
+                else
+                {
+                    copyId = await destChannel.StartIncrementalCopyAsync((CloudPageBlob)destBlob, new CloudPageBlob(srcUri), null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
+                }
                 this.OutputStream.WriteVerbose(taskId, String.Format(Resources.CopyDestinationBlobPending, destBlob.Name, destBlob.Container.Name, copyId));
                 this.WriteCloudBlobObject(taskId, destChannel, destBlob);
             }
