@@ -1401,6 +1401,15 @@ Valid values are:
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
 			</command:parameter>
+      <command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>SupportsHttpsTrafficOnly</maml:name>
+        <maml:description>
+          <maml:para>
+            Indicates whether or not the storage account only supports Https Traffic.
+          </maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Nullable`1[Boolean]</command:parameterValue>
+      </command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
 				<maml:description>
@@ -1561,6 +1570,20 @@ Valid values are:
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
+    <command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+      <maml:name>SupportsHttpsTrafficOnly</maml:name>
+      <maml:description>
+        <maml:para>
+          Indicates whether or not the storage account only supports Https Traffic.
+        </maml:para>
+      </maml:description>
+      <command:parameterValue required="true" variableLength="false">Nullable`1[Boolean]</command:parameterValue>
+      <dev:type>
+        <maml:name>Hashtable</maml:name>
+        <maml:uri/>
+      </dev:type>
+      <dev:defaultValue></dev:defaultValue>
+    </command:parameter>
 		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 			<maml:name>InformationAction</maml:name>
 			<maml:description>
@@ -2863,6 +2886,15 @@ Valid values are:
 				</maml:description>
 				<command:parameterValue required="true" variableLength="false">Hashtable</command:parameterValue>
 			</command:parameter>
+      <command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+        <maml:name>SupportsHttpsTrafficOnly</maml:name>
+        <maml:description>
+          <maml:para>
+            Indicates whether or not the storage account only supports Https Traffic.
+          </maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Nullable`1[Boolean]</command:parameterValue>
+      </command:parameter>
 			<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 				<maml:name>InformationAction</maml:name>
 				<maml:description>
@@ -3037,6 +3069,20 @@ Valid values are:
 			</dev:type>
 			<dev:defaultValue></dev:defaultValue>
 		</command:parameter>
+    <command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
+      <maml:name>SupportsHttpsTrafficOnly</maml:name>
+      <maml:description>
+        <maml:para>
+          Indicates whether or not the storage account only supports Https Traffic.
+        </maml:para>
+      </maml:description>
+      <command:parameterValue required="true" variableLength="false">Nullable`1[Boolean]</command:parameterValue>
+      <dev:type>
+        <maml:name>Hashtable</maml:name>
+        <maml:uri/>
+      </dev:type>
+      <dev:defaultValue></dev:defaultValue>
+    </command:parameter>
 		<command:parameter required="false" variableLength="false" globbing="false" pipelineInput="false" position="named">
 			<maml:name>InformationAction</maml:name>
 			<maml:description>

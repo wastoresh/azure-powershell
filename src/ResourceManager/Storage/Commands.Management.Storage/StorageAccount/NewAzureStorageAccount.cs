@@ -103,6 +103,13 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [Alias(TagsAlias)]
         public Hashtable Tag { get; set; }
 
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Storage Account Supports Https Traffic only")]
+        [AllowEmptyCollection]
+        [ValidateNotNull]
+        public bool? SupportsHttpsTrafficOnly { get; set; }
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -146,6 +153,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
             if (this.AccessTier != null)
             {
                 createParameters.AccessTier = ParseAccessTier(AccessTier);
+            }
+
+            if (this.SupportsHttpsTrafficOnly != null)
+            {
+                createParameters.SupportsHttpsTrafficOnly = this.SupportsHttpsTrafficOnly.Value;
             }
 
             var createAccountResponse = this.StorageClient.StorageAccounts.Create(
