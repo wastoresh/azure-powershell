@@ -443,3 +443,69 @@ function Test-SetAzureRmCurrentStorageAccount
         Clean-ResourceGroup $rgname
     }
 }
+
+
+<#
+.SYNOPSIS
+Test NetworkAcl
+#>l
+function Test-NetworkAcl
+{
+    # Setup
+    $rgname = Get-StorageManagementTestResourceName;
+
+    try
+    {
+        # Test
+        $stoname = 'sto' + $rgname;
+        $stotype = 'Standard_LRS';
+        $loc = "westus";
+		$kind = 'Storage'
+
+        New-AzureRmResourceGroup -Name $rgname -Location $loc;
+		
+        $loc = 'eastus2(stage)';
+        New-AzureRmStorageAccount -ResourceGroupName $rgname -Name $stoname -Location $loc -Type $stotype;
+
+		Update-AzureRmStorageAccountNetworkACL -verbose -ResourceGroupName $rgname -Name $stoname -Bypass AzureServices,Metrics -DefaultAction Allow -IpRule (@{IPAddressOrRange="10.1.1.0/24";Action="allow"},@{IPAddressOrRange="28.0.2.0/19";Action="allow"})
+        $stoacl = Get-AzureRmStorageAccountNetworkACL -ResourceGroupName $rgname -Name $stoname
+		$stoacliprule = $stoacl.IpRules
+        Assert-AreEqual $stoacl.Bypass 6;
+        Assert-AreEqual $stoacl.DefaultAction Allow;
+        Assert-AreEqual $stoacl.IpRules.Count 2
+        Assert-AreEqual $stoacl.IpRules[0].IPAddressOrRange "10.1.1.0/24";
+        Assert-AreEqual $stoacl.IpRules[1].IPAddressOrRange "28.0.2.0/19";
+        Assert-AreEqual $stoacl.VirtualNetworkRules $null
+
+		Remove-AzureRmStorageAccountNetworkACLRule -ResourceGroupName $rgname -Name $stoname -IPAddressOrRange "10.1.1.0/24"
+        $stoacl = Get-AzureRmStorageAccountNetworkACL -ResourceGroupName $rgname -Name $stoname
+        Assert-AreEqual $stoacl.Bypass 6;
+        Assert-AreEqual $stoacl.DefaultAction Allow;
+        Assert-AreEqual $stoacl.IpRules.Count 1
+        Assert-AreEqual $stoacl.IpRules[0].IPAddressOrRange "28.0.2.0/19";
+        Assert-AreEqual $stoacl.VirtualNetworkRules $null
+		
+		Update-AzureRmStorageAccountNetworkACL -ResourceGroupName $rgname -Name $stoname -IpRule @() -DefaultAction Deny -Bypass None
+        $stoacl = Get-AzureRmStorageAccountNetworkACL -ResourceGroupName $rgname -Name $stoname
+        Assert-AreEqual $stoacl.Bypass 0;
+        Assert-AreEqual $stoacl.DefaultAction Deny;
+        Assert-AreEqual $stoacl.IpRules $null
+        Assert-AreEqual $stoacl.VirtualNetworkRules $null
+		
+		$stoacliprule | Add-AzureRmStorageAccountNetworkACLRule -ResourceGroupName $rgname -Name $stoname
+        $stoacl = Get-AzureRmStorageAccountNetworkACL -ResourceGroupName $rgname -Name $stoname
+        Assert-AreEqual $stoacl.Bypass 0;
+        Assert-AreEqual $stoacl.DefaultAction Deny;
+        Assert-AreEqual $stoacl.IpRules.Count 2
+        Assert-AreEqual $stoacl.IpRules[0].IPAddressOrRange "10.1.1.0/24";
+        Assert-AreEqual $stoacl.IpRules[1].IPAddressOrRange "28.0.2.0/19";
+        Assert-AreEqual $stoacl.VirtualNetworkRules $null
+
+        Remove-AzureRmStorageAccount -Force -ResourceGroupName $rgname -Name $stoname;
+    }
+    finally
+    {
+        # Cleanup
+        Clean-ResourceGroup $rgname
+    }
+}
