@@ -54,7 +54,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         [Parameter(HelpMessage = "Returns an object representing the removed file share. By default, this cmdlet does not generate any output.")]
         public SwitchParameter PassThru { get; set; }
 
+        [Parameter(HelpMessage = "Remove Base Share and snapshots.")]
+        public SwitchParameter IncludeSnapshot { get; set; }
+
         private bool force;
+
 
         public override void ExecuteCmdlet()
         {
@@ -79,7 +83,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                 {
                     if (force || ShareIsEmpty(share) || ShouldContinue(string.Format("Remove share and all content in it: {0}", share.Name), ""))
                     {
-                        await this.Channel.DeleteShareAsync(share, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
+                        DeleteShareSnapshotsOption deleteSnapshotOption = DeleteShareSnapshotsOption.None;
+                        if (this.IncludeSnapshot)
+                            deleteSnapshotOption = DeleteShareSnapshotsOption.IncludeSnapshots;
+                        await this.Channel.DeleteShareAsync(share, deleteSnapshotOption, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
                     }
 
                     if (this.PassThru)

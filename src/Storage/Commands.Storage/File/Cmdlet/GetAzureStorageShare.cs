@@ -17,6 +17,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
     using Microsoft.WindowsAzure.Commands.Common.Storage;
     using Microsoft.WindowsAzure.Storage.File;
+    using System;
     using System.Globalization;
     using System.Management.Automation;
 
@@ -38,6 +39,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         public string Prefix { get; set; }
 
         [Parameter(
+            Position = 1,
+            Mandatory = false,
+            ParameterSetName = Constants.SpecificParameterSetName,
+            HelpMessage = "Snapshot Time of the file share snapshot to be gotten.")]
+        [ValidateNotNullOrEmpty]
+        public DateTimeOffset? SnapshotTime { get; set; }
+
+        [Parameter(
             ValueFromPipeline = true,
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = Constants.MatchingPrefixParameterSetName,
@@ -57,7 +66,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                 {
                     case Constants.SpecificParameterSetName:
                         NamingUtil.ValidateShareName(this.Name, false);
-                        var share = this.Channel.GetShareReference(this.Name);
+                        var share = this.Channel.GetShareReference(this.Name, this.SnapshotTime);
                         await this.Channel.FetchShareAttributesAsync(share, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
                         this.OutputStream.WriteObject(taskId, share);
 

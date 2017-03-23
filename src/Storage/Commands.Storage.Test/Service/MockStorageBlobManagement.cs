@@ -695,6 +695,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Test.Service
             throw new NotImplementedException();
         }
 
+        public Task<string> StartIncrementalCopyAsync(CloudPageBlob blob, CloudPageBlob source, AccessCondition destAccessCondition, BlobRequestOptions options, OperationContext operationContext, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// The storage context
         /// </summary>
