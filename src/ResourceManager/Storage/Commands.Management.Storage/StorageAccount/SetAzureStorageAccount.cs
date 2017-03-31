@@ -19,6 +19,7 @@ using Microsoft.Azure.Commands.ResourceManager.Common.Tags;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 using StorageModels = Microsoft.Azure.Management.Storage.Models;
+using Microsoft.Azure.Commands.Management.Storage.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -105,6 +106,18 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [Alias(TagsAlias)]
         public Hashtable Tag { get; set; }
 
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = true,
+            HelpMessage = "Storage Account Encryption KeySource.")]
+        public PSKeySource KeySource
+        {
+            get { return keySource.Value; }
+            set { keySource = value; }
+        }
+
+        private PSKeySource? keySource = null;
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -138,9 +151,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         throw new System.ArgumentException(string.Format("UseSubDomain must be set together with CustomDomainName."));
                     }
 
-                    if (this.EnableEncryptionService != null || this.DisableEncryptionService != null)
+                    if (this.EnableEncryptionService != null || this.DisableEncryptionService != null || keySource !=null)
                     {
-                        updateParameters.Encryption = ParseEncryption(EnableEncryptionService, DisableEncryptionService);
+                        updateParameters.Encryption = ParseEncryption(EnableEncryptionService, DisableEncryptionService, keySource);
                     }
 
                     if (this.AccessTier != null)
