@@ -1,5 +1,6 @@
 ---
 external help file: Microsoft.WindowsAzure.Commands.Storage.dll-Help.xml
+Module Name: Azure.Storage
 ms.assetid: 383402B2-6B7C-41AB-AFF9-36C86156B0A9
 online version: 
 schema: 2.0.0

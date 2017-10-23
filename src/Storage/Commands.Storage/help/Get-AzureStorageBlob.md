@@ -1,5 +1,6 @@
 ---
 external help file: Microsoft.WindowsAzure.Commands.Storage.dll-Help.xml
+Module Name: Azure.Storage
 ms.assetid: E54BFD3A-CD54-4E6B-9574-92B8D3E88FF3
 online version: 
 schema: 2.0.0
@@ -236,7 +237,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### IStorageContext
-
 Parameter 'Context' accepts value of type 'IStorageContext' from the pipeline
 
 ## OUTPUTS
@@ -244,7 +244,6 @@ Parameter 'Context' accepts value of type 'IStorageContext' from the pipeline
 ### AzureStorageBlob
 
 ## NOTES
-
 
 ## RELATED LINKS
 

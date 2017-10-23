@@ -20,6 +20,7 @@ using System.Management.Automation;
 namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
     using Microsoft.WindowsAzure.Commands.Storage.Common;
+    using Microsoft.WindowsAzure.Storage;
     using Microsoft.WindowsAzure.Storage.DataMovement;
     using LocalConstants = Microsoft.WindowsAzure.Commands.Storage.File.Constants;
     using LocalDirectory = System.IO.Directory;
@@ -110,8 +111,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         [Parameter(HelpMessage = "Returns an object representing the downloaded cloud file. By default, this cmdlet does not generate any output.")]
         public SwitchParameter PassThru { get; set; }
 
+        [Parameter(HelpMessage = "Use FIPS aligned MD5 algorithm.")]
+        public SwitchParameter UseNativeMD5 { get; set; }
+
         public override void ExecuteCmdlet()
         {
+            if (UseNativeMD5)
+            {
+                CloudStorageAccount.UseV1MD5 = false;
+            }
+
             CloudFile fileToBeDownloaded;
             string[] path = NamingUtil.ValidatePath(this.Path, true);
             switch (this.ParameterSetName)

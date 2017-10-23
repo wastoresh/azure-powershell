@@ -71,8 +71,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         [Parameter(HelpMessage = "Returns an object representing the downloaded cloud file. By default, this cmdlet does not generate any output.")]
         public SwitchParameter PassThru { get; set; }
 
+        [Parameter(HelpMessage = "Use FIPS aligned MD5 algorithm.")]
+        public SwitchParameter UseNativeMD5 { get; set; }
+
         public override void ExecuteCmdlet()
         {
+            if (UseNativeMD5)
+            {
+                CloudStorageAccount.UseV1MD5 = false;
+            }
+
             // Step 1: Validate source file.
             FileInfo localFile = new FileInfo(this.GetUnresolvedProviderPathFromPSPath(this.Source));
             if (!localFile.Exists)

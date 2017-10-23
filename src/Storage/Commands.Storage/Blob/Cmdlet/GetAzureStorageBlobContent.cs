@@ -94,6 +94,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         private bool checkMd5;
 
+        [Parameter(HelpMessage = "Use FIPS aligned MD5 algorithm.")]
+        public SwitchParameter UseNativeMD5 { get; set; }
+
         private BlobToFileSystemNameResolver fileNameResolver;
 
         /// <summary>
@@ -287,6 +290,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
+            if (UseNativeMD5)
+            {
+                CloudStorageAccount.UseV1MD5 = false;
+            }
+
             switch (ParameterSetName)
             {
                 case BlobParameterSet:

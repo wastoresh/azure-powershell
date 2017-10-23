@@ -166,8 +166,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 pageBlobTier = value;
             }
         }
-
         private PremiumPageBlobTier? pageBlobTier = null;
+
+        [Parameter(HelpMessage = "Use FIPS aligned MD5 algorithm.")]
+        public SwitchParameter UseNativeMD5 { get; set; }
 
         private BlobUploadRequestQueue UploadRequests = new BlobUploadRequestQueue();
 
@@ -492,6 +494,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         /// </summary>
         public override void ExecuteCmdlet()
         {
+            if (UseNativeMD5)
+            {
+                CloudStorageAccount.UseV1MD5 = false;
+            }
+
             ValidateBlobTier(string.Equals(blobType, PageBlobType, StringComparison.InvariantCultureIgnoreCase)? StorageBlob.BlobType.PageBlob : StorageBlob.BlobType.Unspecified, 
                 pageBlobTier);
 
