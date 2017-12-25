@@ -385,7 +385,7 @@ Accept wildcard characters: False
 ```
 
 ### -StorageEncryption
-Whether or not to set the Storage account encryption to use Microsoft-managed keys.
+Indicates whether or not to set the Storage account encryption to use Microsoft-managed keys.
 
 ```yaml
 Type: SwitchParameter

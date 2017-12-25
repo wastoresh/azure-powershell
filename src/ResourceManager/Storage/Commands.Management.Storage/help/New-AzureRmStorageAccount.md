@@ -148,7 +148,7 @@ Accept wildcard characters: False
 ```
 
 ### -EnableHttpsTrafficOnly
-Indicates whether or not the Storage account only enables HTTPS traffic.”
+Indicates whether or not the Storage account only enables HTTPS traffic.
 
 ```yaml
 Type: Boolean
