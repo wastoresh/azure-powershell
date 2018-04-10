@@ -50,6 +50,8 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.Tags = storageAccount.Tags;
             this.EnableHttpsTrafficOnly = storageAccount.EnableHttpsTrafficOnly;
             this.NetworkRuleSet = PSNetworkRuleSet.ParsePSNetworkRule(storageAccount.NetworkRuleSet);
+            this.EnableAzureFilesAadIntegrationForSMB = storageAccount.EnableAzureFilesAadIntegration;
+            this.EnableHierarchicalNamespace = storageAccount.IsHnsEnabled; 
         }
 
         public string ResourceGroupName { get; set; }
@@ -90,6 +92,10 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public IDictionary<string, string> Tags { get; set; }
 
         public bool? EnableHttpsTrafficOnly { get; set; }
+
+        public bool? EnableAzureFilesAadIntegrationForSMB { get; set; }
+
+        public bool? EnableHierarchicalNamespace { get; set; }
 
         public PSNetworkRuleSet NetworkRuleSet { get; set; }
 
