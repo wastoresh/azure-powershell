@@ -379,7 +379,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Profile.Test
                 DataLakeAudience = "DataLakeAudience",
                 AzureOperationalInsightsEndpointResourceId = "AzureOperationalInsightsEndpointResourceId",
                 AzureOperationalInsightsEndpoint = "https://AzureOperationalInsights",
-                StorageOAuthEndpointResourceId = "https://storage.azure.com",
             };
 
             var dict = new Dictionary<string, object>();
@@ -403,7 +402,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Profile.Test
             dict["DataLakeAudience"] = "DataLakeAudience";
             dict["AzureOperationalInsightsEndpointResourceId"] = "AzureOperationalInsightsEndpointResourceId";
             dict["AzureOperationalInsightsEndpoint"] = "https://AzureOperationalInsights";
-            dict["StorageOAuthEndpointResourceId"] = "https://storage.azure.com";
             cmdlet.SetBoundParameters(dict);
 
             cmdlet.InvokeBeginProcessing();
@@ -431,7 +429,6 @@ namespace Microsoft.Azure.Commands.ResourceManager.Profile.Test
             Assert.Equal(cmdlet.DataLakeAudience, actual.DataLakeEndpointResourceId);
             Assert.Equal(cmdlet.AzureOperationalInsightsEndpointResourceId, actual.AzureOperationalInsightsEndpointResourceId);
             Assert.Equal(cmdlet.AzureOperationalInsightsEndpoint, actual.AzureOperationalInsightsEndpoint);
-            Assert.Equal(cmdlet.StorageOAuthEndpointResourceId, actual.StorageOAuthEndpointResourceId);
             commandRuntimeMock.Verify(f => f.WriteObject(It.IsAny<PSAzureEnvironment>()), Times.Once());
             IAzureEnvironment env = AzureRmProfileProvider.Instance.Profile.GetEnvironment("KaTaL");
             Assert.Equal(env.Name, cmdlet.Name);
