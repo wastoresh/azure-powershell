@@ -12,6 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Microsoft.Azure.Commands.Common.Authentication;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Common.Storage;
@@ -20,6 +21,7 @@ using Microsoft.WindowsAzure.Commands.Storage.Adapters;
 using Microsoft.WindowsAzure.Commands.Storage.File;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.File;
 using Microsoft.WindowsAzure.Storage.Queue;
@@ -225,19 +227,27 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// Get cloud storage account 
         /// </summary>
         /// <returns>Storage account</returns>
-        internal AzureStorageContext GetCmdletStorageContext()
+        internal AzureStorageContext GetCmdletStorageContext(string storageAccountName = null)
         {
-            var context = this.GetCmdletStorageContext(this.Context);
+            var context = this.GetCmdletStorageContext(this.Context, storageAccountName);
             this.Context = context;
             return context;
         }
 
-        internal AzureStorageContext GetCmdletStorageContext(IStorageContext inContext)
+        internal AzureStorageContext GetCmdletStorageContext(IStorageContext inContext, string storageAccountName = null)
         {
             AzureStorageContext context = inContext as AzureStorageContext;
             if (context == null && inContext != null)
             {
                 context = new AzureStorageContext(inContext.GetCloudStorageAccount());
+            }
+            else if (context == null && storageAccountName != null)
+            {
+                IAccessToken accessToken = OAuthUtil.CreateOAuthToken(this.DefaultContext);
+                TokenCredential tokenCredential = new TokenCredential(OAuthUtil.GetTokenStrFromAccessToken(accessToken), OAuthUtil.GetTokenRenewer(accessToken), null, new TimeSpan(0, 1, 0));
+                StorageCredentials credential = new StorageCredentials(tokenCredential);
+                CloudStorageAccount account = new CloudStorageAccount(credential, storageAccountName, this.DefaultContext.Environment.StorageEndpointSuffix, true);
+                context = new AzureStorageContext(account);
             }
 
             if (context != null)

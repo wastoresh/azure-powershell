@@ -127,6 +127,7 @@
     <Compile Include="Common\StorageNouns.cs" />
     <Compile Include="Common\TaskOutputStream.cs" />
     <Compile Include="Common\TransferManagerFactory.cs" />
+    <Compile Include="Common\OAuthUtil.cs" />
     <Compile Include="Common\Util.cs" />
     <Compile Include="File\AzureStorageFileCmdletBase.cs" />
     <Compile Include="File\AzureStorageFileException.cs" />

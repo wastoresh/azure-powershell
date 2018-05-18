@@ -211,7 +211,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             if (this.MyInvocation.Line.ToLower().Contains("get-azurestoragecontaineracl"))
             {
                 // Write warning when user SAS credential since get container ACL will fail
-                AzureStorageContext storageContext = this.GetCmdletStorageContext();
+                AzureStorageContext storageContext = this.GetCmdletStorageContext(storageAccountName: AccountName);
                 if (storageContext != null && storageContext.StorageAccount != null && storageContext.StorageAccount.Credentials != null && storageContext.StorageAccount.Credentials.IsSAS)
                 {
                     WriteWarning("Get container permission will fail with SAS token credentials, it needs storage Account key credentials.");

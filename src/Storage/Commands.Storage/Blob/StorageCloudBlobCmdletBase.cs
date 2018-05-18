@@ -23,12 +23,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Management.Automation;
 
     /// <summary>
     /// Base cmdlet for storage blob/container cmdlet
     /// </summary>
     public class StorageCloudBlobCmdletBase : StorageCloudCmdletBase<IStorageBlobManagement>
     {
+        [Parameter(HelpMessage = "Azure Storage Account Name",
+        ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Account")]
+        public virtual string AccountName { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the StorageCloudBlobCmdletBase class.
         /// </summary>
@@ -176,7 +182,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             //Init storage blob management channel
             if (Channel == null || !ShareChannel)
             {
-                Channel = new StorageBlobManagement(GetCmdletStorageContext());
+                Channel = new StorageBlobManagement(GetCmdletStorageContext(storageAccountName: AccountName));
             }
 
             return Channel;

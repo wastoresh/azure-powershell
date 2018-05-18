@@ -16,12 +16,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
     using Microsoft.WindowsAzure.Storage.Queue;
+    using System.Management.Automation;
 
     /// <summary>
     /// base class for azure queue cmdlet
     /// </summary>
     public class StorageQueueBaseCmdlet : StorageCloudCmdletBase<IStorageQueueManagement>
     {
+        [Parameter(HelpMessage = "Azure Storage Account Name",
+        ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Account")]
+        public virtual string AccountName { get; set; }
+
         //Overwrite the useless parameter
         public override int? ServerTimeoutPerRequest { get; set; }
         public override int? ClientTimeoutPerRequest { get; set; }
@@ -36,7 +42,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             //init storage blob managment channel
             if (Channel == null || !ShareChannel)
             {
-                Channel = new StorageQueueManagement(GetCmdletStorageContext());
+                Channel = new StorageQueueManagement(GetCmdletStorageContext(storageAccountName: AccountName));
             }
 
             return Channel;
