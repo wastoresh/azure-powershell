@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '4.3.1'
+ModuleVersion = '4.4.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -121,7 +121,9 @@ CmdletsToExport = 'Get-AzureStorageTable', 'New-AzureStorageTableSASToken',
                'Stop-AzureStorageBlobCopy', 'Update-AzureStorageServiceProperty', 
                'Get-AzureStorageServiceProperty', 
                'Enable-AzureStorageDeleteRetentionPolicy', 
-               'Disable-AzureStorageDeleteRetentionPolicy'
+               'Disable-AzureStorageDeleteRetentionPolicy',
+               'Enable-AzureStorageStaticWebsite', 
+               'Disable-AzureStorageStaticWebsite'
 
 # Variables to export from this module
 # VariablesToExport = @()
@@ -158,10 +160,12 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added additional information about -Permissions parameter in help files.'
+        ReleaseNotes = '* Support Static Website configuration
+   - Enable-AzureStorageStaticWebsite
+   - Disable-AzureStorageStaticWebsite'
 
         # Prerelease string of this module
-        # Prerelease = ''
+        Prerelease = 'preview'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update
         # RequireLicenseAcceptance = $false
