@@ -21,6 +21,7 @@ using Microsoft.WindowsAzure.Storage;
 using System;
 using System.Collections.Generic;
 using StorageModels = Microsoft.Azure.Management.Storage.Models;
+using Microsoft.WindowsAzure.Commands.Common.Attributes;
 
 namespace Microsoft.Azure.Commands.Management.Storage.Models
 {
@@ -66,12 +67,14 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.HasImmutabilityPolicy = container.HasImmutabilityPolicy;
         }
 
+        [Ps1Xml(Label = "ResourceGroupName", Target = ViewControl.Table, GroupByThis = true, ScriptBlock = "$_.ResourceGroupName + \", StorageAccountName: \" + $_.StorageAccountName")]
         public string ResourceGroupName { get; set; }
 
         public string StorageAccountName { get; set; }
 
         public string Id { get; set; }
 
+        [Ps1Xml(Label = "Name", Target = ViewControl.Table, Position = 0)]
         public string Name { get; set; }
 
         public string Type { get; set; }
@@ -80,12 +83,14 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
 
         public IDictionary<string, string> Metadata { get; set; }
 
+        [Ps1Xml(Label = "PublicAccess", Target = ViewControl.Table, Position = 1, TableColumnWidth = 20)]
         public PSPublicAccess? PublicAccess { get; set; }
 
         public PSImmutabilityPolicyProperties ImmutabilityPolicy { get; set; }
 
         public PSLegalHoldProperties LegalHold { get; set; }
 
+        [Ps1Xml(Label = "LastModified", Target = ViewControl.Table, ScriptBlock = "$_.LastModifiedTime.ToUniversalTime().ToString(\"u\")", Position = 2)]
         public DateTime? LastModifiedTime { get; set; }
 
         public string LeaseStatus { get; set; }
@@ -94,8 +99,10 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
 
         public string LeaseDuration { get; set; }
 
+        [Ps1Xml(Label = "HasLegalHold", Target = ViewControl.Table, Position = 3)]
         public bool? HasLegalHold { get; set; }
 
+        [Ps1Xml(Label = "HasImmutabilityPolicy", Target = ViewControl.Table, Position = 4)]
         public bool? HasImmutabilityPolicy { get; set; }
 
 
