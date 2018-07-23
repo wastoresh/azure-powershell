@@ -56,6 +56,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
             AccountTypeString.StandardGRS,
             AccountTypeString.StandardRAGRS,
             AccountTypeString.PremiumLRS,
+            AccountTypeString.PremiumZRS,
             IgnoreCase = true)]
         public string SkuName { get; set; }
 
@@ -74,6 +75,8 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [ValidateSet(AccountKind.Storage,
             AccountKind.StorageV2,
             AccountKind.BlobStorage,
+            AccountKind.FileStorage,
+            AccountKind.BlockBlobStorage,
             IgnoreCase = true)]
         public string Kind { get; set; }
 

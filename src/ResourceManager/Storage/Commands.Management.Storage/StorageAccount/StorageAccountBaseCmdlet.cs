@@ -55,12 +55,15 @@ namespace Microsoft.Azure.Commands.Management.Storage
             internal const string StandardGRS = "Standard_GRS";
             internal const string StandardRAGRS = "Standard_RAGRS";
             internal const string PremiumLRS = "Premium_LRS";
+            internal const string PremiumZRS = "Premium_ZRS";
         }
         protected struct AccountKind
         {
             internal const string Storage = "Storage";
             internal const string StorageV2 = "StorageV2";
             internal const string BlobStorage = "BlobStorage";
+            internal const string FileStorage = "FileStorage";
+            internal const string BlockBlobStorage = "BlockBlobStorage";
         }
         protected struct AccountAccessTier
         {
