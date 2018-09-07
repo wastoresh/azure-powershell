@@ -85,11 +85,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             transferContext.ClientRequestId = CmdletOperationContext.ClientRequestId;
             if (this.Force)
             {
-                transferContext.ShouldOverwriteCallback = TransferContext.ForceOverwrite;
+                transferContext.ShouldOverwriteCallbackAsync = TransferContext.ForceOverwrite;
             }
             else
             {
-                transferContext.ShouldOverwriteCallback = ConfirmOverwrite;
+                //transferContext.ShouldOverwriteCallbackAsync = ConfirmOverwrite;
             }
 
             transferContext.ProgressHandler = new TransferProgressHandler((transferProgress) =>
