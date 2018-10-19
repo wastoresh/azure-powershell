@@ -57,14 +57,10 @@ ScriptsToProcess = @()
 TypesToProcess = @()
 
 # Format files (.ps1xml) to be loaded when importing this module
-FormatsToProcess = @(
-    '.\Microsoft.Azure.Commands.Management.Storage.format.ps1xml'
-)
+FormatsToProcess = '.\Microsoft.Azure.Commands.Management.Storage.format.ps1xml'
 
-# Modules to import as nested modules of the module specified in ModuleToProcess
-NestedModules = @(
-    '.\Microsoft.Azure.Commands.Management.Storage.dll'
-)
+# Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
+NestedModules = @('.\Microsoft.Azure.Commands.Management.Storage.dll', '.\Microsoft.Azure.Commands.Storage.Provider.dll')
 
 # Functions to export from this module
 FunctionsToExport = '*'
