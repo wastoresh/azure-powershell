@@ -1,4 +1,4 @@
-﻿﻿// ----------------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------------
 //
 // Copyright Microsoft Corporation
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,14 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclfile;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Commands.Storage.File;
 using Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet;
-using Microsoft.WindowsAzure.Storage.File;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
 
 namespace Microsoft.WindowsAzure.Management.Storage.Test.File.Cmdlet
 {

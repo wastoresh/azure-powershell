@@ -14,10 +14,14 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;
-    using StorageClient = WindowsAzure.Storage.Shared.Protocol;
+    using StorageClient = xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using StorageClientOLD = xsclold::Microsoft.WindowsAzure.Storage.Shared.Protocol;
 
     /// <summary>
     /// Show azure storage service properties
@@ -110,6 +114,63 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         }
 
         /// <summary>
+        /// Update the Table service properties according to the input
+        /// </summary>
+        /// <param name="logging">Service properties</param>
+        internal void UpdateTableServiceProperties(StorageClientOLD.LoggingProperties logging)
+        {
+            if (Version != null)
+            {
+                logging.Version = Version.ToString();
+            }
+
+            if (RetentionDays != null)
+            {
+                if (RetentionDays == -1)
+                {
+                    //Disable logging retention policy
+                    logging.RetentionDays = null;
+                }
+                else if (RetentionDays < 1 || RetentionDays > 365)
+                {
+                    throw new ArgumentException(string.Format(Resources.InvalidRetentionDay, RetentionDays));
+                }
+                else
+                {
+                    logging.RetentionDays = RetentionDays;
+                }
+            }
+
+            if (LoggingOperations != null && LoggingOperations.Length > 0)
+            {
+                StorageClientOLD.LoggingOperations logOperations = default(StorageClientOLD.LoggingOperations);
+
+                for (int i = 0; i < LoggingOperations.Length; i++)
+                {
+                    if (LoggingOperations[i] == StorageClient.LoggingOperations.None
+                        || LoggingOperations[i] == StorageClient.LoggingOperations.All)
+                    {
+                        if (LoggingOperations.Length > 1)
+                        {
+                            throw new ArgumentException(Resources.NoneAndAllOperationShouldBeAlone);
+                        }
+                    }
+
+                    logOperations |= (StorageClientOLD.LoggingOperations)Enum.Parse(typeof(StorageClientOLD.LoggingOperations), LoggingOperations[i].ToString(), true);
+                    
+                }
+
+                logging.LoggingOperations = logOperations;
+                // Set default logging version
+                if (string.IsNullOrEmpty(logging.Version))
+                {
+                    string defaultLoggingVersion = StorageNouns.DefaultLoggingVersion;
+                    logging.Version = defaultLoggingVersion;
+                }
+            }
+        }
+
+        /// <summary>
         /// Get logging operations
         /// </summary>
         /// <param name="LoggingOperations">The string type of Logging operations</param>
@@ -165,19 +226,39 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
                 throw new PSInvalidOperationException(Resources.FileNotSupportLogging);
             }
 
-            StorageClient.ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-            StorageClient.ServiceProperties serviceProperties = new StorageClient.ServiceProperties();
-            serviceProperties.Clean();
-            serviceProperties.Logging = currentServiceProperties.Logging;
-
-            UpdateServiceProperties(serviceProperties.Logging);
-
-            Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
-                GetRequestOptions(ServiceType), OperationContext);
-
-            if (PassThru)
+            if (ServiceType != StorageServiceType.Table)
             {
-                WriteObject(serviceProperties.Logging);
+                StorageClient.ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                StorageClient.ServiceProperties serviceProperties = new StorageClient.ServiceProperties();
+                serviceProperties.Clean();
+                serviceProperties.Logging = currentServiceProperties.Logging;
+
+                UpdateServiceProperties(serviceProperties.Logging);
+
+                Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
+                    GetRequestOptions(ServiceType), OperationContext);
+
+                if (PassThru)
+                {
+                    WriteObject(serviceProperties.Logging);
+                }
+            }
+            else //Table use old XSCL
+            {
+                StorageClientOLD.ServiceProperties currentServiceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                StorageClientOLD.ServiceProperties serviceProperties = new StorageClientOLD.ServiceProperties();
+                serviceProperties.Clean();
+                serviceProperties.Logging = currentServiceProperties.Logging;
+
+                UpdateTableServiceProperties(serviceProperties.Logging);
+
+                Channel.SetStorageTableServiceProperties(serviceProperties,
+                    GetTableRequestOptions(), TableOperationContext);
+
+                if (PassThru)
+                {
+                    WriteObject(serviceProperties.Logging);
+                }
             }
         }
     }

@@ -14,8 +14,9 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
+    extern alias xsclqueue;
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage.Queue;
+    using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
 
     /// <summary>
     /// base class for azure queue cmdlet

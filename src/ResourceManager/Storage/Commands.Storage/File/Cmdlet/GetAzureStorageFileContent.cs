@@ -12,7 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Storage.File;
+extern alias xsclfile;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;

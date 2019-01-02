@@ -16,6 +16,12 @@ using Microsoft.Azure.Commands.Common.Authentication;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 {
+    extern alias xsclcommon;
+    extern alias xsclblob;
+    extern alias xsclfile;
+    extern alias xsclqueue;
+    extern alias xsclold;
+
     using Adapters;
     using Azure.Commands.Common.Authentication.Abstractions;
     using Commands.Common;
@@ -24,9 +30,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using Microsoft.WindowsAzure.Commands.Storage.File;
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Blob;
-    using Microsoft.WindowsAzure.Storage.File;
+    using xsclcommon ::Microsoft.WindowsAzure.Storage;
+    using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
     using System;
     using System.IO;
     using System.Management.Automation;

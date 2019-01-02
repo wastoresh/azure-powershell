@@ -1,4 +1,4 @@
-﻿﻿// ----------------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------------
 //
 // Copyright Microsoft Corporation
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,11 @@
 // ----------------------------------------------------------------------------------
 
 
+extern alias xsclcommon;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
-using Microsoft.WindowsAzure.Storage;
+using xsclcommon::Microsoft.WindowsAzure.Storage;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Test.Common
 {

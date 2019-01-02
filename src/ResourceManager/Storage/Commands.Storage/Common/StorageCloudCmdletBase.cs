@@ -12,6 +12,11 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclfile;
+extern alias xsclblob;
+extern alias xsclqueue;
+extern alias xsclold;
+extern alias xsclcommon;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 // TODO: Remove IfDef
 #if NETSTANDARD
@@ -23,11 +28,12 @@ using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
 using Microsoft.WindowsAzure.Commands.Storage.Adapters;
 using Microsoft.WindowsAzure.Commands.Storage.File;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.File;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Microsoft.WindowsAzure.Storage.Table;
+using xsclcommon ::Microsoft.WindowsAzure.Storage;
+using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
+using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
+using xsclold::Microsoft.WindowsAzure.Storage.Table;
+using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -184,6 +190,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         }
 
         /// <summary>
+        /// Cmdlet operation context.
+        /// </summary>
+        protected XSCLOLD.OperationContext TableOperationContext
+        {
+            get
+            {
+                return CmdletOperationContext.GetStorageTableOperationContext(WriteDebugLog);
+            }
+        }
+
+        /// <summary>
         /// Write log in debug mode
         /// </summary>
         /// <param name="msg">Debug log</param>
@@ -209,15 +226,34 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                 case StorageServiceType.Queue:
                     options = new QueueRequestOptions();
                     break;
-                case StorageServiceType.Table:
-                    options = new TableRequestOptions();
-                    break;
                 case StorageServiceType.File:
                     options = new FileRequestOptions();
                     break;
                 default:
                     throw new ArgumentException(Resources.InvalidStorageServiceType, "type");
             }
+
+            if (ServerTimeoutPerRequest.HasValue)
+            {
+                options.ServerTimeout = ConvertToTimeSpan(ServerTimeoutPerRequest.Value);
+            }
+
+            if (ClientTimeoutPerRequest.HasValue)
+            {
+                options.MaximumExecutionTime = ConvertToTimeSpan(ClientTimeoutPerRequest.Value);
+            }
+
+            return options;
+        }
+
+        /// <summary>
+        /// Get a request options
+        /// </summary>
+        /// <param name="type">Service type</param>
+        /// <returns>Request options</returns>
+        public TableRequestOptions GetTableRequestOptions()
+        {
+            TableRequestOptions options = new TableRequestOptions();
 
             if (ServerTimeoutPerRequest.HasValue)
             {

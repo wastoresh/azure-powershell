@@ -14,7 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
     using System.Management.Automation;
     using System.Security.Permissions;
     using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
@@ -44,8 +47,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-            WriteObject(new PSSeriviceProperties(serviceProperties));
+            if (ServiceType != StorageServiceType.Table)
+            {
+                ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                WriteObject(new PSSeriviceProperties(serviceProperties));
+            }
+            else //Table use old XSCL
+            {
+                XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                WriteObject(new PSSeriviceProperties(serviceProperties));
+            }
         }
     }
 }

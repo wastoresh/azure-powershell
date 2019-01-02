@@ -14,10 +14,13 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;
-    using StorageClient = WindowsAzure.Storage.Shared.Protocol;
+    using StorageClient = xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
     using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
 
     /// <summary>
@@ -54,16 +57,39 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         {
             if (ShouldProcess("ServiceProperties", VerbsCommon.Set))
             {
-                StorageClient.ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-
-                serviceProperties.DefaultServiceVersion = this.DefaultServiceVersion;
-
-                Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
-                    GetRequestOptions(ServiceType), OperationContext);
-
-                if (PassThru)
+                if (ServiceType != StorageServiceType.Table)
                 {
-                    WriteObject(new PSSeriviceProperties(serviceProperties));
+                    StorageClient.ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+
+                    if (!string.IsNullOrEmpty(DefaultServiceVersion))
+                    {
+                        serviceProperties.DefaultServiceVersion = this.DefaultServiceVersion;
+                    }
+
+                    Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
+                        GetRequestOptions(ServiceType), OperationContext);
+
+                    if (PassThru)
+                    {
+                        WriteObject(new PSSeriviceProperties(serviceProperties));
+                    }
+                }
+                else //Table use old XSCL
+                {
+                    XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+
+                    if (!string.IsNullOrEmpty(DefaultServiceVersion))
+                    {
+                        serviceProperties.DefaultServiceVersion = this.DefaultServiceVersion;
+                    }
+
+                    Channel.SetStorageTableServiceProperties(serviceProperties,
+                        GetTableRequestOptions(), TableOperationContext);
+
+                    if (PassThru)
+                    {
+                        WriteObject(new PSSeriviceProperties(serviceProperties));
+                    }
                 }
             }
         }

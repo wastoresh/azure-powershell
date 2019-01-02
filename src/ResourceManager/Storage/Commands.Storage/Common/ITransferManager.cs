@@ -12,9 +12,11 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Storage.Blob;
+extern alias xsclfile;
+extern alias xsclblob;
+using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.DataMovement;
-using Microsoft.WindowsAzure.Storage.File;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
 using System.Threading;
 using System.Threading.Tasks;
 

@@ -12,12 +12,17 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclcommon;
+extern alias xsclblob;
+extern alias xsclfile;
+extern alias xsclqueue;
+extern alias xsclold;
 
 using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+using xsclcommon ::Microsoft.WindowsAzure.Storage;
+using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +30,7 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Threading.Tasks;
-using StorageBlob = Microsoft.WindowsAzure.Storage.Blob;
+using StorageBlob = xsclblob::Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 {

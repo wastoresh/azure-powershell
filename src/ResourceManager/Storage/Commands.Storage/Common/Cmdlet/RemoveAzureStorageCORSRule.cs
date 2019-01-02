@@ -12,7 +12,10 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+extern alias xsclcommon;
+extern alias xsclold;
+using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
+using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
 using System.Management.Automation;
 using System.Security.Permissions;
 
@@ -38,14 +41,28 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-            ServiceProperties serviceProperties = new ServiceProperties();
-            serviceProperties.Clean();
-            serviceProperties.Cors = currentServiceProperties.Cors;
-            serviceProperties.Cors.CorsRules.Clear();
+            if (ServiceType != StorageServiceType.Table)
+            {
+                ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                ServiceProperties serviceProperties = new ServiceProperties();
+                serviceProperties.Clean();
+                serviceProperties.Cors = currentServiceProperties.Cors;
+                serviceProperties.Cors.CorsRules.Clear();
 
-            Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
-                GetRequestOptions(ServiceType), OperationContext);
+                Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
+                    GetRequestOptions(ServiceType), OperationContext);
+            }
+            else //Table use old XSCL
+            {
+                XSCLOLD.Shared.Protocol.ServiceProperties currentServiceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties = new XSCLOLD.Shared.Protocol.ServiceProperties();
+                serviceProperties.Clean();
+                serviceProperties.Cors = currentServiceProperties.Cors;
+                serviceProperties.Cors.CorsRules.Clear();
+
+                Channel.SetStorageTableServiceProperties(serviceProperties,
+                    GetTableRequestOptions(), TableOperationContext);
+            }
         }
     }
 }

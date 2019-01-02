@@ -14,10 +14,12 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
+    extern alias xsclqueue;
+    extern alias xsclcommon;
     using Microsoft.WindowsAzure.Commands.Common.Storage;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Queue;
-    using Microsoft.WindowsAzure.Storage.Queue.Protocol;
+    using xsclcommon ::Microsoft.WindowsAzure.Storage;
+    using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
+    using xsclqueue::Microsoft.WindowsAzure.Storage.Queue.Protocol;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;

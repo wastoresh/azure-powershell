@@ -12,13 +12,16 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclfile;
+extern alias xsclblob;
+extern alias xsclcommon;
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
 using Microsoft.WindowsAzure.Commands.Common.Storage;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.File;
+using xsclcommon ::Microsoft.WindowsAzure.Storage;
+using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
 using System;
 using System.Management.Automation;
 using System.Security.Permissions;
@@ -292,7 +295,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                 taskId,
                 destFile,
                 () => this.ConfirmOverwrite(blob.SnapshotQualifiedUri.ToString(), destFile.SnapshotQualifiedUri.ToString()),
-                () => destFile.StartCopyAsync(blob.GenerateCopySourceBlob(), null, null, this.RequestOptions, this.OperationContext));
+                () => destFile.StartCopyAsync(blob.GenerateUriWithCredentials(), null, null, this.RequestOptions, this.OperationContext));
 
             this.RunTask(taskGenerator);
         }

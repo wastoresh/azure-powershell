@@ -12,8 +12,11 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclcommon;
+extern alias xsclold;
+using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +45,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-            
-            WriteObject(PSCorsRule.ParseCorsRules(currentServiceProperties.Cors));
+            if (ServiceType != StorageServiceType.Table)
+            {
+                ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                WriteObject(PSCorsRule.ParseCorsRules(currentServiceProperties.Cors));
+            }
+            else //Table use old XSCL
+            {
+                XSCLOLD.Shared.Protocol.ServiceProperties currentServiceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                WriteObject(PSCorsRule.ParseCorsRules(currentServiceProperties.Cors));
+            }
         }
     }
 }

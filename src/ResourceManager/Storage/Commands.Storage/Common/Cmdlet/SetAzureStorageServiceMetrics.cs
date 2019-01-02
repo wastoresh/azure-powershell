@@ -14,7 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;
@@ -96,6 +99,47 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         }
 
         /// <summary>
+        /// Update the specified service properties according to the input in old XSCL
+        /// </summary>
+        /// <param name="serviceProperties">Service properties</param>
+        internal void UpdateServiceProperties(XSCLOLD.Shared.Protocol.MetricsProperties metrics)
+        {
+            if (Version != null)
+            {
+                metrics.Version = Version.ToString();
+            }
+
+            if (RetentionDays != null)
+            {
+                if (RetentionDays == -1)
+                {
+                    //Disable metrics retention policy
+                    metrics.RetentionDays = null;
+                }
+                else if (RetentionDays < 1 || RetentionDays > 365)
+                {
+                    throw new ArgumentException(string.Format(Resources.InvalidRetentionDay, RetentionDays));
+                }
+                else
+                {
+                    metrics.RetentionDays = RetentionDays;
+                }
+            }
+
+            if (MetricsLevel != null)
+            {
+                MetricsLevel metricsLevel = MetricsLevel.Value;
+                metrics.MetricsLevel = (XSCLOLD.Shared.Protocol.MetricsLevel)Enum.Parse(typeof(XSCLOLD.Shared.Protocol.MetricsLevel), metricsLevel.ToString(), true);
+                // Set default metrics version
+                if (string.IsNullOrEmpty(metrics.Version))
+                {
+                    string defaultMetricsVersion = StorageNouns.DefaultMetricsVersion;
+                    metrics.Version = defaultMetricsVersion;
+                }
+            }
+        }
+
+        /// <summary>
         /// Get metrics level
         /// </summary>
         /// <param name="MetricsLevel">The string type of Metrics level</param>
@@ -119,38 +163,78 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-            ServiceProperties serviceProperties = new ServiceProperties();
-            serviceProperties.Clean();
-
-            bool isHourMetrics = false;
-
-            switch (MetricsType)
+            if (ServiceType != StorageServiceType.Table)
             {
-                case ServiceMetricsType.Hour:
-                    serviceProperties.HourMetrics = currentServiceProperties.HourMetrics;
-                    UpdateServiceProperties(serviceProperties.HourMetrics);
-                    isHourMetrics = true;
-                    break;
-                case ServiceMetricsType.Minute:
-                    serviceProperties.MinuteMetrics = currentServiceProperties.MinuteMetrics;
-                    UpdateServiceProperties(serviceProperties.MinuteMetrics);
-                    isHourMetrics = false;
-                    break;
-            }
+                ServiceProperties currentServiceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                ServiceProperties serviceProperties = new ServiceProperties();
+                serviceProperties.Clean();
 
-            Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
-                GetRequestOptions(ServiceType), OperationContext);
+                bool isHourMetrics = false;
 
-            if (PassThru)
-            {
-                if (isHourMetrics)
+                switch (MetricsType)
                 {
-                    WriteObject(serviceProperties.HourMetrics);
+                    case ServiceMetricsType.Hour:
+                        serviceProperties.HourMetrics = currentServiceProperties.HourMetrics;
+                        UpdateServiceProperties(serviceProperties.HourMetrics);
+                        isHourMetrics = true;
+                        break;
+                    case ServiceMetricsType.Minute:
+                        serviceProperties.MinuteMetrics = currentServiceProperties.MinuteMetrics;
+                        UpdateServiceProperties(serviceProperties.MinuteMetrics);
+                        isHourMetrics = false;
+                        break;
                 }
-                else
+
+                Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
+                    GetRequestOptions(ServiceType), OperationContext);
+
+                if (PassThru)
                 {
-                    WriteObject(serviceProperties.MinuteMetrics);
+                    if (isHourMetrics)
+                    {
+                        WriteObject(serviceProperties.HourMetrics);
+                    }
+                    else
+                    {
+                        WriteObject(serviceProperties.MinuteMetrics);
+                    }
+                }
+            }
+            else //Table use old XSCL
+            {
+                XSCLOLD.Shared.Protocol.ServiceProperties currentServiceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties = new XSCLOLD.Shared.Protocol.ServiceProperties();
+                serviceProperties.Clean();
+
+                bool isHourMetrics = false;
+
+                switch (MetricsType)
+                {
+                    case ServiceMetricsType.Hour:
+                        serviceProperties.HourMetrics = currentServiceProperties.HourMetrics;
+                        UpdateServiceProperties(serviceProperties.HourMetrics);
+                        isHourMetrics = true;
+                        break;
+                    case ServiceMetricsType.Minute:
+                        serviceProperties.MinuteMetrics = currentServiceProperties.MinuteMetrics;
+                        UpdateServiceProperties(serviceProperties.MinuteMetrics);
+                        isHourMetrics = false;
+                        break;
+                }
+
+                Channel.SetStorageTableServiceProperties(serviceProperties,
+                    GetTableRequestOptions(), TableOperationContext);
+
+                if (PassThru)
+                {
+                    if (isHourMetrics)
+                    {
+                        WriteObject(serviceProperties.HourMetrics);
+                    }
+                    else
+                    {
+                        WriteObject(serviceProperties.MinuteMetrics);
+                    }
                 }
             }
         }

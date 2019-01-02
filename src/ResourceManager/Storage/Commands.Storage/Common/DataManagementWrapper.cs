@@ -14,10 +14,12 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
+    extern alias xsclfile;
+    extern alias xsclblob;
     using Microsoft.WindowsAzure.Commands.Common;
-    using Microsoft.WindowsAzure.Storage.Blob;
+    using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
     using Microsoft.WindowsAzure.Storage.DataMovement;
-    using Microsoft.WindowsAzure.Storage.File;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
     using System.Threading;
     using System.Threading.Tasks;
 

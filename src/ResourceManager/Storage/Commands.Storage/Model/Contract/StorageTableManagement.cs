@@ -14,9 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
+    extern alias xsclold;
     using Microsoft.WindowsAzure.Commands.Common.Storage;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclold::Microsoft.WindowsAzure.Storage;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
@@ -54,7 +55,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         public StorageTableManagement(AzureStorageContext context)
         {
             internalStorageContext = context;
-            tableClient = internalStorageContext.StorageAccount.CreateCloudTableClient();
+            tableClient = internalStorageContext.OldStorageAccount.CreateCloudTableClient();
         }
 
         /// <summary>

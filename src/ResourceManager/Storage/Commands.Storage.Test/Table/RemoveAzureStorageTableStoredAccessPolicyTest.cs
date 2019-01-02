@@ -14,10 +14,11 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Test.Table
 {
+    extern alias xsclold;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     using System.Globalization;

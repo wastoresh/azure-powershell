@@ -14,7 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
     using System.Management.Automation;
     using System.Security.Permissions;
 
@@ -46,17 +49,33 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-
-            switch (MetricsType)
+            if (ServiceType != StorageServiceType.Table)
             {
-                case ServiceMetricsType.Hour:
-                    WriteObject(serviceProperties.HourMetrics);
-                    break;
-                case ServiceMetricsType.Minute:
-                default:
-                    WriteObject(serviceProperties.MinuteMetrics);
-                    break;
+                ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                switch (MetricsType)
+                {
+                    case ServiceMetricsType.Hour:
+                        WriteObject(serviceProperties.HourMetrics);
+                        break;
+                    case ServiceMetricsType.Minute:
+                    default:
+                        WriteObject(serviceProperties.MinuteMetrics);
+                        break;
+                }
+            }
+            else //Table use old XSCL
+            {
+                XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                switch (MetricsType)
+                {
+                    case ServiceMetricsType.Hour:
+                        WriteObject(serviceProperties.HourMetrics);
+                        break;
+                    case ServiceMetricsType.Minute:
+                    default:
+                        WriteObject(serviceProperties.MinuteMetrics);
+                        break;
+                }
             }
         }
     }

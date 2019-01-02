@@ -12,11 +12,17 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclcommon;
+extern alias xsclblob;
+extern alias xsclfile;
+extern alias xsclqueue;
+extern alias xsclold;
+
 using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+using xsclcommon ::Microsoft.WindowsAzure.Storage;
+using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.DataMovement;
 using System;
 using System.IO;

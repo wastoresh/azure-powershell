@@ -14,10 +14,11 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
 {
+    extern alias xsclold;
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
     using Microsoft.WindowsAzure.Commands.Storage.Table;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Globalization;
     using System.Management.Automation;

@@ -14,10 +14,12 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
 {
+    extern alias xsclold;
+
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclold::Microsoft.WindowsAzure.Storage;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;
@@ -131,7 +133,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
             SetupAccessPolicy(policy, shouldSetExpiryTime);
             ValidatePkAndRk(StartPartitionKey, StartRowKey, EndPartitionKey, EndRowKey);
             string sasToken = table.GetSharedAccessSignature(policy, accessPolicyIdentifier, StartPartitionKey,
-                                StartRowKey, EndPartitionKey, EndRowKey, Protocol, Util.SetupIPAddressOrRangeForSAS(IPAddressOrRange));
+                                StartRowKey, EndPartitionKey, EndRowKey, Protocol, Util.SetupTableIPAddressOrRangeForSAS(IPAddressOrRange));
 
             if (FullUri)
             {

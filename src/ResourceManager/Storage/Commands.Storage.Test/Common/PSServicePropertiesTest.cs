@@ -12,16 +12,21 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclcommon;
+extern alias xsclold;
+extern alias xsclblob;
+extern alias xsclfile;
+extern alias xsclqueue;
 using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.Table;
-using Microsoft.WindowsAzure.Storage.File;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+using xsclblob::Microsoft.WindowsAzure.Storage.Blob;
+using xsclold::Microsoft.WindowsAzure.Storage.Table;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
+using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
+using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Test.Common
 {

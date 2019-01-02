@@ -9,7 +9,10 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+extern alias xsclcommon;
+extern alias xsclold;
+using XSCLOLDProtocol = xsclold::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +35,38 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
                 this.Logging = properties.Logging;
                 this.HourMetrics = properties.HourMetrics;
                 this.MinuteMetrics = properties.MinuteMetrics;
+                this.DefaultServiceVersion = properties.DefaultServiceVersion;
+                this.Cors = PSCorsRule.ParseCorsRules(properties.Cors);
+                this.DeleteRetentionPolicy = PSDeleteRetentionPolicy.ParsePSDeleteRetentionPolicy(properties.DeleteRetentionPolicy);
+                this.StaticWebsite = PSStaticWebsiteProperties.ParsePSStaticWebsiteProperties(properties.StaticWebsite);
+            }
+        }
+
+        //
+        // Summary:
+        //     Initializes a new instance of the PSSeriviceProperties class from old XSCL service properties.
+        public PSSeriviceProperties(XSCLOLDProtocol.ServiceProperties properties)
+        {
+            if (properties != null)
+            {
+                this.Logging = new LoggingProperties()
+                {
+                    Version = properties.Logging.Version,
+                    RetentionDays = properties.Logging.RetentionDays,
+                    LoggingOperations = (LoggingOperations)Enum.Parse(typeof(LoggingOperations), properties.Logging.LoggingOperations.ToString(), true),
+                };
+                this.HourMetrics = new MetricsProperties()
+                {
+                    Version = properties.HourMetrics.Version,
+                    RetentionDays = properties.HourMetrics.RetentionDays,
+                    MetricsLevel = (MetricsLevel)Enum.Parse(typeof(MetricsLevel), properties.HourMetrics.MetricsLevel.ToString(), true),
+                };
+                this.MinuteMetrics = new MetricsProperties()
+                {
+                    Version = properties.MinuteMetrics.Version,
+                    RetentionDays = properties.MinuteMetrics.RetentionDays,
+                    MetricsLevel = (MetricsLevel)Enum.Parse(typeof(MetricsLevel), properties.MinuteMetrics.MetricsLevel.ToString(), true),
+                };
                 this.DefaultServiceVersion = properties.DefaultServiceVersion;
                 this.Cors = PSCorsRule.ParseCorsRules(properties.Cors);
                 this.DeleteRetentionPolicy = PSDeleteRetentionPolicy.ParsePSDeleteRetentionPolicy(properties.DeleteRetentionPolicy);
@@ -105,6 +140,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
 
         //
         // Summary:
+        //     Parse DeleteRetentionPolicy object in old SDK to wrapped  PSDeleteRetentionPolicy object
+        public static PSDeleteRetentionPolicy ParsePSDeleteRetentionPolicy(XSCLOLDProtocol.DeleteRetentionPolicy deleteRetentionPolicy)
+        {
+            if (deleteRetentionPolicy == null)
+            {
+                return null;
+            }
+            PSDeleteRetentionPolicy policy = new PSDeleteRetentionPolicy();
+            policy.Enabled = deleteRetentionPolicy.Enabled;
+            policy.RetentionDays = deleteRetentionPolicy.RetentionDays;
+            return policy;
+        }
+
+        //
+        // Summary:
         //     Gets or sets the Enabled flag of the DeleteRetentionPolicy.
         public bool Enabled { get; set; }
         //
@@ -120,6 +170,22 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
         // Summary:
         //     Parse DeleteRetentionPolicy object in SDK to wrapped  PSDeleteRetentionPolicy object
         public static PSStaticWebsiteProperties ParsePSStaticWebsiteProperties(StaticWebsiteProperties staticWebsiteProperties)
+        {
+            if (staticWebsiteProperties == null)
+            {
+                return null;
+            }
+            PSStaticWebsiteProperties psProperties = new PSStaticWebsiteProperties();
+            psProperties.Enabled = staticWebsiteProperties.Enabled;
+            psProperties.IndexDocument = staticWebsiteProperties.IndexDocument;
+            psProperties.ErrorDocument404Path = staticWebsiteProperties.ErrorDocument404Path;
+            return psProperties;
+        }
+
+        //
+        // Summary:
+        //     Parse DeleteRetentionPolicy object in SDK to wrapped  PSDeleteRetentionPolicy object
+        public static PSStaticWebsiteProperties ParsePSStaticWebsiteProperties(XSCLOLDProtocol.StaticWebsiteProperties staticWebsiteProperties)
         {
             if (staticWebsiteProperties == null)
             {

@@ -12,6 +12,7 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclqueue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Storage.Queue;
-using Microsoft.WindowsAzure.Storage.Queue;
+using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Test.Queue
 {

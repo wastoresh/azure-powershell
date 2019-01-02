@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage;
+﻿extern alias xsclcommon;
+using xsclcommon ::Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.DataMovement;
 using System;
 using System.Globalization;

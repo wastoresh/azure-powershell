@@ -14,8 +14,9 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
+    extern alias xsclcommon;
     using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;

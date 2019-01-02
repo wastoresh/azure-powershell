@@ -1,4 +1,4 @@
-﻿﻿// ----------------------------------------------------------------------------------
+﻿// ----------------------------------------------------------------------------------
 //
 // Copyright Microsoft Corporation
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +12,9 @@
 // limitations under the License.
 // -----------------------------------------------------------------------------------
 
+extern alias xsclblob;
+extern alias xsclcommon;
+extern alias xsclold;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -19,10 +22,12 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Commands.Common.Storage;
 using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+using xsclcommon::Microsoft.WindowsAzure.Storage;
+using xsclcommon::Microsoft.WindowsAzure.Storage.Auth;
+using xsclblob::Microsoft.WindowsAzure.Storage.Blob;
+using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
+using xsclold::Microsoft.WindowsAzure.Storage.Table;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Test.Service
 {
@@ -459,6 +464,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Test.Service
         }
 
         /// <summary>
+        /// Get the Table service properties
+        /// </summary>
+        /// <param name="account">Cloud storage account</param>
+        /// <param name="options">Request options</param>
+        /// <param name="operationContext">Operation context</param>
+        /// <returns>The service properties of the specified service type</returns>
+        public XSCLOLD.Shared.Protocol.ServiceProperties GetStorageTableServiceProperties(TableRequestOptions options, XSCLOLD.OperationContext operationContext)
+        {
+            throw new NotImplementedException("No need to cover this in unit test since the logic is quite simple. For more details, please read GetAzureStorageServiceLogging.cs");
+        }
+
+        /// <summary>
         /// Set service properties
         /// </summary>
         /// <param name="account">Cloud storage account</param>
@@ -466,7 +483,20 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Test.Service
         /// <param name="properties">Service properties</param>
         /// <param name="options">Request options</param>
         /// <param name="operationContext">Operation context</param>
-        public void SetStorageServiceProperties(StorageServiceType type, WindowsAzure.Storage.Shared.Protocol.ServiceProperties properties, IRequestOptions options, OperationContext operationContext)
+        public void SetStorageServiceProperties(StorageServiceType type, xsclcommon.Microsoft.WindowsAzure.Storage.Shared.Protocol.ServiceProperties properties, IRequestOptions options, OperationContext operationContext)
+        {
+            throw new NotImplementedException("No need to cover this in unit test since there are no additional logics on this api");
+        }
+
+
+        /// <summary>
+        /// Set Table service properties
+        /// </summary>
+        /// <param name="account">Cloud storage account</param>
+        /// <param name="properties">Service properties</param>
+        /// <param name="options">Request options</param>
+        /// <param name="operationContext">Operation context</param>
+        public void SetStorageTableServiceProperties(XSCLOLD.Shared.Protocol.ServiceProperties properties, TableRequestOptions options, XSCLOLD.OperationContext operationContext)
         {
             throw new NotImplementedException("No need to cover this in unit test since there are no additional logics on this api");
         }

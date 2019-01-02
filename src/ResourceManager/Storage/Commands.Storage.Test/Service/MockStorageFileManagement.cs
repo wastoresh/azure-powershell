@@ -12,6 +12,9 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclcommon;
+extern alias xsclfile;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +23,8 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Commands.Common.Storage;
 using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
 using Microsoft.WindowsAzure.Management.Storage.Test.Common;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.File;
+using xsclcommon::Microsoft.WindowsAzure.Storage;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
 using Microsoft.WindowsAzure.Commands.Storage;
 
 namespace Microsoft.WindowsAzure.Management.Storage.Test.Service

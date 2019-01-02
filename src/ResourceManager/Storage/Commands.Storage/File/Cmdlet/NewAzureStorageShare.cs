@@ -14,8 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
+    extern alias xsclcommon;
+    extern alias xsclfile;
     using System.Management.Automation;
-    using WindowsAzure.Storage.File;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
 
     [Cmdlet("New", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageShare", DefaultParameterSetName = Constants.ShareNameParameterSetName), OutputType(typeof(CloudFileShare))]
     public class NewAzureStorageShare : AzureStorageFileCmdletBase

@@ -9,9 +9,12 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
-    using Microsoft.WindowsAzure.Storage.Auth;
-    using Microsoft.WindowsAzure.Storage.Blob;
-    using Microsoft.WindowsAzure.Storage.File;
+    extern alias xsclfile;
+    extern alias xsclblob;
+    extern alias xsclcommon;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Auth;
+    using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
     using System;
     using System.Globalization;
 

@@ -14,15 +14,22 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
+    extern alias xsclcommon;
+    extern alias xsclblob;
+    extern alias xsclfile;
+    extern alias xsclqueue;
+    extern alias xsclold;
+
     using Microsoft.WindowsAzure.Commands.Common.Storage;
     using Microsoft.WindowsAzure.Commands.Storage.Common;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Blob;
-    using Microsoft.WindowsAzure.Storage.File;
-    using Microsoft.WindowsAzure.Storage.File.Protocol;
-    using Microsoft.WindowsAzure.Storage.Queue;
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclcommon::Microsoft.WindowsAzure.Storage;
+    using xsclblob::Microsoft.WindowsAzure.Storage.Blob;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File.Protocol;
+    using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -458,8 +465,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
                         return account.CreateCloudBlobClient().GetServicePropertiesAsync((BlobRequestOptions)options, operationContext).Result;
                     case StorageServiceType.Queue:
                         return account.CreateCloudQueueClient().GetServicePropertiesAsync((QueueRequestOptions)options, operationContext).Result;
-                    case StorageServiceType.Table:
-                        return account.CreateCloudTableClient().GetServicePropertiesAsync((TableRequestOptions)options, operationContext).Result;
+                    //case StorageServiceType.Table:
+                    //    return account.CreateCloudTableClient().GetServicePropertiesAsync((TableRequestOptions)options, operationContext).Result;
                     case StorageServiceType.File:
                         FileServiceProperties fileServiceProperties = account.CreateCloudFileClient().GetServicePropertiesAsync((FileRequestOptions)options, operationContext).Result;
                         ServiceProperties sp = new ServiceProperties();
@@ -473,6 +480,26 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
                 }
             }
             catch (AggregateException e) when (e.InnerException is StorageException)
+            {
+                throw e.InnerException;
+            }
+        }
+
+        /// <summary>
+        /// Get the Table service properties
+        /// </summary>
+        /// <param name="account">Cloud storage account</param>
+        /// <param name="options">Request options</param>
+        /// <param name="operationContext">Operation context</param>
+        /// <returns>The service properties of the specified service type</returns>
+        public XSCLOLD.Shared.Protocol.ServiceProperties GetStorageTableServiceProperties(TableRequestOptions options, XSCLOLD.OperationContext operationContext)
+        {
+            XSCLOLD.CloudStorageAccount account = StorageContext.OldStorageAccount;
+            try
+            {
+                return account.CreateCloudTableClient().GetServicePropertiesAsync((TableRequestOptions)options, operationContext).Result;
+            }
+            catch (AggregateException e) when (e.InnerException is XSCLOLD.StorageException)
             {
                 throw e.InnerException;
             }
@@ -499,9 +526,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
                     case StorageServiceType.Queue:
                         Task.Run(() => account.CreateCloudQueueClient().SetServicePropertiesAsync(properties, (QueueRequestOptions)options, operationContext)).Wait();
                         break;
-                    case StorageServiceType.Table:
-                        Task.Run(() => account.CreateCloudTableClient().SetServicePropertiesAsync(properties, (TableRequestOptions)options, operationContext)).Wait();
-                        break;
+                    //case StorageServiceType.Table:
+                    //    Task.Run(() => account.CreateCloudTableClient().SetServicePropertiesAsync(properties, (TableRequestOptions)options, operationContext)).Wait();
+                    //    break;
                     case StorageServiceType.File:
                         if (null != properties.Logging)
                         {
@@ -519,6 +546,27 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
                 }
             }
             catch (AggregateException e) when (e.InnerException is StorageException)
+            {
+                throw e.InnerException;
+            }
+        }
+
+
+        /// <summary>
+        /// Set Table service properties
+        /// </summary>
+        /// <param name="account">Cloud storage account</param>
+        /// <param name="properties">Service properties</param>
+        /// <param name="options">Request options</param>
+        /// <param name="operationContext">Operation context</param>
+        public void SetStorageTableServiceProperties(XSCLOLD.Shared.Protocol.ServiceProperties properties, TableRequestOptions options, XSCLOLD.OperationContext operationContext)
+        {
+            XSCLOLD.CloudStorageAccount account = StorageContext.OldStorageAccount;
+            try
+            {
+                Task.Run(() => account.CreateCloudTableClient().SetServicePropertiesAsync(properties, (TableRequestOptions)options, operationContext)).Wait();
+            }
+            catch (AggregateException e) when (e.InnerException is XSCLOLD.StorageException)
             {
                 throw e.InnerException;
             }

@@ -14,8 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
+    extern alias xsclblob;
+
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage.Blob;
+    using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
     using System;
     using System.Collections.Generic;
     using System.IO;

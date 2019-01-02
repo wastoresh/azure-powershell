@@ -14,13 +14,19 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
+    extern alias xsclqueue;
+    extern alias xsclcommon;
+    extern alias xsclblob;
+    extern alias xsclfile;
+    extern alias xsclold;
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Blob;
-    using Microsoft.WindowsAzure.Storage.File;
-    using Microsoft.WindowsAzure.Storage.Queue;
-    using Microsoft.WindowsAzure.Storage.Queue.Protocol;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclcommon ::Microsoft.WindowsAzure.Storage;
+    using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
+    using xsclqueue::Microsoft.WindowsAzure.Storage.Queue;
+    using xsclqueue::Microsoft.WindowsAzure.Storage.Queue.Protocol;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
+    using xsclcommonold = xsclold::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Collections.Generic;
 
@@ -140,7 +146,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             if (string.IsNullOrEmpty(policyIdentifier)) return true;
             CloudTable table = channel.GetTableReference(tableName);
             TableRequestOptions options = null;
-            OperationContext context = null;
+            xsclcommonold.OperationContext context = null;
             TablePermissions permission = channel.GetTablePermissions(table, options, context);
 
             SharedAccessTablePolicy sharedAccessPolicy =

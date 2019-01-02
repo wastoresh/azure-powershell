@@ -14,10 +14,18 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
+    extern alias xsclcommon;
+    extern alias xsclblob;
+    extern alias xsclfile;
+    extern alias xsclqueue;
+    extern alias xsclold;
+
     using Microsoft.WindowsAzure.Commands.Storage.Common;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Blob;
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using xsclcommon::Microsoft.WindowsAzure.Storage;
+    using xsclblob::Microsoft.WindowsAzure.Storage.Blob;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Collections.Generic;
     using System.Threading;
@@ -207,6 +215,23 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         /// <param name="options">Request options</param>
         /// <param name="operationContext">Operation context</param>
         void SetStorageServiceProperties(StorageServiceType type, ServiceProperties properties, IRequestOptions options, OperationContext operationContext);
+
+        /// <summary>
+        /// Get the Table service properties
+        /// </summary>
+        /// <param name="account">Cloud storage account</param>
+        /// <param name="options">Request options</param>
+        /// <param name="operationContext">Operation context</param>
+        /// <returns>The service properties of the specified service type</returns>
+        XSCLOLD.Shared.Protocol.ServiceProperties GetStorageTableServiceProperties(TableRequestOptions options, XSCLOLD.OperationContext operationContext);
+
+        /// <summary>
+        /// Set Table service properties
+        /// </summary>
+        /// <param name="properties">Service properties</param>
+        /// <param name="options">Request options</param>
+        /// <param name="operationContext">Operation context</param>
+        void SetStorageTableServiceProperties(XSCLOLD.Shared.Protocol.ServiceProperties properties, TableRequestOptions options, XSCLOLD.OperationContext operationContext);
 
         /// <summary>
         /// Get the SAS token for an account.

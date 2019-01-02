@@ -1,4 +1,6 @@
-﻿using System;
+﻿extern alias xsclfile;
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -9,7 +11,7 @@ using Microsoft.WindowsAzure.Commands.Storage.File;
 using Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet;
 using Microsoft.WindowsAzure.Management.Storage.Test.Common;
 using Microsoft.WindowsAzure.Storage.DataMovement;
-using Microsoft.WindowsAzure.Storage.File;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using PSHFile = Microsoft.WindowsAzure.Commands.Storage.File;
 

@@ -14,7 +14,8 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
-    using Microsoft.WindowsAzure.Storage;
+    extern alias xsclcommon;
+    using xsclcommon ::Microsoft.WindowsAzure.Storage;
     using System;
 
     /// <summary>

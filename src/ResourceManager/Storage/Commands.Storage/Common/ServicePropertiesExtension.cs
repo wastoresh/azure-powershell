@@ -14,7 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
 
     public static class ServicePropertiesExtension
     {
@@ -23,6 +26,20 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// </summary>
         /// <param name="serviceProperties">Service properties</param>
         internal static void Clean(this ServiceProperties serviceProperties)
+        {
+            serviceProperties.Logging = null;
+            serviceProperties.HourMetrics = null;
+            serviceProperties.MinuteMetrics = null;
+            serviceProperties.Cors = null;
+            serviceProperties.DefaultServiceVersion = null;
+            serviceProperties.DeleteRetentionPolicy = null;
+        }
+
+        /// <summary>
+        /// Clean all the settings on the ServiceProperties project
+        /// </summary>
+        /// <param name="serviceProperties">Service properties</param>
+        internal static void Clean(this XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties)
         {
             serviceProperties.Logging = null;
             serviceProperties.HourMetrics = null;

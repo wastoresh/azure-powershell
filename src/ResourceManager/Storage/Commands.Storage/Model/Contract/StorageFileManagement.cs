@@ -14,9 +14,11 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
+    extern alias xsclcommon;
+    extern alias xsclfile;
     using Microsoft.WindowsAzure.Commands.Common.Storage;
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.File;
+    using xsclcommon ::Microsoft.WindowsAzure.Storage;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
     using System;
     using System.Threading;
     using System.Threading.Tasks;

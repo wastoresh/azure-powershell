@@ -11,12 +11,13 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+extern alias xsclold;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.WindowsAzure.Commands.Common.Test.Mocks;
 using Microsoft.WindowsAzure.Commands.Storage.Table;
 using Microsoft.WindowsAzure.Commands.Storage.Test.Service;
 using Microsoft.WindowsAzure.Commands.Test.Utilities.Common;
-using Microsoft.WindowsAzure.Storage.Table;
+using xsclold::Microsoft.WindowsAzure.Storage.Table;
 using System;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Test.Table

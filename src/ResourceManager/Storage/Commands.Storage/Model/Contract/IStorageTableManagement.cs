@@ -14,8 +14,9 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
-    using Microsoft.WindowsAzure.Storage;
-    using Microsoft.WindowsAzure.Storage.Table;
+    extern alias xsclold;
+    using xsclold::Microsoft.WindowsAzure.Storage;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 

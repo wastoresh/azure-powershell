@@ -14,7 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
-    using Microsoft.WindowsAzure.Storage.Shared.Protocol;
+    extern alias xsclcommon;
+    extern alias xsclold;
+    using XSCLOLD = xsclold::Microsoft.WindowsAzure.Storage;
+    using xsclcommon::Microsoft.WindowsAzure.Storage.Shared.Protocol;
     using System.Management.Automation;
     using System.Security.Permissions;
 
@@ -48,9 +51,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
             {
                 throw new PSInvalidOperationException(Resources.FileNotSupportLogging);
             }
+            if (ServiceType != StorageServiceType.Table)
+            {
 
-            ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
-            WriteObject(serviceProperties.Logging);
+                ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
+                WriteObject(serviceProperties.Logging);
+            }
+            else //Table use old XSCL
+            {
+                XSCLOLD.Shared.Protocol.ServiceProperties serviceProperties = Channel.GetStorageTableServiceProperties(GetTableRequestOptions(), TableOperationContext);
+                WriteObject(serviceProperties.Logging);
+            }
         }
     }
 }

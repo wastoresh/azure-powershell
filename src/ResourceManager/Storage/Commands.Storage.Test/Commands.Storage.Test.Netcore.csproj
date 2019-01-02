@@ -11,11 +11,35 @@
     <RootNamespace>Microsoft.WindowsAzure.Management.$(PsModuleName)$(AzTestAssemblySuffix)</RootNamespace>
   </PropertyGroup>
 
+  <Target Name="ChangeAliasesOfStrongNameAssemblies" BeforeTargets="FindReferenceAssembliesForReferences;ResolveReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.Azure.Storage.Blob'">
+        <Aliases>xsclblob</Aliases>
+      </ReferencePath>
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.Azure.Storage.Queue'">
+        <Aliases>xsclqueue</Aliases>
+      </ReferencePath>
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.Azure.Storage.File'">
+        <Aliases>xsclfile</Aliases>
+      </ReferencePath>
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.Azure.Storage.Common'">
+        <Aliases>xsclcommon</Aliases>
+      </ReferencePath>
+      <ReferencePath Condition="'%(FileName)' == 'Microsoft.WindowsAzure.Storage'">
+        <Aliases>xsclold</Aliases>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
+  
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="9.4.2" />
+    <PackageReference Include="Microsoft.Azure.Storage.File" Version="9.4.2" />
+    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="9.4.2" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.0" />
-    <PackageReference Include="Microsoft.Azure.Storage.DataMovement" Version="0.8.1" />
+    <PackageReference Include="Microsoft.Azure.Storage.DataMovement" Version="0.9.101" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.2.1" />
     <PackageReference Include="MSTest.TestFramework" Version="1.2.1" />
+    <PackageReference Include="Microsoft.Azure.KeyVault.Core" Version="2.0.4" />
   </ItemGroup>
 
   <ItemGroup>

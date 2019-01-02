@@ -14,9 +14,13 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage
 {
+    extern alias xsclcommon;
+    extern alias xsclold;
+
     using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
     using Microsoft.WindowsAzure.Commands.Common.Storage.Properties;
-    using Microsoft.WindowsAzure.Storage;
+    using xsclcommon::Microsoft.WindowsAzure.Storage;
+    using xscltable = xsclold::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Collections.Generic;
 
@@ -66,6 +70,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// Storage account in context
         /// </summary>
         public virtual CloudStorageAccount StorageAccount { get; protected set; }
+
+        /// <summary>
+        /// Storage account in context
+        /// </summary>
+        public virtual xscltable.CloudStorageAccount OldStorageAccount { get; protected set; }
 
         /// <summary>
         /// Endpoint suffix (everything after "table.", "blob." or "queue.")
@@ -133,6 +142,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         public AzureStorageContext(CloudStorageAccount account, string accountName = null)
         {
             StorageAccount = account;
+            OldStorageAccount = xsclold.Microsoft.WindowsAzure.Storage.CloudStorageAccount.Parse(account.ToString(true));
 
             if (account.BlobEndpoint != null)
             {

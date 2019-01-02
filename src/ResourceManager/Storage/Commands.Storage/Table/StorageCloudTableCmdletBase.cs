@@ -14,9 +14,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Table
 {
+    extern alias xsclold;
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage.Table;
+    using xsclold::Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     /// <summary>
@@ -51,7 +52,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table
         {
             get
             {
-                return (TableRequestOptions)GetRequestOptions(StorageServiceType.Table);
+                return (TableRequestOptions)GetTableRequestOptions();
             }
         }
 

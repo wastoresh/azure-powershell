@@ -14,8 +14,14 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
+    extern alias xsclcommon;
+    extern alias xsclblob;
+    extern alias xsclfile;
+    extern alias xsclqueue;
+    extern alias xsclold;
+
     using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.WindowsAzure.Storage;
+    using xsclcommon ::Microsoft.WindowsAzure.Storage;
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;

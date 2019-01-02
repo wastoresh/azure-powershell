@@ -12,9 +12,13 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.File;
+extern alias xsclfile;
+extern alias xsclblob;
+extern alias xsclcommon;
+using xsclcommon ::Microsoft.WindowsAzure.Storage;
+using xsclblob:: Microsoft.WindowsAzure.Storage.Blob;
+using xsclfile::Microsoft.WindowsAzure.Storage.File;
+using XFile = xsclfile::Microsoft.WindowsAzure.Storage.File;
 using System;
 using System.Collections.Concurrent;
 using System.Management.Automation;
@@ -122,18 +126,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         /// Update failed/finished task count
         /// </summary>
         /// <param name="status">Copy status</param>
-        private void UpdateTaskCount(CopyStatus status)
+        private void UpdateTaskCount(XFile.CopyStatus status)
         {
             switch (status)
             {
-                case CopyStatus.Invalid:
-                case CopyStatus.Failed:
-                case CopyStatus.Aborted:
+                case XFile.CopyStatus.Invalid:
+                case XFile.CopyStatus.Failed:
+                case XFile.CopyStatus.Aborted:
                     Interlocked.Increment(ref InternalFailedCount);
                     break;
-                case CopyStatus.Pending:
+                case XFile.CopyStatus.Pending:
                     break;
-                case CopyStatus.Success:
+                case XFile.CopyStatus.Success:
                 default:
                     Interlocked.Increment(ref InternalFinishedCount);
                     break;
@@ -215,7 +219,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         WriteCopyProgress(file, records);
                         UpdateTaskCount(file.CopyState.Status);
 
-                        if (file.CopyState.Status == CopyStatus.Pending && this.WaitForComplete)
+                        if (file.CopyState.Status == XFile.CopyStatus.Pending && this.WaitForComplete)
                         {
                             jobList.Enqueue(monitorRequest);
                         }

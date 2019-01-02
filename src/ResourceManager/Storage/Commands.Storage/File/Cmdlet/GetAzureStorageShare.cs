@@ -15,9 +15,10 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
+    extern alias xsclfile;
     using Azure.Commands.Common.Authentication.Abstractions;
     using Microsoft.WindowsAzure.Commands.Common.Storage;
-    using Microsoft.WindowsAzure.Storage.File;
+    using xsclfile::Microsoft.WindowsAzure.Storage.File;
     using System;
     using System.Globalization;
     using System.Management.Automation;
