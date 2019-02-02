@@ -253,7 +253,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// <returns>full file path if file path is valid, otherwise throw an exception</returns>
         internal string GetFullReceiveFilePath(string fileName, string blobName, DateTimeOffset? snapshotTime)
         {
-            String filePath = Path.Combine(CurrentPath(), fileName);
+            //String filePath = Path.Combine(CurrentPath(), fileName);
+            String filePath = Path.GetFullPath(fileName);
             fileName = Path.GetFileName(filePath);
             String dirPath = Path.GetDirectoryName(filePath);
 
