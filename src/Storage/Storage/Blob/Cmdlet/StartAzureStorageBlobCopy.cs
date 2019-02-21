@@ -195,8 +195,26 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 pageBlobTier = value;
             }
         }
-
         private PremiumPageBlobTier? pageBlobTier = null;
+
+        [Parameter(HelpMessage = "Block Blob Tier", Mandatory = false, ParameterSetName = ContainerNameParameterSet)]
+        [Parameter(HelpMessage = "Block Blob Tier", Mandatory = false, ParameterSetName = BlobParameterSet)]
+        [Parameter(HelpMessage = "Block Blob Tier", Mandatory = false, ParameterSetName = BlobToBlobParameterSet)]
+        [Parameter(HelpMessage = "Block Blob Tier", Mandatory = false, ParameterSetName = ContainerParameterSet)]
+        [ValidateSet("Hot", "Cool", IgnoreCase = true)]
+        public StandardBlobTier StandardBlobTier
+        {
+            get
+            {
+                return standardBlobTier.Value;
+            }
+
+            set
+            {
+                standardBlobTier = value;
+            }
+        }
+        private StandardBlobTier? standardBlobTier = null;
 
         [Alias("SrcContext", "SourceContext")]
         [Parameter(HelpMessage = "Source Azure Storage Context Object", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerNameParameterSet)]
@@ -579,6 +597,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 {
                     copyId = await destChannel.StartCopyAsync((CloudPageBlob)destBlob, srcUri, pageBlobTier.Value, null, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
                 }
+
+                // The Blob Type and Blob Tier must match, since already checked they are match at the begin of ExecuteCmdlet().
+                if (standardBlobTier != null)
+                {
+                    BlobRequestOptions requestOptions = RequestOptions;
+                    AccessCondition accessCondition = null;
+                    await Channel.SetStandardBlobTierAsync((CloudBlockBlob)destBlob, accessCondition, standardBlobTier.Value, requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false);
+                }
+
                 this.OutputStream.WriteVerbose(taskId, String.Format(Resources.CopyDestinationBlobPending, destBlob.Name, destBlob.Container.Name, copyId));
                 this.WriteCloudBlobObject(taskId, destChannel, destBlob);
             }

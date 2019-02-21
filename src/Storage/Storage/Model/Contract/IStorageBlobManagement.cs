@@ -405,6 +405,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         Task SetPageBlobTierAsync(CloudPageBlob blob, PremiumPageBlobTier tier, BlobRequestOptions options, OperationContext operationContext, CancellationToken cmdletCancellationToken);
 
         /// <summary>
+        /// Return a task that asynchronously set block blob Tier
+        /// </summary>
+        /// <param name="blob">CloudBlockBlob object</param>
+        /// <param name="tier">block blob Tier</param>
+        /// <param name="accessCondition">Access condition</param>
+        /// <param name="options">Blob request options</param>
+        /// <param name="operationContext">An object that represents the context for the current operation.</param>
+        Task SetStandardBlobTierAsync(CloudBlockBlob blob, AccessCondition accessCondition, StandardBlobTier tier, BlobRequestOptions options, OperationContext operationContext, CancellationToken cmdletCancellationToken);
+
+        /// <summary>
         /// List the blobs segmented in specified containers
         /// </summary>
         /// <param name="container">A cloudblobcontainer object</param>

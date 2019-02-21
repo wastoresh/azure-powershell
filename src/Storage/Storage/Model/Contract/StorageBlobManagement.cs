@@ -722,6 +722,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         }
 
         /// <summary>
+        /// Return a task that asynchronously set Premium page blob Tier
+        /// </summary>
+        /// <param name="blob">CloudPageBlob object</param>
+        /// <param name="tier">Premium pageblob Tier</param>
+        /// <param name="options">Blob request options</param>
+        /// <param name="operationContext">An object that represents the context for the current operation.</param>
+        public Task SetPageBlobTierAsync(CloudPageBlob blob, PremiumPageBlobTier tier, BlobRequestOptions options, OperationContext operationContext, CancellationToken cmdletCancellationToken)
+        {
+            return blob.SetPremiumBlobTierAsync(tier, options, operationContext, cmdletCancellationToken);
+        }
+
+        /// <summary>
         /// Return a task that asynchronously set block blob Tier
         /// </summary>
         /// <param name="blob">CloudBlockBlob object</param>
@@ -729,9 +741,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         /// <param name="accessCondition">Access condition</param>
         /// <param name="options">Blob request options</param>
         /// <param name="operationContext">An object that represents the context for the current operation.</param>
-        public Task SetPageBlobTierAsync(CloudPageBlob blob, PremiumPageBlobTier tier, BlobRequestOptions options, OperationContext operationContext, CancellationToken cmdletCancellationToken)
+        public Task SetStandardBlobTierAsync(CloudBlockBlob blob, AccessCondition accessCondition, StandardBlobTier tier, BlobRequestOptions options, OperationContext operationContext, CancellationToken cmdletCancellationToken)
         {
-            return blob.SetPremiumBlobTierAsync(tier, options, operationContext, cmdletCancellationToken);
+            return blob.SetStandardBlobTierAsync(tier, accessCondition, options, operationContext, cmdletCancellationToken);
         }
 
         /// <summary>
