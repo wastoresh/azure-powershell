@@ -253,7 +253,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// <returns>full file path if file path is valid, otherwise throw an exception</returns>
         internal string GetFullReceiveFilePath(string fileName, string blobName, DateTimeOffset? snapshotTime)
         {
-            String filePath = Path.Combine(CurrentPath(), fileName);
+            String filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
             fileName = Path.GetFileName(filePath);
             String dirPath = Path.GetDirectoryName(filePath);
 
@@ -286,6 +286,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
+            if (AsJob.IsPresent)
+            {
+                BeginProcessingImplement();
+            }
+
             switch (ParameterSetName)
             {
                 case BlobParameterSet:
@@ -308,6 +313,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                         GetBlobContent(ContainerName, BlobName, FileName);
                     }
                     break;
+            }
+
+            if (AsJob.IsPresent)
+            {
+                EndProcessingImplement();
             }
         }
     }

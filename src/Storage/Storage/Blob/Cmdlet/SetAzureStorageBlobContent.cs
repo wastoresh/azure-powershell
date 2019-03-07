@@ -169,7 +169,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         private PremiumPageBlobTier? pageBlobTier = null;
 
         private BlobUploadRequestQueue UploadRequests = new BlobUploadRequestQueue();
-
+        
         /// <summary>
         /// Initializes a new instance of the SetAzureBlobContentCommand class.
         /// </summary>
@@ -262,7 +262,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 throw new ArgumentException(Resources.FileNameCannotEmpty);
             }
 
-            String filePath = Path.Combine(CurrentPath(), fileName);
+            String filePath = Path.Combine(Directory.GetCurrentDirectory(), fileName);
 
             return filePath;
         }
@@ -316,6 +316,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 
         protected override void EndProcessing()
         {
+            if (!AsJob.IsPresent)
+            {
+                EndProcessingImplement();
+            }
+        }
+
+        protected override void EndProcessingImplement()
+        {
             while (!UploadRequests.IsEmpty())
             {
                 Tuple<string, StorageBlob.CloudBlob> uploadRequest = UploadRequests.DequeueRequest();
@@ -324,7 +332,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 RunTask(taskGenerator);
             }
 
-            base.EndProcessing();
+            base.EndProcessingImplement();
         }
 
         //only support the common blob properties for block blob and page blob
@@ -491,6 +499,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         /// </summary>
         public override void ExecuteCmdlet()
         {
+            if(AsJob.IsPresent)
+            {
+                BeginProcessingImplement();
+            }
+
             FileName = ResolveUserPath(FileName);
             ValidateBlobTier(string.Equals(blobType, PageBlobType, StringComparison.InvariantCultureIgnoreCase)? StorageBlob.BlobType.PageBlob : StorageBlob.BlobType.Unspecified, 
                 pageBlobTier);
@@ -540,6 +553,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                     }
 
                     break;
+            }
+
+            if (AsJob.IsPresent)
+            {
+                EndProcessingImplement();
             }
         }
     }

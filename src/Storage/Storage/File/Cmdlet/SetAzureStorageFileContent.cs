@@ -73,8 +73,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 
         public override void ExecuteCmdlet()
         {
+            if (AsJob.IsPresent)
+            {
+                BeginProcessingImplement();
+            }
+
             // Step 1: Validate source file.
-            FileInfo localFile = new FileInfo(this.GetUnresolvedProviderPathFromPSPath(this.Source));
+            FileInfo localFile = new FileInfo(System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), this.Source));
             if (!localFile.Exists)
             {
                 throw new FileNotFoundException(string.Format(CultureInfo.CurrentCulture, Resources.SourceFileNotFound, this.Source));
@@ -118,6 +123,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         this.OutputStream.WriteObject(taskId, cloudFileToBeUploaded);
                     }
                 });
+            }
+
+            if (AsJob.IsPresent)
+            {
+                EndProcessingImplement();
             }
         }
 
