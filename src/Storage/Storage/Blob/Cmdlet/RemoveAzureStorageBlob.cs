@@ -41,6 +41,26 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         /// </summary>
         private const string NameParameterSet = "NamePipeline";
 
+        /// <summary>
+        /// container pipeline versionID paremeter set name
+        /// </summary>
+        private const string ContainerPipelineVersionIDParameterSet = "ContainerPipelineVersionId";
+
+        /// <summary>
+        /// blob name, container name and versionID parameter set
+        /// </summary>
+        private const string NameVersionIDParameterSet = "NamePipelineVersionId";
+
+        /// <summary>
+        /// container pipeline versionID paremeter set name
+        /// </summary>
+        private const string ContainerPipelineSnapshotTimeParameterSet = "ContainerPipelineSnapshotTime";
+
+        /// <summary>
+        /// blob name, container name and versionID parameter set
+        /// </summary>
+        private const string NameSnapshotTimeParameterSet = "NamePipelineSnapshotTime";
+
         [Alias("ICloudBlob")]
         [Parameter(HelpMessage = "CloudBlob Object", Mandatory = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = BlobPipelineParameterSet)]
@@ -48,10 +68,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 
         [Parameter(HelpMessage = "CloudBlobContainer Object", Mandatory = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerPipelineParameterSet)]
+        [Parameter(HelpMessage = "CloudBlobContainer Object", Mandatory = true,
+            ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerPipelineVersionIDParameterSet)]
+        [Parameter(HelpMessage = "CloudBlobContainer Object", Mandatory = true,
+            ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerPipelineSnapshotTimeParameterSet)]
         public CloudBlobContainer CloudBlobContainer { get; set; }
 
         [Parameter(ParameterSetName = ContainerPipelineParameterSet, Mandatory = true, Position = 0, HelpMessage = "Blob name")]
         [Parameter(ParameterSetName = NameParameterSet, Mandatory = true, Position = 0, HelpMessage = "Blob name")]
+        [Parameter(ParameterSetName = ContainerPipelineVersionIDParameterSet, Mandatory = true, Position = 0, HelpMessage = "Blob name")]
+        [Parameter(ParameterSetName = NameVersionIDParameterSet, Mandatory = true, Position = 0, HelpMessage = "Blob name")]
+        [Parameter(ParameterSetName = ContainerPipelineSnapshotTimeParameterSet, Mandatory = true, Position = 0, HelpMessage = "Blob name")]
+        [Parameter(ParameterSetName = NameSnapshotTimeParameterSet, Mandatory = true, Position = 0, HelpMessage = "Blob name")]
         public string Blob
         {
             get { return BlobName; }
@@ -61,6 +89,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 
         [Parameter(HelpMessage = "Container name", Mandatory = true, Position = 1,
             ParameterSetName = NameParameterSet)]
+        [Parameter(HelpMessage = "Container name", Mandatory = true, Position = 1,
+            ParameterSetName = NameVersionIDParameterSet)]
+        [Parameter(HelpMessage = "Container name", Mandatory = true, Position = 1,
+            ParameterSetName = NameSnapshotTimeParameterSet)]
         [ValidateNotNullOrEmpty]
         public string Container
         {
@@ -69,13 +101,25 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         }
         private string ContainerName = String.Empty;
 
-        [Parameter(HelpMessage = "Only delete blob snapshots")]
+        [Parameter(HelpMessage = "Only delete blob snapshots", ParameterSetName = ContainerPipelineParameterSet)]
+        [Parameter(HelpMessage = "Only delete blob snapshots", ParameterSetName = NameParameterSet)]
+        [Parameter(HelpMessage = "Only delete blob snapshots", ParameterSetName = BlobPipelineParameterSet)]
         public SwitchParameter DeleteSnapshot
         {
             get { return deleteSnapshot; }
             set { deleteSnapshot = value; }
         }
         private bool deleteSnapshot;
+
+        [Parameter(HelpMessage = "Blob SnapshotTime", Mandatory = true, ParameterSetName = NameSnapshotTimeParameterSet)]
+        [Parameter(HelpMessage = "Blob SnapshotTime", Mandatory = true, ParameterSetName = ContainerPipelineSnapshotTimeParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public DateTimeOffset? SnapshotTime { get; set; }
+
+        [Parameter(HelpMessage = "Blob VersionId", Mandatory = true, ParameterSetName = NameVersionIDParameterSet)]
+        [Parameter(HelpMessage = "Blob VersionId", Mandatory = true, ParameterSetName = ContainerPipelineVersionIDParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public DateTimeOffset? VersionId { get; set; }
 
         [Parameter(HelpMessage = "Force to remove the blob and its snapshot")]
         public SwitchParameter Force
@@ -221,7 +265,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
             try
             {
                 blob = await localChannel.GetBlobReferenceFromServerAsync(container, blobName, accessCondition,
-                      requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false);
+                      requestOptions, OperationContext, CmdletCancellationToken, this.SnapshotTime, this.VersionId).ConfigureAwait(false);
             }
             catch (InvalidOperationException)
             {
@@ -236,7 +280,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
             {
                 //Construct the blob as CloudBlockBlob no matter what's the real blob type
                 //We can't get the blob type if Credentials only have the delete permission and don't have read permission.
-                blob = container.GetBlockBlobReference(blobName);
+                blob = container.GetBlockBlobReference(blobName, blob.SnapshotTime, blob.VersionId);
             }
 
             await RemoveAzureBlob(taskId, localChannel, blob, true).ConfigureAwait(false);
@@ -298,12 +342,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                         break;
 
                     case ContainerPipelineParameterSet:
+                    case ContainerPipelineVersionIDParameterSet:
                         CloudBlobContainer localContainer = CloudBlobContainer;
                         string localName = BlobName;
                         taskGenerator = (taskId) => RemoveAzureBlob(taskId, localChannel, localContainer, localName);
                         break;
 
                     case NameParameterSet:
+                    case NameVersionIDParameterSet:
                     default:
                         string localContainerName = ContainerName;
                         string localBlobName = BlobName;

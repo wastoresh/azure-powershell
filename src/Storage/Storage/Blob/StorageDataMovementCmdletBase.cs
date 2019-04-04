@@ -19,6 +19,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
     using System;
     using System.Globalization;
     using System.Management.Automation;
+    using System.Threading;
     using System.Threading.Tasks;
     using OpContext = Microsoft.Azure.Storage.OperationContext;
 

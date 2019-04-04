@@ -60,7 +60,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
                 {
                     StorageClient.ServiceProperties serviceProperties = Channel.GetStorageServiceProperties(ServiceType, GetRequestOptions(ServiceType), OperationContext);
 
-                serviceProperties.DefaultServiceVersion = this.DefaultServiceVersion;
+                //serviceProperties.DefaultServiceVersion = this.DefaultServiceVersion;
+                //    serviceProperties.AutomaticSnapshotPolicy.Enabled = true;
 
                 Channel.SetStorageServiceProperties(ServiceType, serviceProperties,
                     GetRequestOptions(ServiceType), OperationContext);

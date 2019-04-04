@@ -21,6 +21,22 @@ Get-AzStorageBlob [[-Blob] <String>] [-Container] <String> [-IncludeDeleted] [-M
  [<CommonParameters>]
 ```
 
+### SingleBlobSnapshotTime
+```
+Get-AzStorageBlob [-Blob] <String> [-Container] <String> [-IncludeDeleted] [-MaxCount <Int32>]
+ -SnapshotTime <DateTimeOffset> [-ContinuationToken <BlobContinuationToken>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
+```
+
+### SingleBlobVersionID
+```
+Get-AzStorageBlob [-Blob] <String> [-Container] <String> [-IncludeDeleted] [-MaxCount <Int32>]
+ -VersionId <DateTimeOffset> [-ContinuationToken <BlobContinuationToken>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
+```
+
 ### BlobPrefix
 ```
 Get-AzStorageBlob [-Prefix <String>] [-Container] <String> [-IncludeDeleted] [-MaxCount <Int32>]
@@ -101,6 +117,18 @@ Parameter Sets: BlobName
 Aliases:
 
 Required: False
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+```yaml
+Type: System.String
+Parameter Sets: SingleBlobSnapshotTime, SingleBlobVersionID
+Aliases:
+
+Required: True
 Position: 0
 Default value: None
 Accept pipeline input: False
@@ -263,6 +291,36 @@ Parameter Sets: (All)
 Aliases: ServerTimeoutPerRequestInSeconds
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SnapshotTime
+Blob SnapshotTime
+
+```yaml
+Type: System.Nullable`1[System.DateTimeOffset]
+Parameter Sets: SingleBlobSnapshotTime
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -VersionId
+Blob VersionId
+
+```yaml
+Type: System.Nullable`1[System.DateTimeOffset]
+Parameter Sets: SingleBlobVersionID
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False

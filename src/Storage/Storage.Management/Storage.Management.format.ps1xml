@@ -240,6 +240,10 @@
             <Alignment>Left</Alignment>
             <Label>DeleteRetentionPolicy.Days</Label>
           </TableColumnHeader>
+          <TableColumnHeader>
+            <Alignment>Left</Alignment>
+            <Label>AutomaticSnapshot</Label>
+          </TableColumnHeader>        
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -263,6 +267,10 @@
               <TableColumnItem>
                 <Alignment>Left</Alignment>
                 <ScriptBlock>$_.DeleteRetentionPolicy.Days</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Left</Alignment>
+                <ScriptBlock>if ($_.AutomaticSnapshotPolicyEnabled -ne $null) {if ($_.AutomaticSnapshotPolicyEnabled -eq $true){'Enabled'} else {'Disabled'} } else {$null}</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

@@ -40,7 +40,19 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// </summary>
         private const string PrefixParameterSet = "BlobPrefix";
 
+        /// <summary>
+        /// Single Blob set name
+        /// </summary>
+        private const string SingleBlobSnapshotTimeParameterSet = "SingleBlobSnapshotTime";
+
+        /// <summary>
+        /// Single Blob set name
+        /// </summary>
+        private const string SingleBlobVersionIDParameterSet = "SingleBlobVersionID";
+
         [Parameter(Position = 0, HelpMessage = "Blob name", ParameterSetName = NameParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, HelpMessage = "Blob name", ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
+        [Parameter(Position = 0, Mandatory = true, HelpMessage = "Blob name", ParameterSetName = SingleBlobVersionIDParameterSet)]
         [SupportsWildcards()]
         public string Blob
         {
@@ -112,6 +124,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
         }
 
+        [Parameter(HelpMessage = "Blob SnapshotTime", Mandatory = true, ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public DateTimeOffset? SnapshotTime { get; set; }
+
+        [Parameter(HelpMessage = "Blob VersionId", Mandatory = true, ParameterSetName = SingleBlobVersionIDParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public DateTimeOffset? VersionId { get; set; }
+
         private int InternalMaxCount = int.MaxValue;
 
         [Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
@@ -164,7 +184,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// <param name="containerName">container name</param>
         /// <param name="blobName">blob name pattern</param>
         /// <returns>An enumerable collection of IListBlobItem</returns>
-        internal async Task ListBlobsByName(long taskId, IStorageBlobManagement localChannel, string containerName, string blobName, bool includeDeleted = false)
+        internal async Task ListBlobsByName(long taskId, IStorageBlobManagement localChannel, string containerName, string blobName, bool includeDeleted = false, DateTimeOffset? snapshotTime = null, DateTimeOffset? versionId = null)
         {
             CloudBlobContainer container = null;
             BlobRequestOptions requestOptions = RequestOptions;
@@ -196,7 +216,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     throw new ArgumentException(String.Format(Resources.InvalidBlobName, blobName));
                 }
 
-                CloudBlob blob = await localChannel.GetBlobReferenceFromServerAsync(container, blobName, accessCondition, requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false);
+                CloudBlob blob = await localChannel.GetBlobReferenceFromServerAsync(container, blobName, accessCondition, requestOptions, OperationContext, CmdletCancellationToken, snapshotTime, versionId).ConfigureAwait(false);
 
                 if (null == blob)
                 {
@@ -285,7 +305,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             {
                 string localContainerName = containerName;
                 string localBlobName = blobName;
-                taskGenerator = (taskId) => ListBlobsByName(taskId, localChannel, localContainerName, localBlobName, includeDeleted: IncludeDeleted.IsPresent);
+                taskGenerator = (taskId) => ListBlobsByName(taskId, localChannel, localContainerName, localBlobName, includeDeleted: IncludeDeleted.IsPresent, snapshotTime: this.SnapshotTime, versionId: this.VersionId);
             }
 
             RunTask(taskGenerator);

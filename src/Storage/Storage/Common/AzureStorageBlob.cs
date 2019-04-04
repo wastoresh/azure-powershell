@@ -73,6 +73,17 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         public DateTimeOffset? SnapshotTime { get; private set; }
 
         /// <summary>
+        /// Blob VersionId
+        /// </summary>
+        [Ps1Xml(Label = "VersionId", Target = ViewControl.Table, ScriptBlock = "$_.VersionId.UtcDateTime.ToString(\"u\")", Position = 8, TableColumnWidth = 20)]
+        public DateTimeOffset? VersionId { get; private set; }
+
+        /// <summary>
+        /// Blob snapshot time
+        /// </summary>
+        public bool? IsAutomaticSnapshot { get; private set; }
+
+        /// <summary>
         /// Blob continuation token
         /// </summary>
         public BlobContinuationToken ContinuationToken { get; set; }
@@ -92,6 +103,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             ContentType = blob.Properties.ContentType;
             LastModified = blob.Properties.LastModified;
             SnapshotTime = blob.SnapshotTime;
+            this.VersionId = blob.VersionId;
+            this.IsAutomaticSnapshot = blob.IsAutomaticSnapshot;
         }
     }
 }

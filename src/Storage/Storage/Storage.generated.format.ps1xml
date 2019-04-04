@@ -260,6 +260,11 @@
             <Label>IsDeleted</Label>
             <Width>10</Width>
           </TableColumnHeader>
+          <TableColumnHeader>
+            <Alignment>Left</Alignment>
+            <Label>VersionId</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -295,6 +300,10 @@
               <TableColumnItem>
                 <Alignment>Left</Alignment>
                 <PropertyName>IsDeleted</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Left</Alignment>
+                <ScriptBlock>$_.VersionId.UtcDateTime.ToString("u")</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

@@ -37,6 +37,38 @@ Remove-AzStorageBlob -CloudBlobContainer <CloudBlobContainer> [-Blob] <String> [
  [<CommonParameters>]
 ```
 
+### ContainerPipelineVersionId
+```
+Remove-AzStorageBlob -CloudBlobContainer <CloudBlobContainer> [-Blob] <String> -VersionId <DateTimeOffset>
+ [-Force] [-PassThru] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>]
+ [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### ContainerPipelineSnapshotTime
+```
+Remove-AzStorageBlob -CloudBlobContainer <CloudBlobContainer> [-Blob] <String> -SnapshotTime <DateTimeOffset>
+ [-Force] [-PassThru] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>]
+ [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
+```
+
+### NamePipelineVersionId
+```
+Remove-AzStorageBlob [-Blob] <String> [-Container] <String> -VersionId <DateTimeOffset> [-Force] [-PassThru]
+ [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
+```
+
+### NamePipelineSnapshotTime
+```
+Remove-AzStorageBlob [-Blob] <String> [-Container] <String> -SnapshotTime <DateTimeOffset> [-Force] [-PassThru]
+ [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
+```
+
 ## DESCRIPTION
 The **Remove-AzStorageBlob** cmdlet removes the specified blob from a storage account in Azure.
 
@@ -70,7 +102,7 @@ Specifies the name of the blob you want to remove.
 
 ```yaml
 Type: System.String
-Parameter Sets: NamePipeline, ContainerPipeline
+Parameter Sets: NamePipeline, ContainerPipeline, ContainerPipelineVersionId, ContainerPipelineSnapshotTime, NamePipelineVersionId, NamePipelineSnapshotTime
 Aliases:
 
 Required: True
@@ -119,7 +151,7 @@ You can use the Get-AzStorageContainer cmdlet to get it.
 
 ```yaml
 Type: Microsoft.Azure.Storage.Blob.CloudBlobContainer
-Parameter Sets: ContainerPipeline
+Parameter Sets: ContainerPipeline, ContainerPipelineVersionId, ContainerPipelineSnapshotTime
 Aliases:
 
 Required: True
@@ -153,7 +185,7 @@ Specifies the name of the container.
 
 ```yaml
 Type: System.String
-Parameter Sets: NamePipeline
+Parameter Sets: NamePipeline, NamePipelineVersionId, NamePipelineSnapshotTime
 Aliases:
 
 Required: True
@@ -201,7 +233,7 @@ The user is prompted to confirm the delete operation.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
+Parameter Sets: NamePipeline, BlobPipeline, ContainerPipeline
 Aliases:
 
 Required: False
@@ -252,6 +284,36 @@ Parameter Sets: (All)
 Aliases: ServerTimeoutPerRequestInSeconds
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SnapshotTime
+Blob SnapshotTime
+
+```yaml
+Type: System.Nullable`1[System.DateTimeOffset]
+Parameter Sets: ContainerPipelineSnapshotTime, NamePipelineSnapshotTime
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -VersionId
+Blob VersionId
+
+```yaml
+Type: System.Nullable`1[System.DateTimeOffset]
+Parameter Sets: ContainerPipelineVersionId, NamePipelineVersionId
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False

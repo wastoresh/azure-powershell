@@ -15,20 +15,22 @@ Modifies the service properties for the Azure Storage Blob service.
 ### AccountName (Default)
 ```
 Update-AzStorageBlobServiceProperty [-ResourceGroupName] <String> [-StorageAccountName] <String>
- [-DefaultServiceVersion <String>] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-DefaultServiceVersion <String>] [-AutomaticSnapshotPolicyEnabled <Boolean>]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AccountObject
 ```
 Update-AzStorageBlobServiceProperty -StorageAccount <PSStorageAccount> [-DefaultServiceVersion <String>]
- [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-AutomaticSnapshotPolicyEnabled <Boolean>] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### BlobServicePropertiesResourceId
 ```
 Update-AzStorageBlobServiceProperty [-ResourceId] <String> [-DefaultServiceVersion <String>]
- [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-AutomaticSnapshotPolicyEnabled <Boolean>] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,14 +42,40 @@ The **Update-AzStorageBlobServiceProperty** cmdlet modifies the service properti
 ```
 C:\PS> Update-AzStorageBlobServiceProperty -ResourceGroupName "myresourcegroup" -AccountName "mystorageaccount" -DefaultServiceVersion 2018-03-28 
 
-StorageAccountName ResourceGroupName DefaultServiceVersion DeleteRetentionPolicy.Enabled DeleteRetentionPolicy.Days
------------------- ----------------- --------------------- ----------------------------- --------------------------
+StorageAccountName ResourceGroupName DefaultServiceVersion DeleteRetentionPolicy.Enabled DeleteRetentionPolicy.Days AutomaticSnapshot
+------------------ ----------------- --------------------- ----------------------------- -------------------------- -----------------
 myresourcegroup    mystorageaccount  2018-03-28            False
 ```
 
 This command sets the DefaultServiceVersion of Blob Service to 2018-03-28.
 
+### Example 1: Enable AutomaticSnapshot Policy
+```
+C:\PS> Update-AzStorageBlobServiceProperty -ResourceGroupName "myresourcegroup" -AccountName "mystorageaccount" -AutomaticSnapshotPolicyEnabled $true 
+
+StorageAccountName ResourceGroupName DefaultServiceVersion DeleteRetentionPolicy.Enabled DeleteRetentionPolicy.Days AutomaticSnapshot
+------------------ ----------------- --------------------- ----------------------------- -------------------------- -----------------
+myresourcegroup    mystorageaccount  2018-03-28            False                                                    Enabled
+```
+
+This command enables AutomaticSnapshot Policy.
+
 ## PARAMETERS
+
+### -AutomaticSnapshotPolicyEnabled
+Set if enable Automatic Snapshot Policy.
+
+```yaml
+Type: System.Nullable`1[System.Boolean]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -DefaultProfile
 The credentials, account, tenant, and subscription used for communication with Azure.
