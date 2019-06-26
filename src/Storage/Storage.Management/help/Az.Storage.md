@@ -128,6 +128,12 @@ Gets the Storage resource usage of the current subscription.
 ### [Lock-AzRmStorageContainerImmutabilityPolicy](Lock-AzRmStorageContainerImmutabilityPolicy.md)
 Locks ImmutabilityPolicy of a Storage blob containers
 
+### [Move-AzStorageBlob](Move-AzStorageBlob.md)
+{{Fill in the Synopsis}}
+
+### [Move-AzStorageBlobDirectory](Move-AzStorageBlobDirectory.md)
+{{Fill in the Synopsis}}
+
 ### [New-AzRmStorageContainer](New-AzRmStorageContainer.md)
 Creates a Storage blob container
 
@@ -145,6 +151,12 @@ Creates a ManagementPolicy rule object, which can be used in Set-AzStorageAccoun
 
 ### [New-AzStorageAccountSASToken](New-AzStorageAccountSASToken.md)
 Creates an account-level SAS token.
+
+### [New-AzStorageBlobPathACL](New-AzStorageBlobPathACL.md)
+{{Fill in the Synopsis}}
+
+### [New-AzStorageBlobDirectory](New-AzStorageBlobDirectory.md)
+{{Fill in the Synopsis}}
 
 ### [New-AzStorageBlobSASToken](New-AzStorageBlobSASToken.md)
 Generates a SAS token for an Azure storage blob.
@@ -198,7 +210,7 @@ Creates a stored access policy for an Azure storage table.
 Removes a Storage blob container
 
 ### [Remove-AzRmStorageContainerImmutabilityPolicy](Remove-AzRmStorageContainerImmutabilityPolicy.md)
-Removes ImmutabilityPolicy of a Storage blob containers
+Removes ImmutabilityPolicy of a Storage blob container with an unlocked policy
 
 ### [Remove-AzRmStorageContainerLegalHold](Remove-AzRmStorageContainerLegalHold.md)
 Removes legal hold tags from a Storage blob container
@@ -214,6 +226,9 @@ Remove IpRules or VirtualNetworkRules from the NetWorkRule property of a Storage
 
 ### [Remove-AzStorageBlob](Remove-AzStorageBlob.md)
 Removes the specified storage blob.
+
+### [Remove-AzStorageBlobDirectory](Remove-AzStorageBlobDirectory.md)
+{{Fill in the Synopsis}}
 
 ### [Remove-AzStorageContainer](Remove-AzStorageContainer.md)
 Removes the specified storage container.
@@ -262,6 +277,9 @@ Creates or modifies the management policy of an Azure Storage account.
 
 ### [Set-AzStorageBlobContent](Set-AzStorageBlobContent.md)
 Uploads a local file to an Azure Storage blob.
+
+### [Set-AzStorageBlobDirectory](Set-AzStorageBlobDirectory.md)
+{{Fill in the Synopsis}}
 
 ### [Set-AzStorageContainerAcl](Set-AzStorageContainerAcl.md)
 Sets the public access permission to a storage container.
