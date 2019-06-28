@@ -23,6 +23,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Management.Automation;
     using System.Security.Permissions;
     using System.Threading.Tasks;
+    using System.Collections.Generic;
 
     /// <summary>
     /// list azure blobs in specified azure container
@@ -40,7 +41,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// </summary>
         private const string PrefixParameterSet = "BlobPrefix";
 
-        [Parameter(Position = 0, HelpMessage = "Blob name", ParameterSetName = NameParameterSet)]
+        [Parameter(Position = 0, HelpMessage = "Blob name or Blob Directory Path", ParameterSetName = NameParameterSet)]
+        [Alias("BlobDirectory")]
         [SupportsWildcards()]
         public string Blob
         {
@@ -116,6 +118,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         [Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
         public BlobContinuationToken ContinuationToken { get; set; }
+
+        [Parameter(Mandatory = false, HelpMessage = "Fetch Blob Permission. This only works if Hierarchical Namespace is enabled for the account. ")]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter FetchPermission { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the GetAzureStorageBlobCommand class.
@@ -204,7 +210,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
                 else
                 {
-                    WriteCloudBlobObject(taskId, localChannel, blob);
+                    // TODO: this part need revise if XSCL can IListBlobItem to CloudBlobDirectory.
+                    if (!blob.Metadata.Contains(new KeyValuePair<string, string>("hdi_isfolder", "true"))) //normal blob
+                    {
+                        WriteCloudBlobObject(taskId, localChannel, blob, null, this.FetchPermission.IsPresent);
+                    }
+                    else //blobDir
+                    {
+                        CloudBlobDirectory blobDir = blob.Container.GetDirectoryReference(blob.Name);
+                        blobDir.FetchAttributes();
+                        WriteCloudBlobDirectoryObject(taskId, localChannel, blobDir, null, this.FetchPermission.IsPresent);
+                    }
                 }
             }
         }
@@ -251,7 +267,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
                     if (blobFilter == null || blobFilter(blob))
                     {
-                        WriteCloudBlobObject(taskId, localChannel, blob, blobResult.ContinuationToken);
+                        // TODO: this part need revise if XSCL can IListBlobItem to CloudBlobDirectory.
+                        if (!blob.Metadata.Contains(new KeyValuePair<string, string>("hdi_isfolder", "true"))) //normal blob
+                        {
+                            WriteCloudBlobObject(taskId, localChannel, blob, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                        }
+                        else //blobDir
+                        {
+                            CloudBlobDirectory blobDir = blob.Container.GetDirectoryReference(blob.Name);
+                            blobDir.FetchAttributes();
+                            WriteCloudBlobDirectoryObject(taskId, localChannel, blobDir, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                        }
+
                         realListCount++;
                     }
                 }

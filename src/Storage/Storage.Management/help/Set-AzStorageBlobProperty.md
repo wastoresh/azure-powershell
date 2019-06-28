@@ -32,8 +32,8 @@ Set-AzStorageBlobProperty -Container <String> -Path <String> [-Permission <Strin
 ### BlobPipeline
 ```
 Set-AzStorageBlobProperty -CloudBlob <CloudBlob> [-Permission <String>] [-Owner <String>] [-Group <String>]
- [-Properties <Hashtable>] [-Metadata <Hashtable>] [-ACL <PSPathAccessControlEntry[]>] [-Context <IStorageContext>]
- [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-Properties <Hashtable>] [-Metadata <Hashtable>] [-ACL <PSPathAccessControlEntry[]>]
+ [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 

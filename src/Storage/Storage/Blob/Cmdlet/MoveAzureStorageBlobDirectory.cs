@@ -28,7 +28,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("Move", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory"),OutputType(typeof(CloudBlobDirectory))]
+    [Cmdlet("Move", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory"),OutputType(typeof(AzureStorageBlob))]
     public class MoveAzureStorageBlobDirectoryCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>
@@ -163,7 +163,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
             destrcBlobDir.FetchAttributes();
             destrcBlobDir.FetchAccessControls();
-            WriteObject(destrcBlobDir);
+            AzureStorageBlob azureBlob = new AzureStorageBlob(destrcBlobDir);
+            azureBlob.Context = localChannel.StorageContext;
+            WriteObject(azureBlob);
         }
     }
 }

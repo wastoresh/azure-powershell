@@ -28,7 +28,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("New", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory"), OutputType(typeof(CloudBlobDirectory))]
+    [Cmdlet("New", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory"), OutputType(typeof(AzureStorageBlob))]
     public class NewAzureStorageBlobDirectoryCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>
@@ -206,7 +206,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             blobDir.FetchAttributes();
             blobDir.FetchAccessControls();
 
-            WriteObject(blobDir);
+            AzureStorageBlob azureBlob = new AzureStorageBlob(blobDir);
+            azureBlob.Context = localChannel.StorageContext;
+            WriteObject(azureBlob);
         }
 
         //only support the common blob properties for Blob Dir

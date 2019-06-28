@@ -68,7 +68,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         private string BlobDirectoryPath = String.Empty;
 
         [Parameter(Mandatory = true, HelpMessage = "Azure BlobDirectory Object",
-            ValueFromPipeline = true, ParameterSetName = BlobDirectoryParameterSet)]
+            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobDirectoryParameterSet)]
         [ValidateNotNull]
         public CloudBlobDirectory CloudBlobDirectory { get; set; }
 
