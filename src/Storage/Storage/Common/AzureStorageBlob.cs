@@ -110,7 +110,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             LastModified = blob.Properties.LastModified;
             SnapshotTime = blob.SnapshotTime;
             IsDirectory = false;
-            if (blob.BlobType == BlobType.BlockBlob)
+            if (blob.BlobType == BlobType.BlockBlob 
+                && ((CloudBlockBlob)blob).PathProperties != null)
             {
                 Permissions = ((CloudBlockBlob)blob).PathProperties.Permissions;
             }
@@ -129,7 +130,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             ContentType = blobDir.Properties.ContentType;
             LastModified = blobDir.Properties.LastModified;
             IsDirectory = true;
-            Permissions = blobDir.PathProperties.Permissions;
+            if (blobDir.PathProperties != null)
+            {
+                Permissions = blobDir.PathProperties.Permissions;
+            }
         }
     }
 }

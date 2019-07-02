@@ -49,7 +49,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(Mandatory = true, HelpMessage = "Azure Container Object",
             ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
         [ValidateNotNull]
-        public CloudBlobContainer SrcCloudBlobContainer { get; set; }
+        public CloudBlobContainer CloudBlobContainer { get; set; }
 
         [Parameter(Mandatory = true, HelpMessage = "Container name", ParameterSetName = ManualParameterSet)]
         [ValidateNotNullOrEmpty]
@@ -60,10 +60,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public string SrcPath { get; set; }
 
-        [Parameter(Mandatory = true, HelpMessage = "Azure Blob Directory Object",
-            ValueFromPipeline = true, ParameterSetName = BlobDirParameterSet)]
+        [Alias("SrcCloudBlobDirectory", "SourceCloudBlobDirectory")]
+        [Parameter(Mandatory = true, HelpMessage = "Source Azure Blob Directory Object",
+            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobDirParameterSet)]
         [ValidateNotNull]
-        public CloudBlobDirectory SrcCloudBlobDirectory { get; set; }
+        public CloudBlobDirectory CloudBlobDirectory { get; set; }
 
         [Parameter(Mandatory = true, HelpMessage = "Dest Container name")]
         [ValidateNotNullOrEmpty]
@@ -121,7 +122,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             IStorageBlobManagement localChannel = Channel;
             BlobRequestOptions requestOptions = RequestOptions;         
 
-            CloudBlobDirectory srcBlobDir = this.SrcCloudBlobDirectory;
+            CloudBlobDirectory srcBlobDir = this.CloudBlobDirectory;
             switch (ParameterSetName)
             {
                 case ManualParameterSet:
@@ -133,7 +134,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     srcBlobDir = blobContainer.GetDirectoryReference(this.SrcPath);
                     break;
                 case ContainerParameterSet:
-                    srcBlobDir = this.SrcCloudBlobContainer.GetDirectoryReference(this.SrcPath);
+                    srcBlobDir = this.CloudBlobContainer.GetDirectoryReference(this.SrcPath);
                     break;
                 default:
                     // BlobDirectoryParameterSet already has source BlobDirectory created.

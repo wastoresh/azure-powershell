@@ -9,7 +9,7 @@ schema: 2.0.0
 # Get-AzStorageBlob
 
 ## SYNOPSIS
-Lists blobs in a container.
+Lists blobs and blob directories in a container.
 
 ## SYNTAX
 
@@ -30,7 +30,7 @@ Get-AzStorageBlob [-Prefix <String>] [-Container] <String> [-IncludeDeleted] [-M
 ```
 
 ## DESCRIPTION
-The **Get-AzStorageBlob** cmdlet lists blobs in the specified container in an Azure storage account.
+The **Get-AzStorageBlob** cmdlet lists blobs and blob directories in the specified container in an Azure storage account.
 
 ## EXAMPLES
 
@@ -98,7 +98,7 @@ If a value is specified for this parameter, the cmdlet lists all blobs with name
 ```yaml
 Type: System.String
 Parameter Sets: BlobName
-Aliases: BlobDirectory
+Aliases: BlobDirectory, Path
 
 Required: False
 Position: 0
@@ -206,7 +206,8 @@ Accept wildcard characters: False
 ```
 
 ### -FetchPermission
-Fetch Blob Permission. This only works if Hierarchical Namespace is enabled for the account.
+Fetch Blob Permission. 
+This only works if Hierarchical Namespace is enabled for the account.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter

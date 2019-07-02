@@ -8,15 +8,15 @@ schema: 2.0.0
 # Move-AzStorageBlobDirectory
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Move a Storage blob directory and all its content to another Storage blob directory.
 
 ## SYNTAX
 
 ### ContainerPipeline
 ```
-Move-AzStorageBlobDirectory -SrcCloudBlobContainer <CloudBlobContainer> -SrcPath <String>
- -DestContainer <String> -DestPath <String> [-Umask <String>] [-PathRenameMode <PathRenameMode>]
- [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+Move-AzStorageBlobDirectory -CloudBlobContainer <CloudBlobContainer> -SrcPath <String> -DestContainer <String>
+ -DestPath <String> [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
@@ -30,14 +30,15 @@ Move-AzStorageBlobDirectory -SrcContainer <String> -SrcPath <String> -DestContai
 
 ### BlobDirPipeline
 ```
-Move-AzStorageBlobDirectory -SrcCloudBlobDirectory <CloudBlobDirectory> -DestContainer <String>
- -DestPath <String> [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
+Move-AzStorageBlobDirectory -CloudBlobDirectory <CloudBlobDirectory> -DestContainer <String> -DestPath <String>
+ [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
  [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+The **Move-AzStorageBlobDirectory** cmdlet moves a Storage blob directory and all its content to another Storage blob directory.
+This cmdlet only works if Hierarchical Namespace is enabled for the Storage account.
 
 ## EXAMPLES
 
@@ -62,6 +63,36 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CloudBlobContainer
+Azure Container Object
+
+```yaml
+Type: Microsoft.Azure.Storage.Blob.CloudBlobContainer
+Parameter Sets: ContainerPipeline
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -CloudBlobDirectory
+Source Azure Blob Directory Object
+
+```yaml
+Type: Microsoft.Azure.Storage.Blob.CloudBlobDirectory
+Parameter Sets: BlobDirPipeline
+Aliases: SrcCloudBlobDirectory, SourceCloudBlobDirectory
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -170,36 +201,6 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -SrcCloudBlobContainer
-Azure Container Object
-
-```yaml
-Type: Microsoft.Azure.Storage.Blob.CloudBlobContainer
-Parameter Sets: ContainerPipeline
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
-### -SrcCloudBlobDirectory
-Azure Blob Directory Object
-
-```yaml
-Type: Microsoft.Azure.Storage.Blob.CloudBlobDirectory
-Parameter Sets: BlobDirPipeline
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 

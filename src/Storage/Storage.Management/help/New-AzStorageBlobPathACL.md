@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzStorageBlobPathACL
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Creates a Storage blob path ACL object, which can be used in Set-AzStorageBlob or Set-AzStorageBlobDirectory cmdlets.
 
 ## SYNTAX
 
@@ -18,7 +18,7 @@ New-AzStorageBlobPathACL [-EntityId <String>] [-DefaultScope] -Permission <Strin
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+The **New-AzStorageBlobPathACL** cmdlet creates a Storage blob path ACL object, which can be used in Set-AzStorageBlob or Set-AzStorageBlobDirectory cmdlets.
 
 ## EXAMPLES
 

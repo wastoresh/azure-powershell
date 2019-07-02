@@ -1,20 +1,20 @@
 ---
 external help file: Microsoft.Azure.PowerShell.Cmdlets.Storage.dll-Help.xml
 Module Name: Az.Storage
-online version: https://docs.microsoft.com/en-us/powershell/module/az.storage/set-azstorageblobproperty
+online version: https://docs.microsoft.com/en-us/powershell/module/az.storage/set-azstorageblob
 schema: 2.0.0
 ---
 
-# Set-AzStorageBlobProperty
+# Set-AzStorageBlob
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Update the properties and ACLs of a Storage blob.
 
 ## SYNTAX
 
 ### ContainerPipeline
 ```
-Set-AzStorageBlobProperty -CloudBlobContainer <CloudBlobContainer> -Path <String> [-Permission <String>]
+Set-AzStorageBlob -CloudBlobContainer <CloudBlobContainer> -Path <String> [-Permission <String>]
  [-Owner <String>] [-Group <String>] [-Properties <Hashtable>] [-Metadata <Hashtable>]
  [-ACL <PSPathAccessControlEntry[]>] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>]
  [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
@@ -23,22 +23,23 @@ Set-AzStorageBlobProperty -CloudBlobContainer <CloudBlobContainer> -Path <String
 
 ### ReceiveManual
 ```
-Set-AzStorageBlobProperty -Container <String> -Path <String> [-Permission <String>] [-Owner <String>]
- [-Group <String>] [-Properties <Hashtable>] [-Metadata <Hashtable>] [-ACL <PSPathAccessControlEntry[]>]
+Set-AzStorageBlob -Container <String> -Path <String> [-Permission <String>] [-Owner <String>] [-Group <String>]
+ [-Properties <Hashtable>] [-Metadata <Hashtable>] [-ACL <PSPathAccessControlEntry[]>]
  [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
 ### BlobPipeline
 ```
-Set-AzStorageBlobProperty -CloudBlob <CloudBlob> [-Permission <String>] [-Owner <String>] [-Group <String>]
+Set-AzStorageBlob -CloudBlob <CloudBlob> [-Permission <String>] [-Owner <String>] [-Group <String>]
  [-Properties <Hashtable>] [-Metadata <Hashtable>] [-ACL <PSPathAccessControlEntry[]>]
  [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+The **Set-AzStorageBlob** cmdlet updates the properties and ACLs of a Storage blob.
+This permission, ACLs, owner and group update only works if Hierarchical Namespace is enabled for the Storage account.
 
 ## EXAMPLES
 
@@ -88,7 +89,7 @@ Azure Blob Object
 ```yaml
 Type: Microsoft.Azure.Storage.Blob.CloudBlob
 Parameter Sets: BlobPipeline
-Aliases:
+Aliases: ICloudBlob
 
 Required: True
 Position: Named

@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzStorageBlobDirectory
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Create a Storage blob directory.
 
 ## SYNTAX
 
@@ -29,7 +29,8 @@ New-AzStorageBlobDirectory -Container <String> -Path <String> [-Umask <String>] 
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+The **New-AzStorageDirectory** cmdlet creates a Storage blob directory.
+This cmdlet only works if Hierarchical Namespace is enabled for the Storage account.
 
 ## EXAMPLES
 

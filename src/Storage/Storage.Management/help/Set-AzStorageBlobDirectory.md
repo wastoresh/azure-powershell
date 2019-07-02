@@ -8,7 +8,7 @@ schema: 2.0.0
 # Set-AzStorageBlobDirectory
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Update the properties and ACLs of a Storage blob directory.
 
 ## SYNTAX
 
@@ -38,7 +38,8 @@ Set-AzStorageBlobDirectory -CloudBlobDirectory <CloudBlobDirectory> [-Permission
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+The **Set-AzStorageBlobDirectory** cmdlet updates the properties and ACLs of a Storage blob directory.
+This cmdlet only works if Hierarchical Namespace is enabled for the Storage account.
 
 ## EXAMPLES
 

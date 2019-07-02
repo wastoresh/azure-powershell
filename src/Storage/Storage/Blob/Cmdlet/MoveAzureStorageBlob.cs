@@ -49,7 +49,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(Mandatory = true, HelpMessage = "Source Azure Container Object",
             ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
         [ValidateNotNull]
-        public CloudBlobContainer SrcCloudBlobContainer { get; set; }
+        public CloudBlobContainer CloudBlobContainer { get; set; }
 
         [Parameter(Mandatory = true, HelpMessage = "Source Container name", ParameterSetName = ManualParameterSet)]
         [ValidateNotNullOrEmpty]
@@ -60,10 +60,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public string SrcPath { get; set; }
 
+        [Alias("SrcCloudBlob", "ICloudBlob", "SourceCloudBlob")]
         [Parameter(Mandatory = true, HelpMessage = "Azure Blob Object",
             ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
         [ValidateNotNull]
-        public CloudBlob SrcCloudBlob { get; set; }
+        public CloudBlob CloudBlob { get; set; }
 
         [Parameter(Mandatory = true, HelpMessage = "Dest Container name")]
         [ValidateNotNullOrEmpty]
@@ -121,7 +122,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             IStorageBlobManagement localChannel = Channel;
             BlobRequestOptions requestOptions = RequestOptions;         
 
-            CloudBlockBlob srcBlob = this.SrcCloudBlob as CloudBlockBlob;
+            CloudBlockBlob srcBlob = this.CloudBlob as CloudBlockBlob;
             switch (ParameterSetName)
             {
                 case ManualParameterSet:
@@ -133,7 +134,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     srcBlob = blobContainer.GetBlockBlobReference(this.SrcPath);
                     break;
                 case ContainerParameterSet:
-                    srcBlob = this.SrcCloudBlobContainer.GetBlockBlobReference(this.SrcPath);
+                    srcBlob = this.CloudBlobContainer.GetBlockBlobReference(this.SrcPath);
                     break;
                 default:
                     // BlobDirectoryParameterSet already has source BlobDirectory created.

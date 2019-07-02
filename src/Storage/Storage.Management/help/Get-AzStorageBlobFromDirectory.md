@@ -1,43 +1,35 @@
 ---
 external help file: Microsoft.Azure.PowerShell.Cmdlets.Storage.dll-Help.xml
 Module Name: Az.Storage
-online version: https://docs.microsoft.com/en-us/powershell/module/az.storage/remove-azstorageblobdirectory
+online version: https://docs.microsoft.com/en-us/powershell/module/az.storage/get-azstorageblobfromdirectory
 schema: 2.0.0
 ---
 
-# Remove-AzStorageBlobDirectory
+# Get-AzStorageBlobFromDirectory
 
 ## SYNOPSIS
-Remove a Storage blob directory.
+Lists blobs and blob directories in a blob directory.
 
 ## SYNTAX
 
-### ReceiveManual (Default)
+### ListDirPath (Default)
 ```
-Remove-AzStorageBlobDirectory -Container <String> -Path <String> [-Force] [-PassThru]
+Get-AzStorageBlobFromDirectory [-BlobRelativePath <String>] -Container <String> -BlobDirectoryPath <String>
+ [-IncludeDeleted] [-MaxCount <Int32>] [-ContinuationToken <BlobContinuationToken>] [-FetchPermission]
  [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
-### ContainerPipeline
+### ListDirObject
 ```
-Remove-AzStorageBlobDirectory -CloudBlobContainer <CloudBlobContainer> -Path <String> [-Force] [-PassThru]
+Get-AzStorageBlobFromDirectory [-BlobRelativePath <String>] -CloudBlobDirectory <CloudBlobDirectory>
+ [-IncludeDeleted] [-MaxCount <Int32>] [-ContinuationToken <BlobContinuationToken>] [-FetchPermission]
  [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
-```
-
-### BlobDirectoryPipeline
-```
-Remove-AzStorageBlobDirectory -CloudBlobDirectory <CloudBlobDirectory> [-Force] [-PassThru]
- [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-The **Remove-AzStorageBlobDirectory** cmdlet removes a Storage blob directory.
+The **Get-AzStorageBlob** cmdlet lists blobs and blob directories in the specified blob directory in an Azure storage account.
 This cmdlet only works if Hierarchical Namespace is enabled for the Storage account.
 
 ## EXAMPLES
@@ -50,6 +42,36 @@ PS C:\> {{ Add example code here }}
 {{ Add example description here }}
 
 ## PARAMETERS
+
+### -BlobDirectoryPath
+Blob Directory Path to list from.
+
+```yaml
+Type: System.String
+Parameter Sets: ListDirPath
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -BlobRelativePath
+Blob or Blob Directory Relative Path in the specified Blob Directory.
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases: BlobDirectoryRelativePath
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -ClientTimeoutPerRequest
 The client side maximum execution time for each request in seconds.
@@ -66,27 +88,12 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -CloudBlobContainer
-Azure Container Object
-
-```yaml
-Type: Microsoft.Azure.Storage.Blob.CloudBlobContainer
-Parameter Sets: ContainerPipeline
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
 ### -CloudBlobDirectory
-Azure BlobDirectory Object
+Azure Blob Directory Object to list from.
 
 ```yaml
 Type: Microsoft.Azure.Storage.Blob.CloudBlobDirectory
-Parameter Sets: BlobDirectoryPipeline
+Parameter Sets: ListDirObject
 Aliases:
 
 Required: True
@@ -117,7 +124,7 @@ Container name
 
 ```yaml
 Type: System.String
-Parameter Sets: ReceiveManual
+Parameter Sets: ListDirPath
 Aliases:
 
 Required: True
@@ -142,6 +149,21 @@ Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
+### -ContinuationToken
+Continuation Token.
+
+```yaml
+Type: Microsoft.Azure.Storage.Blob.BlobContinuationToken
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -DefaultProfile
 The credentials, account, tenant, and subscription used for communication with Azure.
 
@@ -157,8 +179,9 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Force
-Force to remove the container and all content in it
+### -FetchPermission
+Fetch Blob Permission.
+This only works if Hierarchical Namespace is enabled for the account.
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -172,8 +195,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PassThru
-Return whether the specified container is successfully removed
+### -IncludeDeleted
+Include deleted blobs, by default get blob won't include deleted blobs
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
@@ -187,15 +210,15 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Path
-Blob Directory path
+### -MaxCount
+The max count of the blobs that can return.
 
 ```yaml
-Type: System.String
-Parameter Sets: ReceiveManual, ContainerPipeline
+Type: System.Nullable`1[System.Int32]
+Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -217,43 +240,10 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Confirm
-Prompts you for confirmation before running the cmdlet.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
-Aliases: cf
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -WhatIf
-Shows what would happen if the cmdlet runs.
-The cmdlet is not run.
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
-Aliases: wi
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
-
-### Microsoft.Azure.Storage.Blob.CloudBlobContainer
 
 ### Microsoft.Azure.Storage.Blob.CloudBlobDirectory
 
@@ -261,7 +251,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### System.Boolean
+### Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel.AzureStorageBlob
 
 ## NOTES
 

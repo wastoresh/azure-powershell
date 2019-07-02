@@ -292,5 +292,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             }
         }
 
+        /// <summary>
+        /// decide if a blob object represent a blob Directory 
+        /// </summary>
+        /// <param name="blob">the Blob Object</param>
+        /// <returns>return true if it represent a blob Directory</returns>
+        public static bool isBlobDirectory(CloudBlob blob)
+        {
+            if (blob.Metadata.Contains(new KeyValuePair<string, string>("hdi_isfolder", "true"))
+                && blob.BlobType == BlobType.BlockBlob
+                && blob.Properties.Length == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
     }
 }

@@ -8,13 +8,13 @@ schema: 2.0.0
 # Move-AzStorageBlob
 
 ## SYNOPSIS
-{{Fill in the Synopsis}}
+Move a Storage blob to another Storage blob.
 
 ## SYNTAX
 
 ### ContainerPipeline
 ```
-Move-AzStorageBlob -SrcCloudBlobContainer <CloudBlobContainer> -SrcPath <String> -DestContainer <String>
+Move-AzStorageBlob -CloudBlobContainer <CloudBlobContainer> -SrcPath <String> -DestContainer <String>
  -DestPath <String> [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
  [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
@@ -30,14 +30,15 @@ Move-AzStorageBlob -SrcContainer <String> -SrcPath <String> -DestContainer <Stri
 
 ### BlobPipeline
 ```
-Move-AzStorageBlob -SrcCloudBlob <CloudBlob> -DestContainer <String> -DestPath <String> [-Umask <String>]
+Move-AzStorageBlob -CloudBlob <CloudBlob> -DestContainer <String> -DestPath <String> [-Umask <String>]
  [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>]
  [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
  [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{Fill in the Description}}
+The **Move-AzStorageblob** cmdlet move a Storage blob to another Storage blob.
+This cmdlet only works if Hierarchical Namespace is enabled for the Storage account.
 
 ## EXAMPLES
 
@@ -62,6 +63,36 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CloudBlob
+Azure Blob Object
+
+```yaml
+Type: Microsoft.Azure.Storage.Blob.CloudBlob
+Parameter Sets: BlobPipeline
+Aliases: SrcCloudBlob, ICloudBlob, SourceCloudBlob
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
+Accept wildcard characters: False
+```
+
+### -CloudBlobContainer
+Source Azure Container Object
+
+```yaml
+Type: Microsoft.Azure.Storage.Blob.CloudBlobContainer
+Parameter Sets: ContainerPipeline
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 
@@ -170,36 +201,6 @@ Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -SrcCloudBlob
-Azure Blob Object
-
-```yaml
-Type: Microsoft.Azure.Storage.Blob.CloudBlob
-Parameter Sets: BlobPipeline
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
-### -SrcCloudBlobContainer
-Azure Container Object
-
-```yaml
-Type: Microsoft.Azure.Storage.Blob.CloudBlobContainer
-Parameter Sets: ContainerPipeline
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 

@@ -29,8 +29,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("Set", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobProperty"),OutputType(typeof(AzureStorageBlob))]
-    public class SetAzStorageBlobPropertyCommand : StorageCloudBlobCmdletBase
+    [Cmdlet("Set", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlob"),OutputType(typeof(AzureStorageBlob))]
+    public class SetAzStorageBlobCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>
         /// manually set the name parameter
@@ -61,6 +61,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
 
+        [Alias("ICloudBlob")]
         [Parameter(Mandatory = true, HelpMessage = "Azure Blob Object",
             ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
         [ValidateNotNull]
@@ -116,18 +117,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
 
         /// <summary>
-        /// Initializes a new instance of the SetAzStorageBlobPropertyCommand class.
+        /// Initializes a new instance of the SetAzStorageBlobCommand class.
         /// </summary>
-        public SetAzStorageBlobPropertyCommand()
+        public SetAzStorageBlobCommand()
             : this(null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the SetAzStorageBlobPropertyCommand class.
+        /// Initializes a new instance of the SetAzStorageBlobCommand class.
         /// </summary>
         /// <param name="channel">IStorageBlobManagement channel</param>
-        public SetAzStorageBlobPropertyCommand(IStorageBlobManagement channel)
+        public SetAzStorageBlobCommand(IStorageBlobManagement channel)
         {
             Channel = channel;
         }

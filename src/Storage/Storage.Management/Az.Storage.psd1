@@ -155,11 +155,11 @@ CmdletsToExport = 'Get-AzStorageAccount', 'Get-AzStorageAccountKey',
                'Get-AzStorageBlobServiceProperty', 
                'Enable-AzStorageBlobDeleteRetentionPolicy', 
                'Disable-AzStorageBlobDeleteRetentionPolicy', 
-               'Get-AzStorageFileHandle', 'Close-AzStorageFileHandle'
+               'Get-AzStorageFileHandle', 'Close-AzStorageFileHandle',
                'New-AzStorageBlobDirectory', 'Set-AzStorageBlobDirectory',
                'Remove-AzStorageBlobDirectory', 'Move-AzStorageBlobDirectory',
-               'Move-AzStorageBlob', 'New-AzStorageBlobPathACL',
-               'Set-AzStorageBlob'
+               'Move-AzStorageBlob','New-AzStorageBlobPathACL',
+               'Set-AzStorageBlob','Get-AzStorageBlobFromDirectory'
 
 # Variables to export from this module
 # VariablesToExport = @()
