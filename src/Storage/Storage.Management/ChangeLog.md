@@ -18,6 +18,9 @@
         - Additional information about change #1
 -->
 ## Upcoming Release
+* Support StandardBlobTier on Upload and Copy Block Blob
+    -  Set-AzureStorageBlobContent
+    -  Start-AzureStorageBlobCopy
 
 ## Version 1.5.0
 * Change 2 parameters "-IndexDocument" and "-ErrorDocument404Path" from required to optional  in cmdlet:

@@ -16,35 +16,35 @@ Starts to copy a blob.
 ### ContainerName (Default)
 ```
 Start-AzStorageBlobCopy [-SrcBlob] <String> -SrcContainer <String> -DestContainer <String> [-DestBlob <String>]
- [-PremiumPageBlobTier <PremiumPageBlobTier>] [-Context <IStorageContext>] [-DestContext <IStorageContext>]
- [-Force] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-PremiumPageBlobTier <PremiumPageBlobTier>] [-StandardBlobTier <StandardBlobTier>]
+ [-Context <IStorageContext>] [-DestContext <IStorageContext>] [-Force] [-ServerTimeoutPerRequest <Int32>]
+ [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### BlobInstance
 ```
 Start-AzStorageBlobCopy -CloudBlob <CloudBlob> -DestContainer <String> [-DestBlob <String>]
- [-PremiumPageBlobTier <PremiumPageBlobTier>] [-Context <IStorageContext>] [-DestContext <IStorageContext>]
- [-Force] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-PremiumPageBlobTier <PremiumPageBlobTier>] [-StandardBlobTier <StandardBlobTier>]
+ [-Context <IStorageContext>] [-DestContext <IStorageContext>] [-Force] [-ServerTimeoutPerRequest <Int32>]
+ [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### BlobInstanceToBlobInstance
 ```
 Start-AzStorageBlobCopy -CloudBlob <CloudBlob> -DestCloudBlob <CloudBlob>
- [-PremiumPageBlobTier <PremiumPageBlobTier>] [-Context <IStorageContext>] [-DestContext <IStorageContext>]
- [-Force] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-PremiumPageBlobTier <PremiumPageBlobTier>] [-StandardBlobTier <StandardBlobTier>]
+ [-Context <IStorageContext>] [-DestContext <IStorageContext>] [-Force] [-ServerTimeoutPerRequest <Int32>]
+ [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### ContainerInstance
 ```
 Start-AzStorageBlobCopy -CloudBlobContainer <CloudBlobContainer> [-SrcBlob] <String> -DestContainer <String>
- [-DestBlob <String>] [-PremiumPageBlobTier <PremiumPageBlobTier>] [-Context <IStorageContext>]
- [-DestContext <IStorageContext>] [-Force] [-ServerTimeoutPerRequest <Int32>]
+ [-DestBlob <String>] [-PremiumPageBlobTier <PremiumPageBlobTier>] [-StandardBlobTier <StandardBlobTier>]
+ [-Context <IStorageContext>] [-DestContext <IStorageContext>] [-Force] [-ServerTimeoutPerRequest <Int32>]
  [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
  [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
@@ -153,6 +153,13 @@ C:\PS> Start-AzStorageBlobCopy -AbsoluteUri "http://www.contosointernal.com/plan
 This command creates a context for the account named ContosoGeneral that uses the specified key, and then stores that key in the $Context variable.
 The second command copies the file from the specified URI to the blob named ContosoPlanning in the container named ContosoArchive.
 The command starts the copy operation in the context stored in $Context.
+
+### Example 6: Copy a source block blob, to a destination block blob with StandardBlobTier as Archive 
+```
+C:\PS>Start-AzStorageBlobCopy -SrcContainer "ContosoUploads" -SrcBlob "ContosoPlanning2015" -DestContainer "ContosoArchives"  -DestBlob "ContosoPlanning2015Backup" -StandardBlobTier Archive
+```
+
+This command starts the copy operation of the block blob, to a destination block blob with StandardBlobTier as Archive.
 
 ## PARAMETERS
 
@@ -504,6 +511,22 @@ Parameter Sets: ShareName
 Aliases: SourceShareName
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -StandardBlobTier
+Block Blob Tier
+
+```yaml
+Type: Microsoft.WindowsAzure.Storage.Blob.StandardBlobTier
+Parameter Sets: ContainerName, BlobInstance, BlobInstanceToBlobInstance, ContainerInstance
+Aliases:
+Accepted values: Hot, Cool
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
