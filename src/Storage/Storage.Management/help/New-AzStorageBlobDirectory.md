@@ -12,18 +12,18 @@ Create a Storage blob directory.
 
 ## SYNTAX
 
-### ContainerPipeline
+### ReceiveManual (Default)
 ```
-New-AzStorageBlobDirectory -CloudBlobContainer <CloudBlobContainer> -Path <String> [-Umask <String>]
- [-Permission <String>] [-Properties <Hashtable>] [-Metadata <Hashtable>] [-Context <IStorageContext>]
+New-AzStorageBlobDirectory -Container <String> -Path <String> [-Umask <String>] [-Permission <String>]
+ [-Properties <Hashtable>] [-Metadata <Hashtable>] [-Context <IStorageContext>]
  [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
-### ReceiveManual
+### ContainerPipeline
 ```
-New-AzStorageBlobDirectory -Container <String> -Path <String> [-Umask <String>] [-Permission <String>]
- [-Properties <Hashtable>] [-Metadata <Hashtable>] [-Context <IStorageContext>]
+New-AzStorageBlobDirectory -CloudBlobContainer <CloudBlobContainer> -Path <String> [-Umask <String>]
+ [-Permission <String>] [-Properties <Hashtable>] [-Metadata <Hashtable>] [-Context <IStorageContext>]
  [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```

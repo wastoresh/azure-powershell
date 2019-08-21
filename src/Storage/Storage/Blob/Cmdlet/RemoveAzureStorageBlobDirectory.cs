@@ -182,11 +182,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     continuationToken = blobDir.Delete(continuation: continuationToken);
                 }
                 while (!string.IsNullOrEmpty(continuationToken));
-            }
 
-            if(PassThru)
-            {
-                WriteObject(true);
+                if (PassThru)
+                {
+                    WriteObject(true);
+                }
             }
         }
     }

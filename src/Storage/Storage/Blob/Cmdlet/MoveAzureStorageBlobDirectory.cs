@@ -28,7 +28,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("Move", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory"),OutputType(typeof(AzureStorageBlob))]
+    [Cmdlet("Move", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory", DefaultParameterSetName = ManualParameterSet, SupportsShouldProcess = true),OutputType(typeof(AzureStorageBlob))]
     public class MoveAzureStorageBlobDirectoryCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>
@@ -141,7 +141,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     break;
             }
 
-            // Create Dest Blob Dir
+            // Create Dest Blob Dir object
             if (!NameUtil.IsValidContainerName(this.DestContainer))
             {
                 throw new ArgumentException(String.Format(Resources.InvalidContainerName, this.DestContainer));

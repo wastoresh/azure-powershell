@@ -29,8 +29,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("Set", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlob"),OutputType(typeof(AzureStorageBlob))]
-    public class SetAzStorageBlobCommand : StorageCloudBlobCmdletBase
+    [Cmdlet("Update", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory", DefaultParameterSetName = ManualParameterSet, SupportsShouldProcess = true), OutputType(typeof(AzureStorageBlob))]
+    public class SetAzureStorageBlobDirectoryCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>
         /// manually set the name parameter
@@ -45,7 +45,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// <summary>
         /// BlobDirectory pipeline
         /// </summary>
-        private const string BlobParameterSet = "BlobPipeline";
+        private const string BlobDirectoryParameterSet = "BlobDirectoryPipeline";
 
         [Parameter(Mandatory = true, HelpMessage = "Azure Container Object",
             ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
@@ -54,215 +54,211 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         [Parameter(Mandatory = true, HelpMessage = "Container name", ParameterSetName = ManualParameterSet)]
         [ValidateNotNullOrEmpty]
-        public string Container { get; set; }
+        public string Container
+        {
+            get { return ContainerName; }
+            set { ContainerName = value; }
+        }
+        private string ContainerName = String.Empty;
 
-        [Parameter(Mandatory = true, HelpMessage = "Blob path", ParameterSetName = ManualParameterSet)]
-        [Parameter(Mandatory = true, HelpMessage = "Blob path", ParameterSetName = ContainerParameterSet)]
+        [Parameter(Mandatory = true, HelpMessage = "Blob Directory path", ParameterSetName = ContainerParameterSet)]
+        [Parameter(Mandatory = true, HelpMessage = "Blob Directory path", ParameterSetName = ManualParameterSet)]
         [ValidateNotNullOrEmpty]
-        public string Path { get; set; }
+        public string Path
+        {
+            get { return BlobDirectoryPath; }
+            set { BlobDirectoryPath = value; }
+        }
+        private string BlobDirectoryPath = String.Empty;
 
-        [Alias("ICloudBlob")]
-        [Parameter(Mandatory = true, HelpMessage = "Azure Blob Object",
-            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
+        [Parameter(Mandatory = true, HelpMessage = "Azure BlobDirectory Object",
+            ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobDirectoryParameterSet)]
         [ValidateNotNull]
-        public CloudBlob CloudBlob { get; set; }
+        public CloudBlobDirectory CloudBlobDirectory { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "Sets POSIX access permissions for the file owner, the file owning group, and others. Each class may be granted read, write, or execute permission. Symbolic (rwxrw-rw-) is supported. Invalid in conjunction with ACL.")]
         [ValidateNotNullOrEmpty]
         [ValidatePattern("([r-][w-][x-]){3}")]
         public string Permission { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "Sets the owner of the blob.")]
+        [Parameter(Mandatory = false, HelpMessage = "Sets the owner of the blob directory.")]
         [ValidateNotNullOrEmpty]
         public string Owner { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "Sets the owning group of the blob.")]
+        [Parameter(Mandatory = false, HelpMessage = "Sets the owning group of the blob directory.")]
         [ValidateNotNullOrEmpty]
         public string Group { get; set; }
 
-        [Parameter(HelpMessage = "Blob Properties", Mandatory = false)]
+        [Parameter(HelpMessage = "Blob Directory Properties", Mandatory = false)]
         public Hashtable Properties
         {
             get
             {
-                return BlobProperties;
+                return BlobDirProperties;
             }
 
             set
             {
-                BlobProperties = value;
+                BlobDirProperties = value;
             }
         }
-        private Hashtable BlobProperties = null;
+        private Hashtable BlobDirProperties = null;
 
-        [Parameter(HelpMessage = "Blob Metadata", Mandatory = false)]
+        [Parameter(HelpMessage = "Blob Directory Metadata", Mandatory = false)]
         public Hashtable Metadata
         {
             get
             {
-                return BlobMetadata;
+                return BlobDirMetadata;
             }
 
             set
             {
-                BlobMetadata = value;
+                BlobDirMetadata = value;
             }
         }
-        private Hashtable BlobMetadata = null;
+        private Hashtable BlobDirMetadata = null;
 
         [Parameter(HelpMessage = "Sets POSIX access control rights on files and directories. Create this object with New-AzStorageBlobPathACL.", Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public PSPathAccessControlEntry[] ACL { get; set; }
 
-
-
         /// <summary>
-        /// Initializes a new instance of the SetAzStorageBlobCommand class.
+        /// Initializes a new instance of the SetAzureStorageBlobDirectoryCommand class.
         /// </summary>
-        public SetAzStorageBlobCommand()
+        public SetAzureStorageBlobDirectoryCommand()
             : this(null)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the SetAzStorageBlobCommand class.
+        /// Initializes a new instance of the SetAzureStorageBlobDirectoryCommand class.
         /// </summary>
         /// <param name="channel">IStorageBlobManagement channel</param>
-        public SetAzStorageBlobCommand(IStorageBlobManagement channel)
+        public SetAzureStorageBlobDirectoryCommand(IStorageBlobManagement channel)
         {
             Channel = channel;
         }
-        
+
         /// <summary>
         /// execute command
         /// </summary>
+        [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
             IStorageBlobManagement localChannel = Channel;
-            BlobRequestOptions requestOptions = RequestOptions;         
+            BlobRequestOptions requestOptions = RequestOptions;
 
-            CloudBlockBlob blob = this.CloudBlob as CloudBlockBlob;
+            CloudBlobDirectory blobDir = this.CloudBlobDirectory;
             switch (ParameterSetName)
             {
                 case ManualParameterSet:
-                    if (!NameUtil.IsValidContainerName(this.Container))
-                    {
-                        throw new ArgumentException(String.Format(Resources.InvalidContainerName, this.Container));
-                    }
-                    CloudBlobContainer blobContainer = localChannel.GetContainerReference(this.Container);
-                    blob = blobContainer.GetBlockBlobReference(this.Path);
+                    CloudBlobContainer blobContainer = localChannel.GetContainerReference(ContainerName);
+                    blobDir = blobContainer.GetDirectoryReference(BlobDirectoryPath);
                     break;
                 case ContainerParameterSet:
-                    blob = this.CloudBlobContainer.GetBlockBlobReference(this.Path);
+                    blobDir = this.CloudBlobContainer.GetDirectoryReference(BlobDirectoryPath);
                     break;
                 default:
-                    // BlobParameterSet already has Blob created.
+                    // BlobDirectoryParameterSet already has the BlobDirectory created.
                     break;
             }
 
-            if (ShouldProcess(blob.Uri.ToString(), "Set Blob ACL: "))
+            if (ShouldProcess(blobDir.Uri.ToString(), "Update Blob Directory: "))
             {
-                blob.FetchAttributes();
+                blobDir.FetchAttributes();
+                blobDir.FetchAccessControls();
 
-
-                if (this.Permission != null || this.Owner != null || this.Group != null || this.ACL != null)
-                {
-                    blob.FetchAccessControls();
-                }
-
-                    //Set permission
-                    if (this.Permission != null || this.Owner != null || this.Group != null)
+                //Set ACL
+                if (this.Permission != null || this.Owner != null || this.Group != null)
                 {
                     if (this.Permission != null)
                     {
-                        blob.PathProperties.Permissions = PathPermissions.ParseSymbolic(this.Permission);
+                        blobDir.PathProperties.Permissions = PathPermissions.ParseSymbolic(this.Permission);
                     }
                     if (this.Owner != null)
                     {
-                        blob.PathProperties.Owner = this.Owner;
+                        blobDir.PathProperties.Owner = this.Owner;
                     }
                     if (this.Group != null)
                     {
-                        blob.PathProperties.Group = this.Group;
+                        blobDir.PathProperties.Group = this.Group;
                     }
-                    blob.SetPermissions();
+                    blobDir.SetPermissions();
                 }
 
-                //Set ACL               
+                //Set ACL            
                 if (this.ACL != null)
                 {
-                    blob.PathProperties.ACL = PSPathAccessControlEntry.ParseAccessControls(this.ACL);
-                    blob.SetAcl();
-                }              
+                    blobDir.PathProperties.ACL = PSPathAccessControlEntry.ParseAccessControls(this.ACL);
+                    blobDir.SetAcl();
+                }
 
-                // Set Blob Properties
-                if (this.BlobProperties != null)
+                // Set Properties
+                if (this.BlobDirProperties != null)
                 {
                     // Valid Blob Dir properties
-                    foreach (DictionaryEntry entry in this.BlobProperties)
+                    foreach (DictionaryEntry entry in this.BlobDirProperties)
                     {
-                        if (!validCloudBlobProperties.ContainsKey(entry.Key.ToString()))
+                        if (!validCloudBlobDirProperties.ContainsKey(entry.Key.ToString()))
                         {
                             throw new ArgumentException(String.Format(Resources.InvalidBlobProperties, entry.Key.ToString(), entry.Value.ToString()));
                         }
                     }
 
-                    foreach (DictionaryEntry entry in BlobProperties)
+                    foreach (DictionaryEntry entry in BlobDirProperties)
                     {
                         string key = entry.Key.ToString();
                         string value = entry.Value.ToString();
-                        Action<BlobProperties, string> action = validCloudBlobProperties[key];
+                        Action<BlobProperties, string> action = validCloudBlobDirProperties[key];
 
                         if (action != null)
                         {
-                            action(blob.Properties, value);
+                            action(blobDir.Properties, value);
                         }
                     }
-                    blob.SetProperties();
+                    blobDir.SetProperties();
                 }
 
-                //Set Blob MetaData
-                if (this.BlobMetadata != null)
+                //Set MetaData
+                if (this.BlobDirMetadata != null)
                 {
-                    foreach (DictionaryEntry entry in this.BlobMetadata)
+                    foreach (DictionaryEntry entry in this.BlobDirMetadata)
                     {
                         string key = entry.Key.ToString();
                         string value = entry.Value.ToString();
 
-                        if (blob.Metadata.ContainsKey(key))
+                        if (blobDir.Metadata.ContainsKey(key))
                         {
-                            blob.Metadata[key] = value;
+                            blobDir.Metadata[key] = value;
                         }
                         else
                         {
-                            blob.Metadata.Add(key, value);
+                            blobDir.Metadata.Add(key, value);
                         }
                     }
-                    blob.SetMetadata();
+                    blobDir.SetMetadata();
                 }
-            }
 
-            blob.FetchAttributes();
-            if (this.Permission != null || this.Owner != null || this.Group != null || this.ACL != null)
-            {
-                blob.FetchAccessControls();
-            }
+                blobDir.FetchAttributes();
+                blobDir.FetchAccessControls();
 
-            AzureStorageBlob azureBlob = new AzureStorageBlob(blob);
-            azureBlob.Context = localChannel.StorageContext;
-            WriteObject(azureBlob);
+                AzureStorageBlob azureBlob = new AzureStorageBlob(blobDir);
+                azureBlob.Context = localChannel.StorageContext;
+                WriteObject(azureBlob);
+            }
         }
 
         //only support the common blob properties for Blob Dir
-        private Dictionary<string, Action<BlobProperties, string>> validCloudBlobProperties =
+        private Dictionary<string, Action<BlobProperties, string>> validCloudBlobDirProperties =
             new Dictionary<string, Action<BlobProperties, string>>(StringComparer.OrdinalIgnoreCase)
             {
                 {"CacheControl", (p, v) => p.CacheControl = v},
                 {"ContentDisposition", (p, v) => p.ContentDisposition = v},
                 {"ContentEncoding", (p, v) => p.ContentEncoding = v},
                 {"ContentLanguage", (p, v) => p.ContentLanguage = v},
-                {"ContentMD5", (p, v) => p.ContentMD5 = v},
-                {"ContentType", (p, v) => p.ContentType = v},
+                //{"ContentMD5", (p, v) => p.ContentMD5 = v},
+                //{"ContentType", (p, v) => p.ContentType = v},
             };
     }
 }

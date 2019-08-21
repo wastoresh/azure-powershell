@@ -28,7 +28,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("New", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory"), OutputType(typeof(AzureStorageBlob))]
+    [Cmdlet("New", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobDirectory", DefaultParameterSetName = ManualParameterSet), OutputType(typeof(AzureStorageBlob))]
     public class NewAzureStorageBlobDirectoryCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>

@@ -64,7 +64,7 @@ Blob or Blob Directory Relative Path in the specified Blob Directory.
 ```yaml
 Type: System.String
 Parameter Sets: (All)
-Aliases: BlobDirectoryRelativePath
+Aliases: BlobDirectoryRelativePath, RelativePath
 
 Required: False
 Position: Named

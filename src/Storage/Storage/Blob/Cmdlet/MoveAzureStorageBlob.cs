@@ -28,7 +28,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure container
     /// </summary>
-    [Cmdlet("Move", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlob"),OutputType(typeof(AzureStorageBlob))]
+    [Cmdlet("Move", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlob", DefaultParameterSetName = ManualParameterSet, SupportsShouldProcess = true),OutputType(typeof(AzureStorageBlob))]
     public class MoveAzureStorageBlobCommand : StorageCloudBlobCmdletBase
     {
         /// <summary>

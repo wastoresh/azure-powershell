@@ -12,20 +12,22 @@ Move a Storage blob to another Storage blob.
 
 ## SYNTAX
 
+### ReceiveManual (Default)
+```
+Move-AzStorageBlob -SrcContainer <String> -SrcPath <String> -DestContainer <String> -DestPath <String>
+ [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
+```
+
 ### ContainerPipeline
 ```
 Move-AzStorageBlob -CloudBlobContainer <CloudBlobContainer> -SrcPath <String> -DestContainer <String>
  -DestPath <String> [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
  [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
-```
-
-### ReceiveManual
-```
-Move-AzStorageBlob -SrcContainer <String> -SrcPath <String> -DestContainer <String> -DestPath <String>
- [-Umask <String>] [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>]
- [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
- [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### BlobPipeline
@@ -33,7 +35,7 @@ Move-AzStorageBlob -SrcContainer <String> -SrcPath <String> -DestContainer <Stri
 Move-AzStorageBlob -CloudBlob <CloudBlob> -DestContainer <String> -DestPath <String> [-Umask <String>]
  [-PathRenameMode <PathRenameMode>] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>]
  [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
- [<CommonParameters>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -224,7 +226,7 @@ Source Blob path
 
 ```yaml
 Type: System.String
-Parameter Sets: ContainerPipeline, ReceiveManual
+Parameter Sets: ReceiveManual, ContainerPipeline
 Aliases:
 
 Required: True
@@ -243,6 +245,36 @@ Symbolic (rwxrw-rw-) is supported.
 Type: System.String
 Parameter Sets: (All)
 Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Confirm
+Prompts you for confirmation before running the cmdlet.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases: cf
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -WhatIf
+Shows what would happen if the cmdlet runs. The cmdlet is not run.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases: wi
 
 Required: False
 Position: Named
