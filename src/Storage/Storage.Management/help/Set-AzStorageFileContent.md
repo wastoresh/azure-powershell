@@ -18,7 +18,7 @@ Uploads the contents of a file.
 Set-AzStorageFileContent [-ShareName] <String> [-Source] <String> [[-Path] <String>] [-PassThru] [-Force]
  [-AsJob] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-PersistSMBProperty] [-PersistPermission] [<CommonParameters>]
 ```
 
 ### Share
@@ -26,7 +26,7 @@ Set-AzStorageFileContent [-ShareName] <String> [-Source] <String> [[-Path] <Stri
 Set-AzStorageFileContent [-Share] <CloudFileShare> [-Source] <String> [[-Path] <String>] [-PassThru] [-Force]
  [-AsJob] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-PersistSMBProperty] [-PersistPermission] [<CommonParameters>]
 ```
 
 ### Directory
@@ -34,7 +34,7 @@ Set-AzStorageFileContent [-Share] <CloudFileShare> [-Source] <String> [[-Path] <
 Set-AzStorageFileContent [-Directory] <CloudFileDirectory> [-Source] <String> [[-Path] <String>] [-PassThru]
  [-Force] [-AsJob] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-PersistSMBProperty] [-PersistPermission] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -216,6 +216,36 @@ Aliases:
 
 Required: False
 Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PersistPermission
+Keep the local source File Permission setting in the uploaded Azure File. This parameter is only available on Windows.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PersistSMBProperty
+Keep the local source File SMB proeprties in the uploaded Azure File. This parameter is only available on Windows.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

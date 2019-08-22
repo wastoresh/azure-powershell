@@ -26,9 +26,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
     using System.Net;
     using System.Threading.Tasks;
     using LocalConstants = Microsoft.WindowsAzure.Commands.Storage.File.Constants;
+    using System.Runtime.InteropServices;
 
     [Cmdlet("Set", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageFileContent", SupportsShouldProcess = true, DefaultParameterSetName = LocalConstants.ShareNameParameterSetName), OutputType(typeof(CloudFile))]
-    public class SetAzureStorageFileContent : StorageFileDataManagementCmdletBase
+    public class SetAzureStorageFileContent : StorageFileDataManagementCmdletBase, IDynamicParameters
     {
         [Parameter(
            Position = 0,
@@ -227,5 +228,25 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                 return baseDirectory.GetFileReferenceByPath(path);
             }
         }
+
+        public object GetDynamicParameters()
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            //if (DateTime.Now.Minute % 2 == 0)
+            {
+                return new WindowsOnlyParameters();
+            }
+            else return null;
+        }
+    }
+
+    // Dynamic Parameters which are only available on Windows.
+    public class WindowsOnlyParameters
+    {
+        [Parameter(HelpMessage = "Keep the local source File SMB proeprties in the uploaded Azure File. This parameter is only available on Windows.")]
+        public SwitchParameter PersistSMBProperty { get; set; }
+
+        [Parameter(HelpMessage = "Keep the local source File Permission setting in the uploaded Azure File. This parameter is only available on Windows.")]
+        public SwitchParameter PersistPermission { get; set; }
     }
 }
