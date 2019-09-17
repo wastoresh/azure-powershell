@@ -68,6 +68,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
             ValueFromPipelineByPropertyName = true)]
         public string Name { get; set; }
 
+        [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
+        public SwitchParameter AsJob { get; set; }
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -92,6 +95,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
                            this.ResourceGroupName,
                            this.StorageAccountName);
                 WriteContainerList(container);
+                while (container.NextPageLink != null)
+                {
+                    container = this.StorageClient.BlobContainers.ListNext(container.NextPageLink);
+                    WriteContainerList(container);
+                }
             }
         }
     }
