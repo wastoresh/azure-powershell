@@ -45,12 +45,18 @@ This cmdlet only works if Hierarchical Namespace is enabled for the Storage acco
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### Example 1: Move a Blob Directory to another Blob Directory in same Storage Account
+```
+PS C:\> Move-AzStorageBlobDirectory -Context $ctx -SrcContainer "testcontainer" -SrcPath "dir1" -DestContainer "testcontainer2" -DestPath "dir2" -Umask rwxrwxrwx
+
+   Container Uri: https://testaccount.blob.core.windows.net/testcontainer2
+
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted  Permissions 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         ---------  ----------- 
+dir2/                True                                                                  2019-10-15 03:30:05Z                                 False      rwxrwxrwx  
 ```
 
-{{ Add example description here }}
+This command update owner and group on a Blob Directory, and then show them
 
 ## PARAMETERS
 

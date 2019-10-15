@@ -22,12 +22,21 @@ The **New-AzStorageBlobPathACL** cmdlet creates a Storage blob path ACL object, 
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### Example 1: Create an ACL object with 3 acl entry (use -InputObject parameter to add acl entry to existing acl object), and update ACL on a Blob Directory
+```
+PS C:\>$acl = New-AzStorageBlobPathACL -AccessControlType user -Permission rwx -DefaultScope
+PS C:\>$acl = New-AzStorageBlobPathACL -AccessControlType group -Permission rw- -InputObject $acl 
+PS C:\>$acl = New-AzStorageBlobPathACL -AccessControlType other -Permission "rw-" -InputObject $acl
+PS C:\>Update-AzStorageBlobDirectory -Container "testcontainer" -Path "dir1/dir2" -ACL $acl
+
+   Container Uri: https://testaccount.blob.core.windows.net/testcontainer
+
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted  Permissions 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         ---------  ----------- 
+dir1/dir2/           True                                   application/octet-stream       2019-10-14 08:02:37Z                                 False      rwxrw-rw-  
 ```
 
-{{ Add example description here }}
+This command creates an ACL object with 3 acl entry (use -InputObject parameter to add acl entry to existing acl object), and updates ACL on a Blob Directory
 
 ## PARAMETERS
 

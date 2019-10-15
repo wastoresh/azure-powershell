@@ -34,12 +34,74 @@ This cmdlet only works if Hierarchical Namespace is enabled for the Storage acco
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### Example 1: Create a Blob Directory
+```
+PS C:\>New-AzStorageBlobDirectory -Container "testcontainer" -Path "dir1/dir2"
+
+   Container Uri: https://weisanity1.blob.core.windows.net/testcontainer
+
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted  Permissions 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         ---------  ----------- 
+dir1/dir2/           True                                   application/octet-stream       2019-10-14 07:53:41Z                                 False      rwxr-x--- 
 ```
 
-{{ Add example description here }}
+This command creates a Blob Directory
+
+### Example 2: Create a Blob Directory with specified Permission, Umask
+```
+PS C:\>New-AzStorageBlobDirectory -Container "testcontainer" -Path "dir1/dir2" -Permission rwxrwxrwx -Umask ---rw----
+
+   Container Uri: https://weisanity1.blob.core.windows.net/testcontainer
+
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted  Permissions 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         ---------  ----------- 
+dir1/dir2/           True                                   application/octet-stream       2019-10-14 07:54:47Z                                 False      rwx--xrwx 
+```
+
+This command creates a Blob Directory with specified Permission, Umask
+
+### Example 3: Create a Blob Directory with specified Properties, Metadata, and then show them
+```
+PS C:\> $dir = New-AzStorageBlobDirectory -Container "testcontainer" -Path "dir1/dir2"  -Properties @{"ContentEncoding" = "UDF8"; "CacheControl" = "READ"; "ContentDisposition" = "True"; "ContentLanguage" = "EN-US"} -Metadata @{"tag1" = "value1"; "tag2" = "value2" }
+
+PS C:\> $dir.CloudBlobDirectory.Properties
+
+CacheControl                       : READ
+ContentDisposition                 : True
+ContentEncoding                    : UDF8
+ContentLanguage                    : EN-US
+Length                             : 0
+ContentMD5                         : 
+ContentType                        : application/octet-stream
+ETag                               : "0x8D7507CE126EC96"
+Created                            : 10/14/2019 8:02:37 AM +00:00
+LastModified                       : 10/14/2019 8:02:37 AM +00:00
+BlobType                           : BlockBlob
+LeaseStatus                        : Unlocked
+LeaseState                         : Available
+LeaseDuration                      : Unspecified
+PageBlobSequenceNumber             : 
+AppendBlobCommittedBlockCount      : 
+IsServerEncrypted                  : True
+IsIncrementalCopy                  : False
+StandardBlobTier                   : Cool
+RehydrationStatus                  : 
+PremiumPageBlobTier                : 
+BlobTierInferred                   : True
+BlobTierLastModifiedTime           : 
+DeletedTime                        : 
+RemainingDaysBeforePermanentDelete : 
+
+PS C:\> $dir.CloudBlobDirectory.Metadata
+
+Key          Value  
+---          -----  
+hdi_isfolder true   
+tag1         value1 
+tag2         value2
+```
+
+This command creates a Blob Directory with specified Properties, Metadata
 
 ## PARAMETERS
 

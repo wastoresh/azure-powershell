@@ -41,20 +41,20 @@ PS C:\>Get-AzStorageBlob -Container "ContainerName" -Blob blob*
 
 This command uses a blob name and wildcard to get a blob.
 
-### Example 2: Get blobs in a container by using the pipeline
+### Example 2: Get blobs and blob directories in a container by using the pipeline
 ```
 PS C:\>Get-AzStorageContainer -Name container* | Get-AzStorageBlob -IncludeDeleted
 
    Container Uri: https://storageaccountname.blob.core.windows.net/container1
 
-Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted 
-----                 --------  ------          -----------                    ------------         ---------- ------------         --------- 
-test1                BlockBlob 403116          application/octet-stream       2017-11-08 07:53:19Z            2017-11-08 08:19:32Z True      
-test1                BlockBlob 403116          application/octet-stream       2017-11-08 09:00:29Z                                 True      
-test2                BlockBlob 403116          application/octet-stream       2017-11-08 07:53:00Z                                 False
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         --------- 
+test1                False        BlockBlob 403116          application/octet-stream       2017-11-08 07:53:19Z            2017-11-08 08:19:32Z True      
+test1                False        BlockBlob 403116          application/octet-stream       2017-11-08 09:00:29Z                                 True      
+test2                False        BlockBlob 403116          application/octet-stream       2017-11-08 07:53:00Z                                 False
 ```
 
-This command uses the pipeline to get all blobs (include blobs in Deleted status) in a container.
+This command uses the pipeline to get all blobs and blob directories (include blobs in Deleted status) in a container.
 
 ### Example 3: Get blobs by name prefix
 ```
@@ -63,7 +63,7 @@ PS C:\>Get-AzStorageBlob -Container "ContainerName" -Prefix "blob"
 
 This command uses a name prefix to get blobs.
 
-### Example 4: List blobs in multiple batches
+### Example 4: List blobs and blob directories in multiple batches
 ```
 PS C:\>$MaxReturn = 10000
 PS C:\> $ContainerName = "abc"
@@ -80,13 +80,29 @@ PS C:\> do
 PS C:\> Echo "Total $Total blobs in container $ContainerName"
 ```
 
-This example uses the *MaxCount* and *ContinuationToken* parameters to list Azure Storage blobs in multiple batches.
+This example uses the *MaxCount* and *ContinuationToken* parameters to list Azure Storage blobs and blob directories in multiple batches.
 The first four commands assign values to variables to use in the example.
-The fifth command specifies a **Do-While** statement that uses the **Get-AzStorageBlob** cmdlet to get blobs.
+The fifth command specifies a **Do-While** statement that uses the **Get-AzStorageBlob** cmdlet to get blobs and blob directories.
 The statement includes the continuation token stored in the $Token variable.
 $Token changes value as the loop runs.
 For more information, type `Get-Help About_Do`.
 The final command uses the **Echo** command to display the total.
+
+### Example 5: Get all blob and blob directories under a container with permission
+```
+PS C:\>Get-AzStorageBlob -Container "container1"  -FetchPermission
+
+
+   Container Uri: https://storageaccountname.blob.core.windows.net/container1
+
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted  Permissions 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         ---------  ----------- 
+dir1/                True                                                                  2019-10-15 03:49:37Z                                 False      rwxr-x---   
+dir1/text1.txt       False        BlockBlob 2097152         application/octet-stream       2019-10-15 03:49:37Z Cool                            False      rw-r-----   
+
+```
+
+This command gets all blobs and blob directories under a container with permission
 
 ## PARAMETERS
 

@@ -44,12 +44,16 @@ This cmdlet only works if Hierarchical Namespace is enabled for the Storage acco
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### Example 1: Move a Blob to another Blob in same Storage Account
 ```
+PS C:\> Move-AzStorageBlob -SrcContainer "testcontainer" -SrcPath dir1/text1.txt  -DestContainer "testcontainer2" -DestPath dir2/text2.txt -Umask rwxrwxrwx
 
-{{ Add example description here }}
+   Container Uri: https://testaccount.blob.core.windows.net/testcontainer2
+
+Name                 IsDirectory  BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime         IsDeleted  Permissions 
+----                 -----------  --------  ------          -----------                    ------------         ---------- ------------         ---------  ----------- 
+dir2/text2.txt       False        BlockBlob 2097152         application/octet-stream       2019-10-15 03:49:37Z Cool                            False      rw-r----- 
+```
 
 ## PARAMETERS
 

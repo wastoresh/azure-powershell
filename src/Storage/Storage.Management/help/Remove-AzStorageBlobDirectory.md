@@ -42,12 +42,19 @@ This cmdlet only works if Hierarchical Namespace is enabled for the Storage acco
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### Example 1: Remove a Blob Directory
+```
+PS C:\>Remove-AzStorageBlobDirectory -Container "testcontainer" -Path "dir1/dir2"
 ```
 
-{{ Add example description here }}
+This command removes a Blob Directory
+
+### Example 2: Remove all sub blob Directory under a blob directory 
+```
+PS C:\>Get-AzStorageBlobFromDirectory -Context $ctx -Container "testcontainer" -BlobDirectoryPath "dir1" | ? {$_.IsDirectory} | Remove-AzStorageBlobDirectory
+```
+
+This command removes all sub blob Directory under a blob directory 
 
 ## PARAMETERS
 
