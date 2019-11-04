@@ -38,8 +38,8 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         [Ps1Xml(Label = "DeleteRetentionPolicy.Days", Target = ViewControl.Table, ScriptBlock = "$_.DeleteRetentionPolicy.Days", Position = 4)]
         public PSDeleteRetentionPolicy DeleteRetentionPolicy { get; set; }
         public PSCorsRules Cors { get; set; }
-        [Ps1Xml(Label = "AutomaticSnapshot", Target = ViewControl.Table, ScriptBlock = "if ($_.AutomaticSnapshotPolicyEnabled -ne $null) {if ($_.AutomaticSnapshotPolicyEnabled -eq $true){'Enabled'} else {'Disabled'} } else {$null}", Position = 5)]
-        public bool? AutomaticSnapshotPolicyEnabled { get; set; }
+        [Ps1Xml(Label = "Versioning", Target = ViewControl.Table, ScriptBlock = "if ($_.IsVersioningEnabled -ne $null) {if ($_.IsVersioningEnabled -eq $true){'Enabled'} else {'Disabled'} } else {$null}", Position = 5)]
+        public bool? IsVersioningEnabled { get; set; }
 
         public PSBlobServiceProperties()
         { }
@@ -54,7 +54,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.Cors = policy.Cors is null ? null : new PSCorsRules(policy.Cors);
             this.DefaultServiceVersion = policy.DefaultServiceVersion;
             this.DeleteRetentionPolicy = policy.DeleteRetentionPolicy is null ? null : new PSDeleteRetentionPolicy(policy.DeleteRetentionPolicy);
-            this.AutomaticSnapshotPolicyEnabled = policy.AutomaticSnapshotPolicyEnabled;
+            this.IsVersioningEnabled = policy.IsVersioningEnabled;
         }
         public BlobServiceProperties ParseBlobServiceProperties()
         {
@@ -63,7 +63,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
                 Cors = this.Cors is null ? null : this.Cors.ParseCorsRules(),
                 DefaultServiceVersion = this.DefaultServiceVersion,
                 DeleteRetentionPolicy = this.DeleteRetentionPolicy is null ? null : this.DeleteRetentionPolicy.ParseDeleteRetentionPolicy(),
-                AutomaticSnapshotPolicyEnabled = this.AutomaticSnapshotPolicyEnabled
+                IsVersioningEnabled = this.IsVersioningEnabled
             };
         }
 

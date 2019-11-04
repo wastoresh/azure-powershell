@@ -242,7 +242,7 @@
           </TableColumnHeader>
           <TableColumnHeader>
             <Alignment>Left</Alignment>
-            <Label>AutomaticSnapshot</Label>
+            <Label>Versioning</Label>
           </TableColumnHeader>        
         </TableHeaders>
         <TableRowEntries>
@@ -270,7 +270,7 @@
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
-                <ScriptBlock>if ($_.AutomaticSnapshotPolicyEnabled -ne $null) {if ($_.AutomaticSnapshotPolicyEnabled -eq $true){'Enabled'} else {'Disabled'} } else {$null}</ScriptBlock>
+                <ScriptBlock>if ($_.IsVersioningEnabled -ne $null) {if ($_.IsVersioningEnabled -eq $true){'Enabled'} else {'Disabled'} } else {$null}</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

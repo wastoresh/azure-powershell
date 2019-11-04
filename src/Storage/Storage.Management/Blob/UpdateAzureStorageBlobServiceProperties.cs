@@ -83,9 +83,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [ValidateNotNull]
         public string DefaultServiceVersion { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "Set if enable Automatic Snapshot Policy.")]
+        [Parameter(Mandatory = false, HelpMessage = "Set if enable Blob Versioning.")]
         [ValidateNotNull]
-        public bool? AutomaticSnapshotPolicyEnabled { get; set; }
+        public bool? EnableVersioning { get; set; }
 
         public override void ExecuteCmdlet()
         {
@@ -115,9 +115,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 {
                     serviceProperties.DefaultServiceVersion = this.DefaultServiceVersion;
                 }
-                if (this.AutomaticSnapshotPolicyEnabled != null)
+                if (this.EnableVersioning != null)
                 {
-                    serviceProperties.AutomaticSnapshotPolicyEnabled = this.AutomaticSnapshotPolicyEnabled;
+                    serviceProperties.IsVersioningEnabled = this.EnableVersioning;
                 }
 
                 serviceProperties = this.StorageClient.BlobServices.SetServiceProperties(this.ResourceGroupName, this.StorageAccountName, serviceProperties);
