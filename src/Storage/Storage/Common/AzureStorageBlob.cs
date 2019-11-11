@@ -17,6 +17,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
     using Microsoft.Azure.Storage.Blob;
     using System;
     using Microsoft.WindowsAzure.Commands.Common.Attributes;
+    using global::Azure.Storage.Blobs;
+    using Microsoft.WindowsAzure.Commands.Storage;
+    using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+    using Microsoft.WindowsAzure.Commands.Storage.Common;
+    using global::Azure.Storage;
+
+    //using Azure.Storage.Blobs;
 
     /// <summary>
     /// Azure storage blob object
@@ -50,6 +57,33 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         public bool IsDeleted { get; private set; }
 
         /// <summary>
+        /// XSCL Track2 Blob Client, used to run blob APIs
+        /// </summary>
+        public BlobClient blobClient
+        {
+            get
+            {
+                if (privateBlobClient == null)
+                {
+                    privateBlobClient = GetTrack2BlobClient(this.ICloudBlob, (AzureStorageContext)this.Context);
+                }
+                return privateBlobClient;
+            }
+        }
+        private BlobClient privateBlobClient = null;
+
+        /// <summary>
+        /// XSCL Track2 Blob properties, will always retrieve the properties on server and return to user
+        /// </summary>
+        public global::Azure.Storage.Blobs.Models.BlobProperties blobProperties
+        {
+            get
+            {
+                return blobClient.GetProperties().Value;
+            }
+        }
+
+        /// <summary>
         /// Blob IsDeleted
         /// </summary>
         public int? RemainingDaysBeforePermanentDelete { get; private set; }
@@ -59,6 +93,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// </summary>
         [Ps1Xml(Label = "ContentType", Target = ViewControl.Table, Position = 3, TableColumnWidth = 30)]
         public string ContentType { get; private set; }
+
 
         /// <summary>
         /// Blob last modified time
@@ -81,7 +116,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// Azure storage blob constructor
         /// </summary>
         /// <param name="blob">ICloud blob object</param>
-        public AzureStorageBlob(CloudBlob blob)
+        public AzureStorageBlob(CloudBlob blob, AzureStorageContext storageContext)
         {
             Name = blob.Name;
             ICloudBlob = blob;
@@ -92,6 +127,47 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             ContentType = blob.Properties.ContentType;
             LastModified = blob.Properties.LastModified;
             SnapshotTime = blob.SnapshotTime;
+            this.Context = storageContext;
+        }
+
+        protected static BlobClient GetTrack2BlobClient(CloudBlob cloubBlob, AzureStorageContext context)
+        {
+            BlobClient blobClient;
+            if (cloubBlob.ServiceClient.Credentials.IsToken) //Oauth
+            {
+                if (context == null)
+                {
+                    //TODO 
+                    throw new System.Exception("Need Storage Context to convert Track1 Blob object in token credentail to Track2 Blob object.");
+                }
+                blobClient = new BlobClient(cloubBlob.SnapshotQualifiedUri, context.Track2OauthToken);
+
+            }
+            else if (cloubBlob.ServiceClient.Credentials.IsSAS) //SAS
+            {
+                string fullUri = cloubBlob.SnapshotQualifiedUri.ToString();
+                if (cloubBlob.IsSnapshot)
+                {
+                    // Since snapshot URL already has '?', need remove '?' in the first char of sas
+                    fullUri = fullUri + "&" + cloubBlob.ServiceClient.Credentials.SASToken.Substring(1);
+                }
+                else
+                {
+                    fullUri = fullUri + cloubBlob.ServiceClient.Credentials.SASToken;
+                }
+                blobClient = new BlobClient(new Uri(fullUri));
+            }
+            else if (cloubBlob.ServiceClient.Credentials.IsSharedKey) //Shared Key
+            {
+                blobClient = new BlobClient(cloubBlob.SnapshotQualifiedUri,
+                    new StorageSharedKeyCredential(context.Name, cloubBlob.ServiceClient.Credentials.ExportBase64EncodedKey()));
+            }
+            else //Anonymous
+            {
+                blobClient = new BlobClient(cloubBlob.SnapshotQualifiedUri);
+            }
+
+            return blobClient;
         }
     }
 }

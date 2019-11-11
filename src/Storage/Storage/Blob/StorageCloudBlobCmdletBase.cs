@@ -23,6 +23,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
+    using global::Azure.Storage.Blobs;
+    using global::Azure.Storage;
 
     /// <summary>
     /// Base cmdlet for storage blob/container cmdlet
@@ -209,8 +212,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <param name="channel">IStorageBlobManagement channel object</param>
         internal void WriteCloudBlobObject(long taskId, IStorageBlobManagement channel, CloudBlob blob, BlobContinuationToken continuationToken = null)
         {
-            AzureStorageBlob azureBlob = new AzureStorageBlob(blob);
-            azureBlob.Context = channel.StorageContext;
+            AzureStorageBlob azureBlob = new AzureStorageBlob(blob, channel.StorageContext);
+            //azureBlob.Context = channel.StorageContext;
             azureBlob.ContinuationToken = continuationToken;
             OutputStream.WriteObject(taskId, azureBlob);
         }
