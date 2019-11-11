@@ -20,6 +20,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using XTable = Microsoft.Azure.Cosmos.Table;
     using System;
     using System.Collections.Generic;
+    using Microsoft.WindowsAzure.Commands.Storage.Common;
 
     /// <summary>
     /// Storage context
@@ -72,6 +73,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// Storage account in context
         /// </summary>
         public virtual XTable.CloudStorageAccount TableStorageAccount { get; protected set; }
+
+        /// <summary>
+        /// Storage Library Track2 Oauth credential
+        /// </summary>
+        public virtual AzureSessionCredential Track2OauthToken { get; set; }
 
         /// <summary>
         /// Endpoint suffix (everything after "table.", "blob." or "queue.")
