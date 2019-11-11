@@ -581,6 +581,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
             }
 
             AzureStorageContext context = new AzureStorageContext(account, StorageAccountName);
+            if (ParameterSetName == OAuthParameterSet || ParameterSetName == OAuthEnvironmentParameterSet)
+            {
+                context.Track2OauthToken = new AzureSessionCredential(DefaultContext);
+            }
             WriteObject(context);
         }
     }
