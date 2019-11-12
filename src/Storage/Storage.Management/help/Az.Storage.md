@@ -80,6 +80,9 @@ Checks the availability of a Storage account name.
 ### [Get-AzStorageAccountNetworkRuleSet](Get-AzStorageAccountNetworkRuleSet.md)
 Get the NetWorkRule property of a Storage account
 
+### [Get-AzStorageObjectReplicationPolicy](Get-AzStorageObjectReplicationPolicy.md)
+{{Fill in the Synopsis}}
+
 ### [Get-AzStorageBlob](Get-AzStorageBlob.md)
 Lists blobs in a container.
 
@@ -176,6 +179,9 @@ Creates a ManagementPolicy rule filter object, which can be used in New-AzStorag
 ### [New-AzStorageAccountManagementPolicyRule](New-AzStorageAccountManagementPolicyRule.md)
 Creates a ManagementPolicy rule object, which can be used in Set-AzStorageAccountManagementPolicy.
 
+### [New-AzStorageObjectReplicationPolicyRule](New-AzStorageObjectReplicationPolicyRule.md)
+{{Fill in the Synopsis}}
+
 ### [New-AzStorageAccountSASToken](New-AzStorageAccountSASToken.md)
 Creates an account-level SAS token.
 
@@ -257,6 +263,9 @@ Removes the management policy of an Azure Storage account.
 ### [Remove-AzStorageAccountNetworkRule](Remove-AzStorageAccountNetworkRule.md)
 Remove IpRules or VirtualNetworkRules from the NetWorkRule property of a Storage account
 
+### [Remove-AzStorageObjectReplicationPolicy](Remove-AzStorageObjectReplicationPolicy.md)
+{{Fill in the Synopsis}}
+
 ### [Remove-AzStorageBlob](Remove-AzStorageBlob.md)
 Removes the specified storage blob.
 
@@ -313,6 +322,9 @@ Modifies a Storage account.
 
 ### [Set-AzStorageAccountManagementPolicy](Set-AzStorageAccountManagementPolicy.md)
 Creates or modifies the management policy of an Azure Storage account.
+
+### [Set-AzStorageObjectReplicationPolicy](Set-AzStorageObjectReplicationPolicy.md)
+{{Fill in the Synopsis}}
 
 ### [Set-AzStorageBlobContent](Set-AzStorageBlobContent.md)
 Uploads a local file to an Azure Storage blob.

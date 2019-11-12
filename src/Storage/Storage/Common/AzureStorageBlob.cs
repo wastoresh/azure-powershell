@@ -22,6 +22,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
     using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using global::Azure.Storage;
+    using global::Azure.Storage.Blobs.Specialized;
 
     /// <summary>
     /// Azure storage blob object
