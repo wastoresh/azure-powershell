@@ -102,10 +102,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         }
 
         private string containerName = String.Empty;
-        
-        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs, by default get blob won't include deleted blobs")]
+
+        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs in list blob, by default list blob won't include deleted blobs")]
         [ValidateNotNullOrEmpty]
         public SwitchParameter IncludeDeleted { get; set; }
+
+        [Parameter(Mandatory = false, HelpMessage = "Blob versions will be listed only if this parameter is present, by default get blob won't include blob versions.")]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter IncludeVersion { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
         public int? MaxCount
@@ -245,6 +249,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             if (includeDeleted)
             {
                 details = details | BlobListingDetails.Deleted;
+            }
+
+            if (this.IncludeVersion.IsPresent)
+            {
+                details = details | BlobListingDetails.Versions;
             }
 
             int listCount = InternalMaxCount;

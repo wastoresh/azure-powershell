@@ -253,7 +253,7 @@
           <TableColumnHeader>
             <Alignment>Left</Alignment>
             <Label>SnapshotTime</Label>
-            <Width>20</Width>
+            <Width>28</Width>
           </TableColumnHeader>
           <TableColumnHeader>
             <Alignment>Left</Alignment>
@@ -263,7 +263,7 @@
           <TableColumnHeader>
             <Alignment>Left</Alignment>
             <Label>VersionId</Label>
-            <Width>20</Width>
+            <Width>30</Width>
           </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
@@ -295,7 +295,7 @@
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
-                <ScriptBlock>$_.SnapshotTime.UtcDateTime.ToString("u")</ScriptBlock>
+                <ScriptBlock>$_.SnapshotTime.UtcDateTime.ToString("o")</ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
@@ -303,7 +303,7 @@
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
-                <ScriptBlock>$_.VersionId.UtcDateTime.ToString("u")</ScriptBlock>
+                <ScriptBlock>if ($_.ICloudBlob.IsCurrentVersion){$_.ICloudBlob.VersionId.UtcDateTime.ToString("o") + " *"} else {$_.ICloudBlob.VersionId.UtcDateTime.ToString("o")}</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

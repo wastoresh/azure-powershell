@@ -15,9 +15,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Management.Storage" Version="14.0.1" />
-    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.99" />
-    <PackageReference Include="Microsoft.Azure.Storage.File" Version="11.1.99" />
-    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.1.99" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.100" />
+    <PackageReference Include="Microsoft.Azure.Storage.File" Version="11.1.100" />
+    <PackageReference Include="Microsoft.Azure.Storage.Queue" Version="11.1.100" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="$(StorageToolsPath)Adapters\ARM.Storage.6\ARMStorageProvider.cs" Link="Common\ARMStorageProvider.cs" />
