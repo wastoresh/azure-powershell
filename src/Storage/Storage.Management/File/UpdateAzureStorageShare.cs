@@ -116,7 +116,15 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [AllowEmptyCollection]
         [ValidateNotNull]
         public Hashtable Metadata { get; set; }
-        
+
+        [Parameter(Mandatory = false,
+            HelpMessage = "Sets reduction of the access rights for the remote superuser. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'")]
+        [ValidateSet(RootSquashType.NoRootSquash,
+            RootSquashType.RootSquash,
+            RootSquashType.AllSquash,
+            IgnoreCase = true)]
+        public string RootSquash { get; set; }
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -146,12 +154,20 @@ namespace Microsoft.Azure.Commands.Management.Storage
             {
                 Dictionary<string, string> MetadataDictionary = CreateMetadataDictionary(Metadata, validate: true);
 
+                //FileSharePropertiesUpdateParameters updateParameters = new FileSharePropertiesUpdateParameters()
+                //{
+                //    Metadata = MetadataDictionary,
+                //    ShareQuota = shareQuota,
+                //    RootSquash = this.RootSquash
+                //};
+
                 var Share = this.StorageClient.FileShares.Update(
                                     this.ResourceGroupName,
                                     this.StorageAccountName,
                                     this.Name,
                                     MetadataDictionary,
-                                    shareQuota);
+                                    this.shareQuota,
+                                    rootSquash: this.RootSquash);
 
                 WriteObject(new PSShare(Share));
             }

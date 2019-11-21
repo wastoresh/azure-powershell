@@ -15,14 +15,15 @@ Creates a Storage file share.
 ### AccountName (Default)
 ```
 New-AzRmStorageShare [-ResourceGroupName] <String> [-StorageAccountName] <String> -Name <String>
- [-QuotaGiB <Int32>] [-Metadata <Hashtable>] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-QuotaGiB <Int32>] [-Metadata <Hashtable>] [-EnabledProtocol <String>] [-RootSquash <String>]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AccountObject
 ```
 New-AzRmStorageShare -StorageAccount <PSStorageAccount> -Name <String> [-QuotaGiB <Int32>]
- [-Metadata <Hashtable>] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-Metadata <Hashtable>] [-EnabledProtocol <String>] [-RootSquash <String>]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -36,7 +37,7 @@ PS C:\>New-AzRmStorageShare -ResourceGroupName "myResourceGroup" -StorageAccount
 
 Name     StorageAccountName ResourceGroupName Etag                QuotaGiB LastModifiedTime    
 ----     ------------------ ----------------- ----                -------- ----------------    
-myshare  myStorageAccount   myResourceGroup   
+myshare  myStorageAccount   myResourceGroup
 ```
 
 This command creates a Storage file share with metadata and share quota as 100 GiB.
@@ -47,7 +48,7 @@ Get-AzStorageAccount -ResourceGroupName "myResourceGroup" -StorageAccountName "m
 
 Name     StorageAccountName ResourceGroupName Etag                QuotaGiB LastModifiedTime    
 ----     ------------------ ----------------- ----                -------- ----------------    
-myshare  myStorageAccount   myResourceGroup   
+myshare  myStorageAccount   myResourceGroup
 ```
 
 This command creates a Storage file share with Storage account object and share name.
@@ -61,6 +62,22 @@ The credentials, account, tenant, and subscription used for communication with A
 Type: Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core.IAzureContextContainer
 Parameter Sets: (All)
 Aliases: AzContext, AzureRmContext, AzureCredential
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnabledProtocol
+Sets protocols for file shares. It cannot be changed after file share creation. Possible values include: 'SMB', 'NFS'
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+Accepted values: NFS, SMB
 
 Required: False
 Position: Named
@@ -95,7 +112,7 @@ Aliases: N, ShareName
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -125,7 +142,23 @@ Aliases:
 Required: True
 Position: 0
 Default value: None
-Accept pipeline input: True (ByPropertyName)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RootSquash
+Sets reduction of the access rights for the remote superuser. Possible values include: 'NoRootSquash', 'RootSquash', 'AllSquash'
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+Accepted values: NoRootSquash, RootSquash, AllSquash
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -140,7 +173,7 @@ Aliases:
 Required: True
 Position: Named
 Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -155,7 +188,7 @@ Aliases: AccountName
 Required: True
 Position: 1
 Default value: None
-Accept pipeline input: True (ByPropertyName)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

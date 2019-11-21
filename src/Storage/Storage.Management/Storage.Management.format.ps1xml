@@ -346,6 +346,10 @@
       <ViewSelectedBy>
         <TypeName>Microsoft.Azure.Commands.Management.Storage.Models.PSShare</TypeName>
       </ViewSelectedBy>
+      <GroupBy>
+        <ScriptBlock>$_.ResourceGroupName + ", StorageAccountName: " + $_.StorageAccountName</ScriptBlock>
+        <Label>ResourceGroupName</Label>
+      </GroupBy>
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
@@ -354,23 +358,11 @@
           </TableColumnHeader>
           <TableColumnHeader>
             <Alignment>Left</Alignment>
-            <Label>StorageAccountName</Label>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Alignment>Left</Alignment>
-            <Label>ResourceGroupName</Label>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Alignment>Left</Alignment>
-            <Label>Etag</Label>
-          </TableColumnHeader>
-          <TableColumnHeader>
-            <Alignment>Left</Alignment>
             <Label>QuotaGiB</Label>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Alignment>Left</Alignment>
-            <Label>LastModifiedTime</Label>
+          <Alignment>Left</Alignment>
+          <Label>EnabledProtocol</Label>
           </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
@@ -382,23 +374,11 @@
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
-                <PropertyName>StorageAccountName</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <Alignment>Left</Alignment>
-                <PropertyName>ResourceGroupName</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <Alignment>Left</Alignment>
-                <PropertyName>Etag</PropertyName>
-              </TableColumnItem>
-              <TableColumnItem>
-                <Alignment>Left</Alignment>
                 <PropertyName>QuotaGiB</PropertyName>              
             </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
-                <ScriptBlock>$_.LastModifiedTime.ToString("u")</ScriptBlock>
+                <PropertyName>EnabledProtocols</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
