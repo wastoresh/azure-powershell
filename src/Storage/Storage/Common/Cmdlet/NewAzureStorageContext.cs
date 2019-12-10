@@ -580,11 +580,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
                     throw new ArgumentException(Resources.DefaultStorageCredentialsNotFound);
             }
 
-            AzureStorageContext context = new AzureStorageContext(account, StorageAccountName);
-            if (ParameterSetName == OAuthParameterSet || ParameterSetName == OAuthEnvironmentParameterSet)
-            {
-                context.Track2OauthToken = new AzureSessionCredential(DefaultContext);
-            }
+            AzureStorageContext context = new AzureStorageContext(account, StorageAccountName, DefaultContext);
+            //if (ParameterSetName == OAuthParameterSet || ParameterSetName == OAuthEnvironmentParameterSet)
+            //{
+            //    context.Track2OauthToken = new AzureSessionCredential(DefaultContext);
+            //}
             WriteObject(context);
         }
     }
