@@ -142,7 +142,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// Create a storage context usign cloud storage account
         /// </summary>
         /// <param name="account">cloud storage account</param>
-        public AzureStorageContext(CloudStorageAccount account, string accountName = null)
+        public AzureStorageContext(CloudStorageAccount account, string accountName = null, IAzureContext DefaultContext = null)
         {
             StorageAccount = account;
             TableStorageAccount = XTable.CloudStorageAccount.Parse(StorageAccount.ToString(true));
@@ -180,6 +180,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 else if (account.Credentials.IsToken)
                 {
                     StorageAccountName = "[AccessToken]";
+                    Track2OauthToken = new AzureSessionCredential(DefaultContext);
                 }
                 else
                 {
