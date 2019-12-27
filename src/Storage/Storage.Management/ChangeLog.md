@@ -18,6 +18,9 @@
         - Additional information about change #1
 -->
 ## Upcoming Release
+* Fix DataLake Gen2 Output AzureDataLakeGen2Item.Permissions display format
+    -  Get-AzDataLakeGen2Item
+    -  Get-AzDataLakeGen2ChildItem
 * Add breaking change warning message for DefaultAction Value change in a future release
     - Update-AzStorageAccountNetworkRuleSet
 
