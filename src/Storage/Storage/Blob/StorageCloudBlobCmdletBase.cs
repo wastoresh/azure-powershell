@@ -25,6 +25,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using System.Globalization;
     using System.Threading.Tasks;
     using System.Collections;
+    using global::Azure.Storage.Files.DataLake;
+    using global::Azure.Storage;
 
     /// <summary>
     /// Base cmdlet for storage blob/container cmdlet
@@ -220,53 +222,53 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Write a datalake gen2 item  to output. If the input blob represent a folder of datalake gen2 , will output a folder, else output a file of datalake gen2
         /// </summary>
-        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, CloudBlockBlob blob, BlobContinuationToken continuationToken = null, bool fetchPermission = false, long? taskId = null)
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeFileClient fileClient, BlobContinuationToken continuationToken = null, bool fetchPermission = false, long? taskId = null)
         {
-            AzureDataLakeGen2Item azureBlob = null;
-            if (!isBlobDirectory(blob)) //normal blob
-            {
-                if (fetchPermission)
-                {
-                    blob.FetchAccessControls();
-                }
-                azureBlob = new AzureDataLakeGen2Item(blob);
-            }
-            else //blobDir
-            {
-                CloudBlobDirectory blobDir = blob.Container.GetDirectoryReference(blob.Name);
-                blobDir.FetchAttributes();
-                if (fetchPermission)
-                {
-                    blobDir.FetchAccessControls();
-                }
-                azureBlob = new AzureDataLakeGen2Item(blobDir);
-            }
-            azureBlob.Context = channel.StorageContext;
-            azureBlob.ContinuationToken = continuationToken;
+            AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(fileClient);
+            //if (!isBlobDirectory(blob)) //normal blob
+            //{
+            //    if (fetchPermission)
+            //    {
+            //        blob.FetchAccessControls();
+            //    }
+            //    azureBlob = new AzureDataLakeGen2Item(blob);
+            //}
+            //else //blobDir
+            //{
+            //    CloudBlobDirectory blobDir = blob.Container.GetDirectoryReference(blob.Name);
+            //    blobDir.FetchAttributes();
+            //    if (fetchPermission)
+            //    {
+            //        blobDir.FetchAccessControls();
+            //    }
+            //    azureBlob = new AzureDataLakeGen2Item(blobDir);
+            //}
+            azureDataLakeGen2Item.Context = channel.StorageContext;
+            azureDataLakeGen2Item.ContinuationToken = continuationToken;
             if (taskId == null)
             {
-                WriteObject(azureBlob);
+                WriteObject(azureDataLakeGen2Item);
             }
             else
             {
-                OutputStream.WriteObject(taskId.Value, azureBlob);
+                OutputStream.WriteObject(taskId.Value, azureDataLakeGen2Item);
             }
         }
 
         /// <summary>
         /// Write a datalake gen2 folder to output.
         /// </summary>
-        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, CloudBlobDirectory blobDir, BlobContinuationToken continuationToken = null, bool fetchPermission = false)
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeDirectoryClient dirClient, BlobContinuationToken continuationToken = null, bool fetchPermission = false)
         {
 
-            if (fetchPermission)
-            {
-                blobDir.FetchAccessControls();
-            }
-            AzureDataLakeGen2Item azureBlob = new AzureDataLakeGen2Item(blobDir);
-            azureBlob.Context = channel.StorageContext;
-            azureBlob.ContinuationToken = continuationToken;
-            WriteObject(azureBlob);
+            //if (fetchPermission)
+            //{
+            //    blobDir.FetchAccessControls();
+            //}
+            AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(dirClient);
+            azureDataLakeGen2Item.Context = channel.StorageContext;
+            azureDataLakeGen2Item.ContinuationToken = continuationToken;
+            WriteObject(azureDataLakeGen2Item);
         }
 
         /// <summary>
@@ -600,6 +602,34 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                     blobDir.SetMetadata();
                 }
             }
+        }
+
+        /// <summary>
+        /// get the DataLakeFileSystemClient object by name if DataLakeFileSystem exists
+        /// </summary>
+        /// <param name="fileSystemName">DataLakeFileSystem name</param>
+        /// <returns>return DataLakeFileSystemClient object if specified DataLakeFileSystem exists, otherwise throw an exception</returns>
+        internal DataLakeFileSystemClient GetFileSystemClientByName(IStorageBlobManagement localChannel, string fileSystemName, bool skipCheckExists = false)
+        {
+            if (!NameUtil.IsValidContainerName(fileSystemName))
+            {
+                throw new ArgumentException(String.Format(Resources.InvalidContainerName, fileSystemName));
+            }
+
+            BlobRequestOptions requestOptions = RequestOptions;
+
+            //// TODO: need update for other credential, and check exist
+            Uri fileSystemUri = localChannel.StorageContext.StorageAccount.CreateCloudBlobClient().GetContainerReference(fileSystemName).Uri;
+            DataLakeFileSystemClient fileSystem = new DataLakeFileSystemClient(fileSystemUri, new StorageSharedKeyCredential(localChannel.StorageContext.StorageAccountName, localChannel.StorageContext.StorageAccount.Credentials.ExportBase64EncodedKey()));
+
+            return fileSystem;
+            //if (!skipCheckExists && container.ServiceClient.Credentials.IsSharedKey
+            //    && !await localChannel.DoesContainerExistAsync(container, requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false))
+            //{
+            //    throw new ArgumentException(String.Format(Resources.ContainerNotFound, containerName));
+            //}
+
+            //return container;
         }
     }
 }

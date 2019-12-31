@@ -24,6 +24,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Security.Permissions;
     using System.Threading.Tasks;
     using System.Collections.Generic;
+    using global::Azure.Storage.Files.DataLake;
+    using global::Azure.Storage.Files.DataLake.Models;
+    using global::Azure;
 
     /// <summary>
     /// list azure blobs in specified azure FileSystem
@@ -102,7 +105,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         public override void ExecuteCmdlet()
         {
             IStorageBlobManagement localChannel = Channel;
-            CloudBlobContainer container = GetCloudBlobContainerByName(localChannel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
+            DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
 
             BlobRequestOptions requestOptions = RequestOptions;
             bool useFlatBlobListing = this.Recurse.IsPresent ? true : false;
@@ -118,31 +121,41 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             {
                 requestCount = Math.Min(listCount, MaxListCount);
                 realListCount = 0;
-                BlobResultSegment blobResult = localChannel.ListBlobsSegmentedAsync(container, this.Path, useFlatBlobListing,
-                    details, requestCount, continuationToken, requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
+                Pageable<PathItem> items = fileSystem.GetPaths(this.Path, this.Recurse);
 
-                foreach (IListBlobItem blobItem in blobResult.Results)
+                foreach (PathItem item in items)
                 {
-                    CloudBlob blob = blobItem as CloudBlob;
-
-                    if (blob == null)
+                    if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
                     {
-                        CloudBlobDirectory blobDir = blobItem as CloudBlobDirectory;
-                        if (blobDir == null)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            WriteDataLakeGen2Item(localChannel, blobDir, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
-                            realListCount++;
-                        }
-                    }
-                    else
-                    {
-                        WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
+                        WriteDataLakeGen2Item(localChannel, dirClient, null, fetchPermission: true);
                         realListCount++;
                     }
+                    else //File
+                    {
+                        DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
+                        WriteDataLakeGen2Item(Channel, fileClient, null, fetchPermission: true);
+                        realListCount++;
+                    }
+
+                    //if (blob == null)
+                    //{
+                    //    CloudBlobDirectory blobDir = blobItem as CloudBlobDirectory;
+                    //    if (blobDir == null)
+                    //    {
+                    //        continue;
+                    //    }
+                    //    else
+                    //    {
+                    //        WriteDataLakeGen2Item(localChannel, blobDir, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                    //        realListCount++;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                    //    realListCount++;
+                    //}
                 }
 
                 if (InternalMaxCount != int.MaxValue)

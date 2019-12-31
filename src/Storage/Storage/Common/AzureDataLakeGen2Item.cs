@@ -18,19 +18,36 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
     using System;
     using Microsoft.WindowsAzure.Commands.Common.Attributes;
     using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
+    using global::Azure.Storage.Files.DataLake;
+    using global::Azure.Storage.Files.DataLake.Models;
+    using System.Threading;
+    using global::Azure;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Azure storage blob object
     /// </summary>
     public class AzureDataLakeGen2Item : AzureStorageBase
     {
-        public CloudBlockBlob File { get; set; }
+        /// <summary>
+        /// File Properties
+        /// </summary>
+        public PSDataLakeFile File { get; set; }
+
+        ///// <summary>
+        ///// File Client
+        ///// </summary>
+        //public DataLakeFileClient FileClient { get; set; }
 
         /// <summary>
-        /// CloudBlobDirectory object
+        /// Directory Properties
         /// </summary>
-        public CloudBlobDirectory Directory { get; private set; }
+        public PSDataLakeDirectory Directory { get; private set; }
 
+        ///// <summary>
+        ///// Directory Client
+        ///// </summary>
+        //public DataLakeDirectoryClient DirectoryClient { get; set; }
 
         /// <summary>
         /// The Path of the item
@@ -55,10 +72,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// </summary>
         public PSPathAccessControlEntry[] ACL { get; set; }
 
-        /// <summary>
-        /// Azure storage blob type
-        /// </summary>
-        public BlobType BlobType { get; private set; }
+        ///// <summary>
+        ///// Azure storage blob type
+        ///// </summary>
+        //public BlobType BlobType { get; private set; }
 
         /// <summary>
         /// Blob length
@@ -99,46 +116,120 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// Azure DataLakeGen2 Item constructor
         /// </summary>
         /// <param name="blob">CloudBlockBlob blob object</param>
-        public AzureDataLakeGen2Item(CloudBlockBlob blob)
+        public AzureDataLakeGen2Item(DataLakeFileClient fileClient)
         {
-            Name = blob.Name;
-            Path = blob.Name;
-            File = blob;
-            BlobType = blob.BlobType;
-            Length = blob.Properties.Length;
-            ContentType = blob.Properties.ContentType;
-            LastModified = blob.Properties.LastModified;
+            Name = fileClient.Name;
+            Path = fileClient.Path;
+            File = (PSDataLakeFile)fileClient;
+            //BlobType = blob.BlobType;
+            Length = File.Properties.ContentLength;
+            ContentType = File.Properties.ContentType;
+            LastModified = File.Properties.LastModified;
             IsDirectory = false;
-            if (blob.PathProperties != null)
-            {
-                Permissions = ((CloudBlockBlob)blob).PathProperties.Permissions;
-                ACL = PSPathAccessControlEntry.ParsePSPathAccessControlEntrys(blob.PathProperties.ACL);
-                Owner = blob.PathProperties.Owner;
-                Group = blob.PathProperties.Group;
-            }
+            //PathAccessControl acl = fileClient.GetAccessControl();
+            Permissions = File.PathProperties.Permissions;
+            ACL = PSPathAccessControlEntry.ParsePSPathAccessControlEntrys(File.PathProperties.AccessControlList);
+            Owner = File.PathProperties.Owner;
+            Group = File.PathProperties.Group;
         }
 
         /// <summary>
         /// Azure DataLakeGen2 Item constructor
         /// </summary>
         /// <param name="blobDir">Cloud blob Directory object</param>
-        public AzureDataLakeGen2Item(CloudBlobDirectory blobDir)
+        public AzureDataLakeGen2Item(DataLakeDirectoryClient directoryClient)
         {
-            Name = blobDir.Prefix;
-            Path = blobDir.Prefix;
-            Directory = blobDir;
-            BlobType = BlobType.Unspecified;
-            Length = 0;
-            ContentType = blobDir.Properties.ContentType;
-            LastModified = blobDir.Properties.LastModified;
+            Name = directoryClient.Name;
+            Path = directoryClient.Path;
+            Directory = (PSDataLakeDirectory)directoryClient;
+            //BlobType = BlobType.Unspecified;
+            Length = Directory.Properties.ContentLength;
+            ContentType = Directory.Properties.ContentType;
+            LastModified = Directory.Properties.LastModified;
             IsDirectory = true;
-            if (blobDir.PathProperties != null)
+            //PathAccessControl acl = directoryClient.GetAccessControl();
+            Permissions = Directory.PathProperties.Permissions;
+            ACL = PSPathAccessControlEntry.ParsePSPathAccessControlEntrys(Directory.PathProperties.AccessControlList);
+            Owner = Directory.PathProperties.Owner;
+            Group = Directory.PathProperties.Group;
+        }
+    }
+
+    public class PSDataLakeFile : DataLakeFileClient
+    {
+        /// <summary>
+        /// File Properties
+        /// </summary>
+        public PathProperties Properties
+        {
+            get
             {
-                Permissions = blobDir.PathProperties.Permissions;
-                ACL = PSPathAccessControlEntry.ParsePSPathAccessControlEntrys(blobDir.PathProperties.ACL);
-                Owner = blobDir.PathProperties.Owner;
-                Group = blobDir.PathProperties.Group;
+                if (properties == null)
+                {
+                    properties = this.GetProperties();
+                }
+                return properties;
             }
         }
+        private PathProperties properties;
+
+        public IDictionary<string, string> Metadata {
+            get
+            {
+                return this.Properties.Metadata;
+            }
+        }
+
+        public PathAccessControl PathProperties
+        {
+            get
+            {
+                if (pathProperties == null)
+                {
+                    pathProperties = this.GetAccessControl();
+                }
+                return pathProperties;
+            }
+        }
+        private PathAccessControl pathProperties;
+    }
+    public class PSDataLakeDirectory : DataLakeDirectoryClient
+    {
+        /// <summary>
+        /// File Properties
+        /// </summary>
+        public PathProperties Properties
+        {
+            get
+            {
+                if (properties == null)
+                {
+                    properties = this.GetProperties();
+                }
+                return properties;
+            }
+        }
+        private PathProperties properties;
+
+        public IDictionary<string, string> Metadata
+        {
+            get
+            {
+                return this.Properties.Metadata;
+            }
+        }
+
+        public PathAccessControl PathProperties
+        {
+            get
+            {
+                if (pathProperties == null)
+                {
+                    pathProperties = this.GetAccessControl();
+                }
+                return pathProperties;
+            }
+        }
+        private PathAccessControl pathProperties;
     }
 }
