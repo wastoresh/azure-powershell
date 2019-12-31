@@ -172,12 +172,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(this.Path);
                 if (ShouldProcess(dirClient.Uri.ToString(), "Create Directory: "))
                 {
-                    // TODO：check dir exsit after theDataLakeDirectoryClient.Exists() is added
                     //if (dirClient.Exists())
                     //{
                     //    throw new ResourceAlreadyExistException(String.Format("Folder '{0}' already exists.", dirClient.Uri));
                     //}
-
                     DataLakeModels.PathPermissions pathPermissions = null;
                     if (this.Permission != null)
                     {
@@ -194,12 +192,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                         this.Umask != null ? DataLakeModels.PathPermissions.ParseSymbolicPermissions(this.Umask).ToOctalPermissions() : null);
                             //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null);
 
+                    //blobDir.FetchAttributes();
                     WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
                 }
             }
             else //create File
             {
-                CloudBlobContainer container = GetCloudBlobContainerByName(Channel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
+                CloudBlobContainer container = Channel.GetContainerReference(this.FileSystem);
                 CloudBlockBlob blob = container.GetBlockBlobReference(this.Path);
 
                 if (ShouldProcess(blob.Uri.ToString(), "Create File: "))
@@ -268,8 +267,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
             {
                 CloudBlob destBlob = destination as CloudBlob;
-                SetBlobProperties((CloudBlockBlob)destBlob, this.BlobProperties, false);
-                SetBlobMetaData((CloudBlockBlob)destBlob, this.BlobMetadata, false);
+                //SetBlobProperties((CloudBlockBlob)destBlob, this.BlobProperties, false);
+                //SetBlobMetaData((CloudBlockBlob)destBlob, this.BlobMetadata, false);
             };
 
             await DataMovementTransferHelper.DoTransfer(() =>
@@ -287,7 +286,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             SetBlobPermissionWithUMask((CloudBlockBlob)blob, this.Permission, this.Umask);
 
             blob.FetchAttributes();
-            WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, taskId: data.TaskId);
+            //WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, taskId: data.TaskId);
         }
 
         /// <summary>
@@ -335,7 +334,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
 
             //Set permission to blob
-            blob.PathProperties.Permissions = DataLakeModels.PathPermissions.ParseSymbolicPermissions(blobPermission);
+            //blob.PathProperties.Permissions = DataLakeModels.PathPermissions.ParseSymbolicPermissions(blobPermission);
             blob.SetPermissions();
         }
     }

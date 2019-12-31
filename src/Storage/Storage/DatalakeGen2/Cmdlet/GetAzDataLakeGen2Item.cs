@@ -24,6 +24,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Security.Permissions;
     using System.Threading.Tasks;
     using System.Collections.Generic;
+    using global::Azure.Storage.Files.DataLake;
+    using global::Azure;
+    using global::Azure.Storage.Files.DataLake.Models;
 
     /// <summary>
     /// list azure blobs in specified azure FileSystem
@@ -70,19 +73,41 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         {
             IStorageBlobManagement localChannel = Channel;
 
-            CloudBlobContainer container = GetCloudBlobContainerByName(localChannel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
+            DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
 
-            try
+            DataLakeFileClient fileClient;
+            DataLakeDirectoryClient dirClient;
+            if (GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient))
             {
-                CloudBlob blob = (CloudBlob)container.GetBlobReferenceFromServer(this.Path);
-                WriteDataLakeGen2Item(Channel, (CloudBlockBlob)blob, null, fetchPermission: true);
+                // Directory
+                WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
             }
-            catch (StorageException e) when (e.IsNotFoundException())
+            else 
             {
-                CloudBlobDirectory blobDir = container.GetDirectoryReference(this.Path);
-                blobDir.FetchAttributes();
-                WriteDataLakeGen2Item(localChannel, blobDir, null, fetchPermission: true);
+                //File
+                WriteDataLakeGen2Item(Channel, fileClient, fetchPermission: true);
             }
+
+            //CloudBlob blob = (CloudBlob)container.GetBlobReferenceFromServer(this.Path);
+            //Pageable<PathItem> items = fileSystem.GetPaths(this.Path);
+            //PathItem current = items.GetEnumerator().Current;
+            //if (current != null)
+            //{
+            //    if (current.IsDirectory != null && current.IsDirectory.Value) // Directory
+            //    {
+            //        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(this.Path);
+            //        WriteDataLakeGen2Item(localChannel, dirClient, null, fetchPermission: true);
+            //    }
+            //    else //File
+            //    {
+            //        DataLakeFileClient fileClient = fileSystem.GetFileClient(this.Path);
+            //        WriteDataLakeGen2Item(Channel, fileClient, null, fetchPermission: true);
+            //    }
+            //}
+            //else
+            //{
+            //    // TODO: through exception that the item not exist
+            //}
 
         }
     }

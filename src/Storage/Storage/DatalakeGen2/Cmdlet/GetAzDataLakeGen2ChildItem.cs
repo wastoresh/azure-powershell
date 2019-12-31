@@ -24,6 +24,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Security.Permissions;
     using System.Threading.Tasks;
     using System.Collections.Generic;
+    using global::Azure.Storage.Files.DataLake;
+    using global::Azure.Storage.Files.DataLake.Models;
+    using global::Azure;
 
     /// <summary>
     /// list azure blobs in specified azure FileSystem
@@ -50,27 +53,27 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public SwitchParameter Recurse { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
-        public int? MaxCount
-        {
-            get { return InternalMaxCount; }
-            set
-            {
-                if (value.Value <= 0)
-                {
-                    InternalMaxCount = int.MaxValue;
-                }
-                else
-                {
-                    InternalMaxCount = value.Value;
-                }
-            }
-        }
+        //[Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
+        //public int? MaxCount
+        //{
+        //    get { return InternalMaxCount; }
+        //    set
+        //    {
+        //        if (value.Value <= 0)
+        //        {
+        //            InternalMaxCount = int.MaxValue;
+        //        }
+        //        else
+        //        {
+        //            InternalMaxCount = value.Value;
+        //        }
+        //    }
+        //}
 
-        private int InternalMaxCount = int.MaxValue;
+        //private int InternalMaxCount = int.MaxValue;
 
-        [Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
-        public BlobContinuationToken ContinuationToken { get; set; }
+        //[Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
+        //public BlobContinuationToken ContinuationToken { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
@@ -102,57 +105,67 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         public override void ExecuteCmdlet()
         {
             IStorageBlobManagement localChannel = Channel;
-            CloudBlobContainer container = GetCloudBlobContainerByName(localChannel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
+            DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
 
             BlobRequestOptions requestOptions = RequestOptions;
             bool useFlatBlobListing = this.Recurse.IsPresent ? true : false;
-            BlobListingDetails details = BlobListingDetails.Metadata | BlobListingDetails.Copy;
+            //BlobListingDetails details = BlobListingDetails.Metadata | BlobListingDetails.Copy;
 
-            int listCount = InternalMaxCount;
-            int MaxListCount = 5000;
-            int requestCount = MaxListCount;
-            int realListCount = 0;
-            BlobContinuationToken continuationToken = ContinuationToken;
+            //int listCount = InternalMaxCount;
+            //int MaxListCount = 5000;
+            //int requestCount = MaxListCount;
+            //int realListCount = 0;
+            //BlobContinuationToken continuationToken = ContinuationToken;
 
-            do
-            {
-                requestCount = Math.Min(listCount, MaxListCount);
-                realListCount = 0;
-                BlobResultSegment blobResult = localChannel.ListBlobsSegmentedAsync(container, this.Path, useFlatBlobListing,
-                    details, requestCount, continuationToken, requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
+            //do
+            //{
+                //requestCount = Math.Min(listCount, MaxListCount);
+                //realListCount = 0;
+                Pageable<PathItem> items = fileSystem.GetPaths(this.Path, this.Recurse);
 
-                foreach (IListBlobItem blobItem in blobResult.Results)
+                foreach (PathItem item in items)
                 {
-                    CloudBlob blob = blobItem as CloudBlob;
+                    if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
+                    {
+                        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
+                        WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
+                        //realListCount++;
+                    }
+                    else //File
+                    {
+                        DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
+                        WriteDataLakeGen2Item(Channel, fileClient, fetchPermission: true);
+                        //realListCount++;
+                    }
 
-                    if (blob == null)
-                    {
-                        CloudBlobDirectory blobDir = blobItem as CloudBlobDirectory;
-                        if (blobDir == null)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            WriteDataLakeGen2Item(localChannel, blobDir, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
-                            realListCount++;
-                        }
-                    }
-                    else
-                    {
-                        WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
-                        realListCount++;
-                    }
+                    //if (blob == null)
+                    //{
+                    //    CloudBlobDirectory blobDir = blobItem as CloudBlobDirectory;
+                    //    if (blobDir == null)
+                    //    {
+                    //        continue;
+                    //    }
+                    //    else
+                    //    {
+                    //        WriteDataLakeGen2Item(localChannel, blobDir, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                    //        realListCount++;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
+                    //    realListCount++;
+                    //}
                 }
 
-                if (InternalMaxCount != int.MaxValue)
-                {
-                    listCount -= realListCount;
-                }
+            //    if (InternalMaxCount != int.MaxValue)
+            //    {
+            //        listCount -= realListCount;
+            //    }
 
-                continuationToken = blobResult.ContinuationToken;
-            }
-            while (listCount > 0 && continuationToken != null);
+            //    continuationToken = blobResult.ContinuationToken;
+            //}
+            //while (listCount > 0 && continuationToken != null);
         }
     }
 }
