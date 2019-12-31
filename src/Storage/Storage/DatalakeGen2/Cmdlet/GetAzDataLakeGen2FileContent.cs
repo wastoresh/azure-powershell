@@ -126,7 +126,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 this.OutputStream).ConfigureAwait(false);
 
             //this.WriteCloudBlobObject(data.TaskId, data.Channel, blob);
-            WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, taskId: data.TaskId);
+            //WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, taskId: data.TaskId);
         }
 
         /// <summary>
@@ -231,11 +231,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
             bool foundAFolder = false;
             CloudBlockBlob blob = null;
-            CloudBlobDirectory blobDir = null;
             if (ParameterSetName == ManualParameterSet)
             {
                 CloudBlobContainer container = GetCloudBlobContainerByName(Channel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
-                foundAFolder = GetExistDataLakeGen2Item(container, this.Path, out blob, out blobDir);
+                blob = container.GetBlockBlobReference(this.Path);
+                blob.FetchAttributes();
+                foundAFolder = isBlobDirectory(blob);
                 if (foundAFolder)
                 {
                     throw new ArgumentException(String.Format("The input FileSystem '{0}', path '{1}' point to a Directory, which don't have content to get.", this.FileSystem, this.Path));
@@ -245,7 +246,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             {
                 if (!InputObject.IsDirectory)
                 {
-                    blob = (CloudBlockBlob)InputObject.File;
+                    blob = new CloudBlockBlob(InputObject.File.Uri, Channel.StorageContext.StorageAccount.Credentials);
+                    blob.FetchAttributes();
                 }
                 else
                 {

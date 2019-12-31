@@ -12,13 +12,16 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Storage.Blob;
+//using Microsoft.Azure.Storage.Blob;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.WindowsAzure.Commands.Storage;
 using Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation;
+using global::Azure.Storage.Files.DataLake;
+using global::Azure;
+using global::Azure.Storage.Files.DataLake.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -60,7 +63,23 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 psacls = new List<PSPathAccessControlEntry>(this.InputObject);
             }
 
-            PSPathAccessControlEntry psacl = new PSPathAccessControlEntry(this.AccessControlType, RolePermissions.ParseSymbolic(this.Permission, false), this.DefaultScope, this.EntityId);
+            ////Parse Role permission
+            //RolePermissions rolePermission = RolePermissions.None;
+            //if (this.Permission[0] != '-') // [r-]
+            //{
+            //    rolePermission = rolePermission | RolePermissions.Read;
+            //}
+            //if (this.Permission[1] != '-') // [w-]
+            //{
+            //    rolePermission = rolePermission | RolePermissions.Write;
+            //}
+            //if (this.Permission[2] != '-') // [x-]
+            //{
+            //    rolePermission = rolePermission | RolePermissions.Execute;
+            //}
+
+
+            PSPathAccessControlEntry psacl = new PSPathAccessControlEntry(this.AccessControlType, PathAccessControlExtensions.ParseSymbolicRolePermissions(this.Permission), this.DefaultScope, this.EntityId);
             psacls.Add(psacl);
 
             WriteObject(psacls.ToArray(), true);
