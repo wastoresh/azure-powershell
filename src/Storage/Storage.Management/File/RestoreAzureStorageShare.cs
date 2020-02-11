@@ -23,8 +23,8 @@ using System.Management.Automation;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
-    [Cmdlet("Update", ResourceManager.Common.AzureRMConstants.AzureRMStoragePrefix + StorageShareNounStr, DefaultParameterSetName = AccountNameParameterSet, SupportsShouldProcess = true), OutputType(typeof(PSShare))]
-    public class UpdateAzureStorageShareCommand : StorageFileBaseCmdlet
+    [Cmdlet("Restore", ResourceManager.Common.AzureRMConstants.AzureRMStoragePrefix + StorageShareNounStr, DefaultParameterSetName = AccountNameParameterSet, SupportsShouldProcess = true), OutputType(typeof(PSShare))]
+    public class RestoreAzureStorageShareCommand : StorageFileBaseCmdlet
     {
         /// <summary>
         /// AccountName Parameter Set
@@ -40,11 +40,6 @@ namespace Microsoft.Azure.Commands.Management.Storage
         /// ShareObject Parameter Set
         /// </summary>
         private const string ShareObjectParameterSet = "ShareObject";
-
-        /// <summary>
-        /// Share ResourceId  parameter set 
-        /// </summary>
-        private const string ShareResourceIdParameterSet = "ShareResourceId";
 
         [Parameter(
             Position = 0,
@@ -63,15 +58,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [ValidateNotNullOrEmpty]
         public string StorageAccountName { get; set; }
 
-        [Alias("N", "ShareName")]
-        [Parameter(Mandatory = true,
-            HelpMessage = "Share Name",
-            ParameterSetName = AccountObjectParameterSet)]
-        [Parameter(Position = 2,
-            Mandatory = true,
-            HelpMessage = "Share Name",
-            ParameterSetName = AccountNameParameterSet)]
-        public string Name { get; set; }
+        //[Parameter(Mandatory = false,
+        //    HelpMessage = "Target share Name, which will be restored to.")]
+        //public string ShareName { get; set; }
 
         [Parameter(Mandatory = true,
             HelpMessage = "Storage account object",
@@ -80,44 +69,35 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [ValidateNotNullOrEmpty]
         public PSStorageAccount StorageAccount { get; set; }
 
-        [Parameter(
-            Position = 0,
-            Mandatory = true,
-            ValueFromPipelineByPropertyName = true,
-            HelpMessage = "Input a File Share Resource Id.",
-           ParameterSetName = ShareResourceIdParameterSet)]
-        [ValidateNotNullOrEmpty]
-        public string ResourceId { get; set; }
-
         [Alias("Share")]
         [Parameter(Mandatory = true,
-            HelpMessage = "Storage Share object",
+            HelpMessage = "Deleted Share object, which will be restored",
             ValueFromPipeline = true,
             ParameterSetName = ShareObjectParameterSet)]
         [ValidateNotNullOrEmpty]
         public PSShare InputObject { get; set; }
 
-        [Alias("Quota")]
-        [Parameter(Mandatory = false,
-            HelpMessage = "Share Quota in Gibibyte.")]
-        public int QuotaGiB
-        {
-            get
-            {
-                return shareQuota is null ? 0 : shareQuota.Value;
-            }
-            set
-            {
-                shareQuota = value;
-            }
-        }
-        private int? shareQuota = null;
+        [Alias("N", "ShareName")]
+        [Parameter(Mandatory = true,
+            HelpMessage = "Deleted Share Name, which will be restored.",
+            ParameterSetName = AccountNameParameterSet)]
+        [Parameter(Mandatory = true,
+            HelpMessage = "Deleted Share Name, which will be restored.",
+            ParameterSetName = AccountObjectParameterSet)]
+        public string Name { get; set; }
 
-        [Parameter(HelpMessage = "Share Metadata", Mandatory = false)]
-        [AllowEmptyCollection]
-        [ValidateNotNull]
-        public Hashtable Metadata { get; set; }
-        
+        [Parameter(Mandatory = true,
+            HelpMessage = "Deleted Share Version, which will be restored from.",
+            ParameterSetName = AccountNameParameterSet)]
+        [Parameter(Mandatory = true,
+            HelpMessage = "Deleted Share Version, which will be restored from.",
+            ParameterSetName = AccountObjectParameterSet)]
+        public string DeletedShareVersion { get; set; }
+
+        //[Parameter(Mandatory = false)]
+        //    public SwitchParameter PassThru { get; set; }
+
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -125,35 +105,37 @@ namespace Microsoft.Azure.Commands.Management.Storage
             switch (ParameterSetName)
             {
                 case ShareObjectParameterSet:
+                    if(InputObject.Deleted != true)
+                    {
+                        throw new ArithmeticException(string.Format("The input share {0} is not deleted, so can't restore.", this.InputObject.Name));
+                    }
                     this.ResourceGroupName = InputObject.ResourceGroupName;
                     this.StorageAccountName = InputObject.StorageAccountName;
                     this.Name = InputObject.Name;
+                    this.DeletedShareVersion = InputObject.Version;
                     break;
                 case AccountObjectParameterSet:
                     this.ResourceGroupName = StorageAccount.ResourceGroupName;
                     this.StorageAccountName = StorageAccount.StorageAccountName;
                     break;
-                case ShareResourceIdParameterSet:
-                    ResourceIdentifier shareResource = new ResourceIdentifier(ResourceId);
-                    this.ResourceGroupName = shareResource.ResourceGroupName;
-                    this.StorageAccountName = PSBlobServiceProperties.GetStorageAccountNameFromResourceId(ResourceId);
-                    this.Name = shareResource.ResourceName;
-                    break;
                 default:
                     break;
             }
 
-            if (ShouldProcess(this.Name, "Update Share"))
+            if (ShouldProcess(this.Name, "Restore Share"))
             {
-                Dictionary<string, string> MetadataDictionary = CreateMetadataDictionary(Metadata, validate: true);
-
-                var Share = this.StorageClient.FileShares.Update(
+                this.StorageClient.FileShares.Restore(
                                     this.ResourceGroupName,
                                     this.StorageAccountName,
                                     this.Name,
-                                    new FileShare(metadata: MetadataDictionary,
-                                    shareQuota: shareQuota));
+                                    this.Name,
+                                    this.DeletedShareVersion);
 
+
+                var Share = this.StorageClient.FileShares.Get(
+                           this.ResourceGroupName,
+                           this.StorageAccountName,
+                           this.Name);
                 WriteObject(new PSShare(Share));
             }
         }

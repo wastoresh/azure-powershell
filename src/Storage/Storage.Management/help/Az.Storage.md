@@ -116,6 +116,9 @@ Gets the state of a copy operation.
 ### [Get-AzStorageFileHandle](Get-AzStorageFileHandle.md)
 Lists file handles of a file share, a file directory or a file.
 
+### [Get-AzStorageFileServiceProperty](Get-AzStorageFileServiceProperty.md)
+{{ Fill in the Synopsis }}
+
 ### [Get-AzStorageQueue](Get-AzStorageQueue.md)
 Lists storage queues.
 
@@ -293,6 +296,9 @@ Removes a storage table.
 ### [Remove-AzStorageTableStoredAccessPolicy](Remove-AzStorageTableStoredAccessPolicy.md)
 Removes a stored access policy from an Azure storage table.
 
+### [Restore-AzRmStorageShare](Restore-AzRmStorageShare.md)
+{{ Fill in the Synopsis }}
+
 ### [Restore-AzStorageBlobRange](Restore-AzStorageBlobRange.md)
 Restores a Storage account for specific blob ranges.
 
@@ -379,6 +385,9 @@ Modifies the service properties for the Azure Storage Blob service.
 
 ### [Update-AzStorageEncryptionScope](Update-AzStorageEncryptionScope.md)
 Modify an encryption scope for a Storage account.
+
+### [Update-AzStorageFileServiceProperty](Update-AzStorageFileServiceProperty.md)
+{{ Fill in the Synopsis }}
 
 ### [Update-AzStorageServiceProperty](Update-AzStorageServiceProperty.md)
 Modifies the properties for the Azure Storage service.

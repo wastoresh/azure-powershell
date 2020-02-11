@@ -18,16 +18,27 @@ Get-AzRmStorageShare [-ResourceGroupName] <String> [-StorageAccountName] <String
  [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
 ```
 
+### AccountNameList
+```
+Get-AzRmStorageShare [-ResourceGroupName] <String> [-StorageAccountName] <String> [-IncludeDeleted]
+ [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
+```
+
 ### AccountObject
 ```
-Get-AzRmStorageShare -StorageAccount <PSStorageAccount> [-Name <String>]
+Get-AzRmStorageShare -StorageAccount <PSStorageAccount> -Name <String>
+ [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
+```
+
+### AccountObjectList
+```
+Get-AzRmStorageShare -StorageAccount <PSStorageAccount> [-IncludeDeleted]
  [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
 ```
 
 ### ShareResourceId
 ```
-Get-AzRmStorageShare [-ResourceId] <String> [-Name <String>] [-DefaultProfile <IAzureContextContainer>]
- [<CommonParameters>]
+Get-AzRmStorageShare [-ResourceId] <String> [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -86,15 +97,42 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -IncludeDeleted
+Include deleted shares, by default list shares won't include deleted shares
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: AccountNameList, AccountObjectList
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Name
 Share Name
 
 ```yaml
 Type: System.String
-Parameter Sets: (All)
+Parameter Sets: AccountName
 Aliases: N, ShareName
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+```yaml
+Type: System.String
+Parameter Sets: AccountObject
+Aliases: N, ShareName
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -106,7 +144,7 @@ Resource Group Name.
 
 ```yaml
 Type: System.String
-Parameter Sets: AccountName
+Parameter Sets: AccountName, AccountNameList
 Aliases:
 
 Required: True
@@ -136,7 +174,7 @@ Storage account object
 
 ```yaml
 Type: Microsoft.Azure.Commands.Management.Storage.Models.PSStorageAccount
-Parameter Sets: AccountObject
+Parameter Sets: AccountObject, AccountObjectList
 Aliases:
 
 Required: True
@@ -151,7 +189,7 @@ Storage Account Name.
 
 ```yaml
 Type: System.String
-Parameter Sets: AccountName
+Parameter Sets: AccountName, AccountNameList
 Aliases: AccountName
 
 Required: True

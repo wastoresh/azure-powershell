@@ -16,6 +16,7 @@ using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
+using Microsoft.Rest.Azure;
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
@@ -34,6 +35,15 @@ namespace Microsoft.Azure.Commands.Management.Storage
         /// Account object parameter set 
         /// </summary>
         private const string AccountObjectParameterSet = "AccountObject";
+        /// <summary>
+        /// AccountName Parameter Set
+        /// </summary>
+        private const string AccountNameListParameterSet = "AccountNameList";
+
+        /// <summary>
+        /// Account object parameter set 
+        /// </summary>
+        private const string AccountObjectListParameterSet = "AccountObjectList";
 
         /// <summary>
         /// Share ResourceId  parameter set 
@@ -45,6 +55,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
             Mandatory = true,
             HelpMessage = "Resource Group Name.",
             ParameterSetName = AccountNameParameterSet)]
+        [Parameter(
+            Position = 0,
+            Mandatory = true,
+            HelpMessage = "Resource Group Name.",
+            ParameterSetName = AccountNameListParameterSet)]
         [ValidateNotNullOrEmpty]
         public string ResourceGroupName { get; set; }
 
@@ -53,6 +68,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
             Mandatory = true,
             HelpMessage = "Storage Account Name.",
             ParameterSetName = AccountNameParameterSet)]
+        [Parameter(
+            Position = 1,
+            Mandatory = true,
+            HelpMessage = "Storage Account Name.",
+            ParameterSetName = AccountNameListParameterSet)]
         [Alias(AccountNameAlias)]
         [ValidateNotNullOrEmpty]
         public string StorageAccountName { get; set; }
@@ -61,6 +81,10 @@ namespace Microsoft.Azure.Commands.Management.Storage
             HelpMessage = "Storage account object",
             ValueFromPipeline = true,
             ParameterSetName = AccountObjectParameterSet)]
+        [Parameter(Mandatory = true,
+            HelpMessage = "Storage account object",
+            ValueFromPipeline = true,
+            ParameterSetName = AccountObjectListParameterSet)]
         [ValidateNotNullOrEmpty]
         public PSStorageAccount StorageAccount { get; set; }
 
@@ -75,8 +99,29 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Alias("N", "ShareName")]
         [Parameter(HelpMessage = "Share Name",
-            Mandatory = false)]
+            Mandatory = true,
+            ParameterSetName = AccountObjectParameterSet)]
+        [Parameter(HelpMessage = "Share Name",
+            Mandatory = false,
+            ParameterSetName = AccountNameParameterSet)]
         public string Name { get; set; }
+
+        [Parameter(Mandatory = false,
+            HelpMessage = "Include deleted shares, by default list shares won't include deleted shares",
+            ParameterSetName = AccountNameListParameterSet)]
+        [Parameter(Mandatory = false,
+            HelpMessage = "Include deleted shares, by default list shares won't include deleted shares",
+            ParameterSetName = AccountObjectListParameterSet)]
+        public SwitchParameter IncludeDeleted { get; set; }
+
+        //[Parameter(Mandatory = false,
+        //    HelpMessage = "The fitler to list shares.",
+        //    ParameterSetName = AccountNameListParameterSet)]
+        //[Parameter(Mandatory = false,
+        //    HelpMessage = "The fitler to list shares.",
+        //    ParameterSetName = AccountObjectListParameterSet)]
+        //[ValidateNotNullOrEmpty]
+        //public string Filter { get; set; }
 
         public override void ExecuteCmdlet()
         {
@@ -85,6 +130,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
             switch (ParameterSetName)
             {
                 case AccountObjectParameterSet:
+                case AccountObjectListParameterSet:
                     this.ResourceGroupName = StorageAccount.ResourceGroupName;
                     this.StorageAccountName = StorageAccount.StorageAccountName;
                     break;
@@ -109,10 +155,23 @@ namespace Microsoft.Azure.Commands.Management.Storage
             }
             else
             {
-                var Shares = this.StorageClient.FileShares.List(
+                ListSharesExpand? listSharesExpand = null;
+                if (this.IncludeDeleted.IsPresent)
+                {
+                    listSharesExpand = ListSharesExpand.Deleted;
+                }
+                IPage<FileShareItem> shares = this.StorageClient.FileShares.List(
                            this.ResourceGroupName,
-                           this.StorageAccountName);
-                WriteShareList(Shares);
+                           this.StorageAccountName,
+                           //null,
+                           //filter: this.Filter,
+                           expand: listSharesExpand);
+                WriteShareList(shares);
+                while (shares.NextPageLink != null)
+                {
+                    shares = this.StorageClient.FileShares.ListNext(shares.NextPageLink);
+                    WriteShareList(shares);
+                }
             }
         }
     }
