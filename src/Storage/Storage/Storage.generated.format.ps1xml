@@ -378,7 +378,7 @@
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
-                <ScriptBlock>$_.Permissions.ToSymbolicString()</ScriptBlock>
+                <ScriptBlock>$_.Permissions.ToSymbolicPermissions()</ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
                 <Alignment>Left</Alignment>
@@ -513,7 +513,7 @@
                 <PropertyName>EntityId</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <ScriptBlock>$_.Permissions.ToSymbolicString()</ScriptBlock>
+                <ScriptBlock>$_.Permissions.ToSymbolicPermissions()</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
