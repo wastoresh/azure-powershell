@@ -153,12 +153,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 if (!InputObject.IsDirectory)
                 {
                     fileClient = InputObject.File;
-                    originalMetadata = InputObject.File.Metadata;
+                    originalMetadata = InputObject.Properties.Metadata;
                 }
                 else
                 {
                     dirClient = InputObject.Directory;
-                    originalMetadata = InputObject.Directory.Metadata;
+                    originalMetadata = InputObject.Properties.Metadata;
                     foundAFolder = true;
                 }
             }
