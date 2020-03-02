@@ -80,12 +80,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             if (GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient))
             {
                 // Directory
-                WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
+                WriteDataLakeGen2Item(localChannel, dirClient);
             }
             else 
             {
                 //File
-                WriteDataLakeGen2Item(Channel, fileClient, fetchPermission: true);
+                WriteDataLakeGen2Item(Channel, fileClient);
             }
 
             //CloudBlob blob = (CloudBlob)container.GetBlobReferenceFromServer(this.Path);

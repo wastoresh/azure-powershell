@@ -170,11 +170,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     //Set Permission
                     if (this.Permission != null || this.Owner != null || this.Group != null)
                     {
-                        PathAccessControl originPathAccessControl = dirClient.GetAccessControl().Value;
-                        //dirClient.SetPermissions(
-                        //    this.Permission != null ? PathPermissions.ParseSymbolicPermissions(this.Permission) : originPathAccessControl.Permissions,
-                        //    this.Owner != null ? this.Owner : originPathAccessControl.Owner,
-                        //    this.Group != null ? this.Group : originPathAccessControl.Group);
+                        //PathAccessControl originPathAccessControl = dirClient.GetAccessControl().Value;
                         dirClient.SetPermissions(
                             this.Permission != null ? PathPermissions.ParseSymbolicPermissions(this.Permission) : null,
                             this.Owner,
@@ -193,7 +189,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     //Set MetaData
                     SetBlobDirMetadata(dirClient, this.BlobMetadata, setToServer: true, originalMetadata: originalMetadata);
 
-                    WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
+                    WriteDataLakeGen2Item(localChannel, dirClient);
                 }
             }
             else
@@ -203,7 +199,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     //Set Permission
                     if (this.Permission != null || this.Owner != null || this.Group != null)
                     {
-                        PathAccessControl originPathAccessControl = dirClient.GetAccessControl().Value;
+                        //PathAccessControl originPathAccessControl = fileClient.GetAccessControl().Value;
                         //dirClient.SetPermissions(
                         //    this.Permission != null ? PathPermissions.ParseSymbolicPermissions(this.Permission) : originPathAccessControl.Permissions,
                         //    this.Owner != null ? this.Owner : originPathAccessControl.Owner,
@@ -226,7 +222,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     //Set MetaData
                     SetBlobMetaData(fileClient, this.BlobMetadata, setToServer: true, originalMetadata: originalMetadata);
 
-                    WriteDataLakeGen2Item(localChannel, fileClient, fetchPermission: true);
+                    WriteDataLakeGen2Item(localChannel, fileClient);
                 }
             }
         }

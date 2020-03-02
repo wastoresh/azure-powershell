@@ -85,6 +85,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
             }
             return psacls.ToArray();
         }
+
+        public string GetSymbolicRolePermissions()
+        {
+            return PathAccessControlExtensions.ToSymbolicRolePermissions(this.Permissions);
+        }
     }
 
     /// <summary>

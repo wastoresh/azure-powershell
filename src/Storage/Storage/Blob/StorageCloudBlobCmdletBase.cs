@@ -226,7 +226,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Write a datalake gen2 item  to output. If the input blob represent a folder of datalake gen2 , will output a folder, else output a file of datalake gen2
         /// </summary>
-        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeFileClient fileClient, bool fetchPermission = false, long? taskId = null)
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeFileClient fileClient, string ContinuationToken = null, long? taskId = null)
         {
             AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(fileClient);
             //if (!isBlobDirectory(blob)) //normal blob
@@ -248,6 +248,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             //    azureBlob = new AzureDataLakeGen2Item(blobDir);
             //}
             azureDataLakeGen2Item.Context = channel.StorageContext;
+            azureDataLakeGen2Item.ContinuationToken = ContinuationToken;
             //azureDataLakeGen2Item.ContinuationToken = continuationToken;
             if (taskId == null)
             {
@@ -262,7 +263,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Write a datalake gen2 folder to output.
         /// </summary>
-        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeDirectoryClient dirClient, bool fetchPermission = false)
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeDirectoryClient dirClient, string ContinuationToken = null)
         {
 
             //if (fetchPermission)
@@ -271,6 +272,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             //}
             AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(dirClient);
             azureDataLakeGen2Item.Context = channel.StorageContext;
+            azureDataLakeGen2Item.ContinuationToken = ContinuationToken;
             //azureDataLakeGen2Item.ContinuationToken = continuationToken;
             WriteObject(azureDataLakeGen2Item);
         }
@@ -336,15 +338,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         }
 
         /// <summary>
-        /// decide if a blob object represent a folder of datalake gen2
+        /// decide if a object represent a folder of datalake gen2
         /// </summary>
-        /// <param name="blob">the Blob Object</param>
+        /// <param name="blob">the File Object</param>
         /// <returns>return true if it represent a folder of datalake gen2</returns>
-        public static bool isBlobDirectory(CloudBlob blob)
+        public static bool isDirectory(PathProperties fileProperties)
         {
-            if (blob.Metadata.Contains(new KeyValuePair<string, string>("hdi_isfolder", "true"))
-                && blob.BlobType == BlobType.BlockBlob
-                && blob.Properties.Length == 0)
+            if (fileProperties.Metadata.Contains(new KeyValuePair<string, string>("hdi_isfolder", "true"))
+                && fileProperties.ContentLength == 0)
             {
                 return true;
             }
@@ -376,43 +377,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         }
 
         /// <summary>
-        /// Check if the DataLakeGen2 file exist, and return it if exist
-        /// </summary>
-        /// <param name="container">the container for the file</param>
-        /// <param name="path">the path for the file</param>
-        /// <returns>return the file object if exist, else return null</returns>
-        public static CloudBlockBlob GetExistBlockBlob(CloudBlobContainer container, string path)
-        {
-            CloudBlockBlob blob = container.GetBlockBlobReference(path);
-            if (blob.Exists() && !isBlobDirectory(blob))
-            {
-                return blob;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Check if the DataLakeGen2 folder exist, and return it if exist
-        /// </summary>
-        /// <param name="container">the container for the folder</param>
-        /// <param name="path">the path for the folder</param>
-        /// <returns>return the folder object if exist, else return null</returns>
-        public static CloudBlobDirectory GetExistBlobDirectory(CloudBlobContainer container, string path)
-        {
-            CloudBlobDirectory blobDir = container.GetDirectoryReference(path);
-            if (blobDir.Exists())
-            {
-                return blobDir;
-            }
-            else
-            {
-                return null;
-            }
-        }
-        /// <summary>
         /// Get an Exist DataLakeGen2Item
         /// </summary>
         /// <param name="container">the blob container</param>
@@ -420,28 +384,52 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <returns>return true if the item is a folder, else false</returns>
         public static bool GetExistDataLakeGen2Item(DataLakeFileSystemClient fileSystem, string path, out DataLakeFileClient fileClient, out DataLakeDirectoryClient dirClient)
         {
-            Pageable<PathItem> items = fileSystem.GetPaths(path);
-            PathItem current = items.GetEnumerator().Current;
-            if (current != null)
+            try
             {
-                if (current.IsDirectory != null && current.IsDirectory.Value) // Directory
+                fileClient = fileSystem.GetFileClient(path);
+                PathProperties properties = fileClient.GetProperties().Value;
+                if (isDirectory(properties))
                 {
                     dirClient = fileSystem.GetDirectoryClient(path);
                     fileClient = null;
                     return true;
                 }
-                else //File
+                else
                 {
-                    fileClient = fileSystem.GetFileClient(path);
                     dirClient = null;
                     return false;
                 }
             }
-            else
+            catch (RequestFailedException e) when (e.Status == 404)
             {
                 // TODO: through exception that the item not exist
-                throw new System.Exception();
+                throw new ArgumentException(string.Format("The Item in File System {0} on path {1} does not exist.", fileSystem.Name, path));
             }
+
+
+
+            //Pageable<PathItem> items = fileSystem.GetPaths(path);
+            //PathItem current = items.GetEnumerator().Current;
+            //if (current != null)
+            //{
+            //    if (current.IsDirectory != null && current.IsDirectory.Value) // Directory
+            //    {
+            //        dirClient = fileSystem.GetDirectoryClient(path);
+            //        fileClient = null;
+            //        return true;
+            //    }
+            //    else //File
+            //    {
+            //        fileClient = fileSystem.GetFileClient(path);
+            //        dirClient = null;
+            //        return false;
+            //    }
+            //}
+            //else
+            //{
+            //    // TODO: through exception that the item not exist
+            //    throw new System.Exception();
+            //}
         }
 
         //only support the common properties for DatalakeGen2File

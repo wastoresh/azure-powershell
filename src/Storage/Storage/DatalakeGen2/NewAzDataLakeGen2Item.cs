@@ -51,6 +51,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         private const string defaultFilePermission = "rw-rw-rw-";
         private const string defaultUmask = "----w-rwx";
 
+        private DataLakeFileSystemClient fileSystem;
+
         [Parameter(ValueFromPipeline = true, Position = 0, Mandatory = true, HelpMessage = "FileSystem name")]
         [ValidateNotNullOrEmpty]
         public string FileSystem { get; set; }
@@ -165,7 +167,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
 
             IStorageBlobManagement localChannel = Channel;
-            DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
+            fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
 
             if (this.Directory.IsPresent)
             {
@@ -193,7 +195,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                             //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null);
 
                     //blobDir.FetchAttributes();
-                    WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
+                    WriteDataLakeGen2Item(localChannel, dirClient);
                 }
             }
             else //create File
@@ -286,7 +288,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             SetBlobPermissionWithUMask((CloudBlockBlob)blob, this.Permission, this.Umask);
 
             blob.FetchAttributes();
-            //WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, taskId: data.TaskId);
+            WriteDataLakeGen2Item(localChannel, fileSystem.GetFileClient(blob.Name), taskId: data.TaskId);
         }
 
         /// <summary>
@@ -297,7 +299,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// <param name="blob">the blob object to set permission with umask</param>
         /// <param name="permission">permission string to set, in format "rwxrwxrwx", default value is "rwxrwxrwx"</param>
         /// <param name="umask">umask string to set, in format "rwxrwxrwx", default value is "----w-rwx"</param>
-        protected static void SetBlobPermissionWithUMask(CloudBlockBlob blob, string permission, String umask)
+        protected void SetBlobPermissionWithUMask(CloudBlockBlob blob, string permission, String umask)
         {
             // Don't need set permission when both input permission and umask are null
             if (string.IsNullOrEmpty(permission) && string.IsNullOrEmpty(umask))
@@ -335,7 +337,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
             //Set permission to blob
             //blob.PathProperties.Permissions = DataLakeModels.PathPermissions.ParseSymbolicPermissions(blobPermission);
-            blob.SetPermissions();
+            fileSystem.GetFileClient(blob.Name).SetPermissions(DataLakeModels.PathPermissions.ParseSymbolicPermissions(blobPermission));
         }
     }
 }

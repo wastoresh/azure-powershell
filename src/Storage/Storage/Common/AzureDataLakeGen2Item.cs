@@ -83,9 +83,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         public PathAccessControl AccessControl { get; private set; }
 
         /// <summary>
-        /// Blob length
+        /// Datalake Item list  ContinuationToken
         /// </summary>
-        [Ps1Xml(Label = "Length", Target = ViewControl.Table, ScriptBlock = "if ($_.IsDirectory -eq $false) {$_.Length}", Position = 2, TableColumnWidth = 15)]
+        public string ContinuationToken { get; set; }
+
+    /// <summary>
+    /// Blob length
+    /// </summary>
+    [Ps1Xml(Label = "Length", Target = ViewControl.Table, ScriptBlock = "if ($_.IsDirectory -eq $false) {$_.Length}", Position = 2, TableColumnWidth = 15)]
         public long Length { get; private set; }
 
         /// <summary>

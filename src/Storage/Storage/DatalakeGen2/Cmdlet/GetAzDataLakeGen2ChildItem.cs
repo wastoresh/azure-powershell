@@ -53,30 +53,34 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public SwitchParameter Recurse { get; set; }
 
-        //[Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
-        //public int? MaxCount
-        //{
-        //    get { return InternalMaxCount; }
-        //    set
-        //    {
-        //        if (value.Value <= 0)
-        //        {
-        //            InternalMaxCount = int.MaxValue;
-        //        }
-        //        else
-        //        {
-        //            InternalMaxCount = value.Value;
-        //        }
-        //    }
-        //}
+        [Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
+        public int? MaxCount
+        {
+            get { return InternalMaxCount; }
+            set
+            {
+                if (value.Value <= 0)
+                {
+                    InternalMaxCount = int.MaxValue;
+                }
+                else
+                {
+                    InternalMaxCount = value.Value;
+                }
+            }
+        }
 
-        //private int InternalMaxCount = int.MaxValue;
+        private int InternalMaxCount = int.MaxValue;
 
-        //[Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
-        //public BlobContinuationToken ContinuationToken { get; set; }
+        [Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
+        public string ContinuationToken { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
+
+        [Parameter(Mandatory = false, HelpMessage = "If speicify this parameter, the user identity values returned in the owner and group fields of each list entry will be transformed from Azure Active Directory Object IDs to User Principal Names. " 
+            + "If not speicify this parameter, the values will be returned as Azure Active Directory Object IDs. Note that group and application Object IDs are not translated because they do not have unique friendly names.")]
+        public SwitchParameter UserPrincipalName { get; set; }
 
         // Overwrite the useless parameter
         public override int? ConcurrentTaskCount { get; set; }
@@ -109,63 +113,41 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
             BlobRequestOptions requestOptions = RequestOptions;
             bool useFlatBlobListing = this.Recurse.IsPresent ? true : false;
-            //BlobListingDetails details = BlobListingDetails.Metadata | BlobListingDetails.Copy;
 
-            //int listCount = InternalMaxCount;
-            //int MaxListCount = 5000;
-            //int requestCount = MaxListCount;
-            //int realListCount = 0;
-            //BlobContinuationToken continuationToken = ContinuationToken;
-
-            //do
-            //{
-                //requestCount = Math.Min(listCount, MaxListCount);
-                //realListCount = 0;
-                Pageable<PathItem> items = fileSystem.GetPaths(this.Path, this.Recurse);
-
+            Pageable<PathItem> items = fileSystem.GetPaths(this.Path, this.Recurse, this.UserPrincipalName.IsPresent);
+            
+            
                 foreach (PathItem item in items)
                 {
                     if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
                     {
                         DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
-                        WriteDataLakeGen2Item(localChannel, dirClient, fetchPermission: true);
-                        //realListCount++;
+                        WriteDataLakeGen2Item(localChannel, dirClient, "");
                     }
                     else //File
                     {
                         DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
-                        WriteDataLakeGen2Item(Channel, fileClient, fetchPermission: true);
-                        //realListCount++;
+                        WriteDataLakeGen2Item(Channel, fileClient, "");
                     }
-
-                    //if (blob == null)
-                    //{
-                    //    CloudBlobDirectory blobDir = blobItem as CloudBlobDirectory;
-                    //    if (blobDir == null)
-                    //    {
-                    //        continue;
-                    //    }
-                    //    else
-                    //    {
-                    //        WriteDataLakeGen2Item(localChannel, blobDir, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
-                    //        realListCount++;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, blobResult.ContinuationToken, this.FetchPermission.IsPresent);
-                    //    realListCount++;
-                    //}
                 }
 
-            //    if (InternalMaxCount != int.MaxValue)
-            //    {
-            //        listCount -= realListCount;
-            //    }
+            //Page<PathItem> pageitems = items.AsPages(this.ContinuationToken, this.MaxCount).GetEnumerator().Current;
 
-            //    continuationToken = blobResult.ContinuationToken;
+
+            //foreach (PathItem item in pageitems.Values)
+            //{
+            //    if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
+            //    {
+            //        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
+            //        WriteDataLakeGen2Item(localChannel, dirClient, pageitems.ContinuationToken);
+            //    }
+            //    else //File
+            //    {
+            //        DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
+            //        WriteDataLakeGen2Item(Channel, fileClient, pageitems.ContinuationToken);
+            //    }
             //}
-            //while (listCount > 0 && continuationToken != null);
+
         }
     }
 }

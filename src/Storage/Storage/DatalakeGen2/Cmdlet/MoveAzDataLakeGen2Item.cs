@@ -65,24 +65,24 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public string DestPath { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "The umask restricts the permissions of the file or directory to be created. The resulting permission is given by p & ^u, where p is the permission and u is the umask. Symbolic (rwxrw-rw-) is supported. ")]
-        [ValidateNotNullOrEmpty]
-        [ValidatePattern("([r-][w-][x-]){3}")]
-        public string Umask { get; set; }
+        //[Parameter(Mandatory = false, HelpMessage = "The umask restricts the permissions of the file or directory to be created. The resulting permission is given by p & ^u, where p is the permission and u is the umask. Symbolic (rwxrw-rw-) is supported. ")]
+        //[ValidateNotNullOrEmpty]
+        //[ValidatePattern("([r-][w-][x-]){3}")]
+        //public string Umask { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "This parameter determines the behavior of the rename operation. The value must be \"legacy\" or \"posix\", and the default value will be \"posix\". ")]
-        public PathRenameMode PathRenameMode
-        {
-            get
-            {
-                return (pathRenameMode == null) ? PathRenameMode.Posix : pathRenameMode.Value;
-            }
-            set
-            {
-                pathRenameMode = value;
-            }
-        }
-        private PathRenameMode? pathRenameMode = null;
+        //[Parameter(Mandatory = false, HelpMessage = "This parameter determines the behavior of the rename operation. The value must be \"legacy\" or \"posix\", and the default value will be \"posix\". ")]
+        //public PathRenameMode PathRenameMode
+        //{
+        //    get
+        //    {
+        //        return (pathRenameMode == null) ? PathRenameMode.Posix : pathRenameMode.Value;
+        //    }
+        //    set
+        //    {
+        //        pathRenameMode = value;
+        //    }
+        //}
+        //private PathRenameMode? pathRenameMode = null;
 
         // Overwrite the useless parameter
         public override int? ConcurrentTaskCount { get; set; }
@@ -142,7 +142,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 if (ShouldProcess(srcBlobDir.Uri.ToString(), "Move Directory: "))
                 {
                     DataLakeDirectoryClient destBlobDir = srcBlobDir.Rename(this.DestPath).Value;
-                    WriteDataLakeGen2Item(localChannel, destBlobDir, fetchPermission: false);
+                    WriteDataLakeGen2Item(localChannel, destBlobDir);
                     //CloudBlobDirectory destBlobDir = destblobContainer.GetDirectoryReference(this.DestPath);
                     //srcBlobDir.Move(destBlobDir.Uri, null, null, requestOptions, OperationContext,
                     //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null,
@@ -156,7 +156,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 if (ShouldProcess(srcBlob.Uri.ToString(), "Move File: "))
                 {
                     DataLakeFileClient destBlob = srcBlob.Rename(this.DestPath).Value;
-                    WriteDataLakeGen2Item(localChannel, destBlob, fetchPermission: false);
+                    WriteDataLakeGen2Item(localChannel, destBlob);
                     //CloudBlockBlob destBlob = destblobContainer.GetBlockBlobReference(this.DestPath);
                     //(srcBlob).Move(destBlob.Uri, null, null, requestOptions, OperationContext,
                     //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null,

@@ -513,7 +513,7 @@
                 <PropertyName>EntityId</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <ScriptBlock>$_.Permissions.ToSymbolicPermissions()</ScriptBlock>
+                <ScriptBlock>$_.GetSymbolicRolePermissions()</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
