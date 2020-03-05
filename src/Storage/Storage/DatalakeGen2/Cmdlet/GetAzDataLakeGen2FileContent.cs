@@ -25,6 +25,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Security.Permissions;
 using System.Threading.Tasks;
+using Azure.Storage.Files.DataLake;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 {
@@ -74,6 +75,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         private bool checkMd5;
 
         private BlobToFileSystemNameResolver fileNameResolver;
+
+        private DataLakeFileClient fileClient;
 
         /// <summary>
         /// Initializes a new instance of the GetAzDataLakeGen2ItemContentCommand class.
@@ -126,7 +129,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 this.OutputStream).ConfigureAwait(false);
 
             //this.WriteCloudBlobObject(data.TaskId, data.Channel, blob);
-            //WriteDataLakeGen2Item(localChannel, (CloudBlockBlob)blob, taskId: data.TaskId);
+            WriteDataLakeGen2Item(localChannel, fileClient, taskId: data.TaskId);
         }
 
         /// <summary>
@@ -224,23 +227,26 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
+            IStorageBlobManagement localChannel = Channel;
+            BlobRequestOptions requestOptions = RequestOptions;
             if (AsJob.IsPresent)
             {
                 DoBeginProcessing();
             }
 
-            bool foundAFolder = false;
             CloudBlockBlob blob = null;
             if (ParameterSetName == ManualParameterSet)
             {
-                CloudBlobContainer container = GetCloudBlobContainerByName(Channel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
-                blob = container.GetBlockBlobReference(this.Path);
-                blob.FetchAttributes();
-                foundAFolder = isBlobDirectory(blob);
-                if (foundAFolder)
+                DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
+                DataLakeDirectoryClient dirClient;
+                if (GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient))
                 {
                     throw new ArgumentException(String.Format("The input FileSystem '{0}', path '{1}' point to a Directory, which don't have content to get.", this.FileSystem, this.Path));
                 }
+
+                CloudBlobContainer container = GetCloudBlobContainerByName(Channel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
+                blob = container.GetBlockBlobReference(this.Path);
+                blob.FetchAttributes();
             }
             else //BlobParameterSet
             {
@@ -248,6 +254,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 {
                     blob = new CloudBlockBlob(InputObject.File.Uri, Channel.StorageContext.StorageAccount.Credentials);
                     blob.FetchAttributes();
+                    fileClient = InputObject.File;
                 }
                 else
                 {

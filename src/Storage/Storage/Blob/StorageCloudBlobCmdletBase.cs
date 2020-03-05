@@ -377,7 +377,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         }
 
         /// <summary>
-        /// Get an Exist DataLakeGen2Item
+        /// Get an Exist DataLakeGen2Item, return true is the item is a folder, return false if it's File
         /// </summary>
         /// <param name="container">the blob container</param>
         /// <param name="path">the path of the Items</param>
@@ -459,10 +459,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Set properties to a datalake gen2 folder
         /// </summary>
-        /// <param name="blobDir">datalake gen2 folder</param>
+        /// <param name="dir">datalake gen2 folder</param>
         /// <param name="BlobDirProperties">properties to set</param>
         /// <param name="setToServer">True will set to server, false only set to the local folder object</param>
-        protected static PathHttpHeaders SetBlobDirProperties(DataLakeDirectoryClient blobDir, Hashtable BlobDirProperties, bool setToServer = true)
+        protected static PathHttpHeaders SetBlobDirProperties(DataLakeDirectoryClient dir, Hashtable BlobDirProperties, bool setToServer = true)
         {
             if (BlobDirProperties != null)
             {
@@ -471,7 +471,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 {
                     if (!validDatalakeGen2FolderProperties.ContainsKey(entry.Key.ToString()))
                     {
-                        throw new ArgumentException(String.Format(Resources.InvalidBlobProperties, entry.Key.ToString(), entry.Value.ToString()));
+                        throw new ArgumentException(String.Format("InvalidDataLakeDirectoryProperties", entry.Key.ToString(), entry.Value.ToString()));
                     }
                 }
 
@@ -488,9 +488,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                         action(headers, value);
                     }
                 }
-                if (setToServer && BlobDirProperties != null)
+                if (setToServer && dir != null)
                 {
-                    blobDir.SetHttpHeaders(new PathHttpHeaders());
+                    dir.SetHttpHeaders(headers);
                 }
                 return headers;
             }
@@ -503,10 +503,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Set properties to a datalake gen2 file
         /// </summary>
-        /// <param name="blob">datalake gen2 file</param>
+        /// <param name="file">datalake gen2 file</param>
         /// <param name="BlobProperties">properties to set</param>
         /// <param name="setToServer">True will set to server, false only set to the local file object</param>
-        protected static PathHttpHeaders SetBlobProperties(DataLakeFileClient blob, Hashtable BlobProperties, bool setToServer = true)
+        protected static PathHttpHeaders SetFileProperties(DataLakeFileClient file, Hashtable BlobProperties, bool setToServer = true)
         {
             if (BlobProperties != null)
             {
@@ -515,7 +515,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 {
                     if (!validDatalakeGen2FileProperties.ContainsKey(entry.Key.ToString()))
                     {
-                        throw new ArgumentException(String.Format(Resources.InvalidBlobProperties, entry.Key.ToString(), entry.Value.ToString()));
+                        throw new ArgumentException(String.Format("InvalidDataLakeFileProperties", entry.Key.ToString(), entry.Value.ToString()));
                     }
                 }
 
@@ -531,9 +531,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                         action(headers, value);
                     }
                 }
-                if (setToServer)
+                if (setToServer && file != null)
                 {
-                    blob.SetHttpHeaders(new PathHttpHeaders());
+                    file.SetHttpHeaders(headers);
                 }
                 return headers;
             }
@@ -546,10 +546,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Set Metadata to a datalake gen2 file
         /// </summary>
-        /// <param name="blob">datalake gen2 file</param>
+        /// <param name="file">datalake gen2 file</param>
         /// <param name="Metadata">Metadata to set</param>
         /// <param name="setToServer">True will set to server, false only set to the local file object</param>
-        protected static IDictionary<string, string> SetBlobMetaData(DataLakeFileClient blob, Hashtable Metadata, bool setToServer = true, IDictionary<string, string> originalMetadata = null)
+        protected static IDictionary<string, string> SetFileMetaData(DataLakeFileClient file, Hashtable Metadata, bool setToServer = true, IDictionary<string, string> originalMetadata = null)
         {
             if (Metadata != null)
             {
@@ -576,9 +576,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                         metadata.Add(key, value);
                     }
                 }
-                if (setToServer)
+                if (setToServer && file != null)
                 {
-                    blob.SetMetadata(metadata);
+                    file.SetMetadata(metadata);
                 }
                 return metadata;
             }
@@ -591,10 +591,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Set Metadata to a datalake gen2 folder
         /// </summary>
-        /// <param name="blobDir">datalake gen2 folder</param>
+        /// <param name="dir">datalake gen2 folder</param>
         /// <param name="Metadata">Metadata to set</param>
         /// <param name="setToServer">True will set to server, false only set to the local folder object</param>
-        protected static IDictionary<string, string> SetBlobDirMetadata(DataLakeDirectoryClient blobDir, Hashtable Metadata, bool setToServer = true, IDictionary<string, string> originalMetadata = null)
+        protected static IDictionary<string, string> SetBlobDirMetadata(DataLakeDirectoryClient dir, Hashtable Metadata, bool setToServer = true, IDictionary<string, string> originalMetadata = null)
         {
             if (Metadata != null)
             {
@@ -621,9 +621,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                         metadata.Add(key, value);
                     }
                 }
-                if (setToServer)
+                if (setToServer && dir != null)
                 {
-                    blobDir.SetMetadata(metadata);
+                    dir.SetMetadata(metadata);
                 }
                 return metadata;
             }

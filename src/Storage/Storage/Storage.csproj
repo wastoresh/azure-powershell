@@ -20,11 +20,7 @@
     <Copy SourceFiles="@(PreLoadAssemblies)" DestinationFolder="$(TargetDir)\PreloadAssemblies" />
     <Copy SourceFiles="@(PreLoadAssemblies)" DestinationFolder="$(TargetDir)" />
   </Target>
-  
-  <ItemGroup>
-    <Compile Remove="DatalakeGen2\Cmdlet\GetAzDataLakeGen2FileContent.cs" />
-    <Compile Remove="DatalakeGen2\Cmdlet\NewAzDataLakeGen2Item.cs" />
-  </ItemGroup>
+ 
 
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.3.0" />

@@ -217,10 +217,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     }
 
                     // Set Properties
-                    SetBlobProperties(fileClient, this.BlobProperties, setToServer: true);
+                    SetFileProperties(fileClient, this.BlobProperties, setToServer: true);
 
                     //Set MetaData
-                    SetBlobMetaData(fileClient, this.BlobMetadata, setToServer: true, originalMetadata: originalMetadata);
+                    SetFileMetaData(fileClient, this.BlobMetadata, setToServer: true, originalMetadata: originalMetadata);
 
                     WriteDataLakeGen2Item(localChannel, fileClient);
                 }
