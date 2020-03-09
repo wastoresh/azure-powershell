@@ -23,6 +23,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
     using System.Threading;
     using global::Azure;
     using System.Collections.Generic;
+    using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
 
     /// <summary>
     /// Azure storage blob object
@@ -87,10 +88,10 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// </summary>
         public string ContinuationToken { get; set; }
 
-    /// <summary>
-    /// Blob length
-    /// </summary>
-    [Ps1Xml(Label = "Length", Target = ViewControl.Table, ScriptBlock = "if ($_.IsDirectory -eq $false) {$_.Length}", Position = 2, TableColumnWidth = 15)]
+        /// <summary>
+        /// Blob length
+        /// </summary>
+        [Ps1Xml(Label = "Length", Target = ViewControl.Table, ScriptBlock = "if ($_.IsDirectory -eq $false) {$_.Length}", Position = 2, TableColumnWidth = 15)]
         public long Length { get; private set; }
 
         /// <summary>
@@ -116,12 +117,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// </summary>
         [Ps1Xml(Label = "Group", Target = ViewControl.Table, Position = 7, TableColumnWidth = 10)]
         public string Group { get; set; }
-
-        ///// <summary>
-        ///// Blob continuation token
-        ///// </summary>
-        //public BlobContinuationToken ContinuationToken { get; set; }
-
+        
         /// <summary>
         /// Azure DataLakeGen2 Item constructor
         /// </summary>
@@ -154,19 +150,60 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             Name = directoryClient.Name;
             Path = directoryClient.Path;
             Directory = directoryClient;
-            Properties = directoryClient.GetProperties();
-            AccessControl = directoryClient.GetAccessControl();
-            Length = Properties.ContentLength;
-            ContentType = Properties.ContentType;
-            LastModified = Properties.LastModified;
             IsDirectory = true;
-            //PathAccessControl acl = fileClient.GetAccessControl();
+            if (directoryClient.Path != "/") //is root directory
+            {
+                Properties = directoryClient.GetProperties();
+                Length = Properties.ContentLength;
+                ContentType = Properties.ContentType;
+                LastModified = Properties.LastModified;
+            }
+            AccessControl = directoryClient.GetAccessControl();
             Permissions = AccessControl.Permissions;
             ACL = PSPathAccessControlEntry.ParsePSPathAccessControlEntrys(AccessControl.AccessControlList);
             Owner = AccessControl.Owner;
             Group = AccessControl.Group;
         }
+
+
+        /// <summary>
+        /// Azure DataLakeGen2 Item constructor
+        /// </summary>
+        /// <param name="item">datalake gen2 listout item</param>
+        public AzureDataLakeGen2Item(PathItem item, DataLakeFileSystemClient fileSystem, bool fetchPermission = false)
+        {
+            this.Name = item.Name;
+            this.Path = item.Name;
+            this.IsDirectory = item.IsDirectory is null ? false : item.IsDirectory.Value;
+            DataLakePathClient pathclient = null;
+            if (this.IsDirectory) // Directory
+            {
+                this.Directory = fileSystem.GetDirectoryClient(item.Name);
+                pathclient = this.Directory;
+            }
+            else //File
+            {
+                this.File = fileSystem.GetFileClient(item.Name);
+                pathclient = this.File;
+            }
+
+            this.Owner = item.Owner;
+            this.Group = item.Group;
+            this.Permissions = PathPermissions.ParseSymbolicPermissions(item.Permissions);
+            this.LastModified = item.LastModified;
+            this.Length = item.ContentLength is null ? 0 : item.ContentLength.Value;
+
+            if (fetchPermission)
+            {
+                this.Properties = pathclient.GetProperties();
+                this.AccessControl = pathclient.GetAccessControl();
+                this.ACL = PSPathAccessControlEntry.ParsePSPathAccessControlEntrys(this.AccessControl.AccessControlList);
+                this.ContentType = Properties.ContentType;
+            }
+        }
     }
+
+
 
     //public class PSDataLakeFile : DataLakeFileClient
     //{

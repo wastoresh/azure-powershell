@@ -192,9 +192,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                         metadata, 
                         this.Permission, 
                         this.Umask != null ? DataLakeModels.PathPermissions.ParseSymbolicPermissions(this.Umask).ToOctalPermissions() : null);
-                            //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null);
 
-                    //blobDir.FetchAttributes();
                     WriteDataLakeGen2Item(localChannel, dirClient);
                 }
             }
@@ -268,8 +266,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 CloudBlob destBlob = destination as CloudBlob;
                 SetAzureBlobContentCommand.SetBlobProperties(destBlob, this.BlobProperties);
                 SetAzureBlobContentCommand.SetBlobMeta(destBlob, this.BlobMetadata);
-                //SetBlobProperties((CloudBlockBlob)destBlob, this.BlobProperties, false);
-                //SetBlobMetaData((CloudBlockBlob)destBlob, this.BlobMetadata, false);
             };
 
             await DataMovementTransferHelper.DoTransfer(() =>
@@ -335,7 +331,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
 
             //Set permission to blob
-            //blob.PathProperties.Permissions = DataLakeModels.PathPermissions.ParseSymbolicPermissions(blobPermission);
             fileSystem.GetFileClient(blob.Name).SetPermissions(DataLakeModels.PathPermissions.ParseSymbolicPermissions(blobPermission));
         }
     }

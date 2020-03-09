@@ -45,9 +45,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "Fetch Blob permission/ACL/owner.")]
+        [Alias("FetchPermission")]
+        [Parameter(Mandatory = false, HelpMessage = "Fetch the datalake item properties and ACL.")]
         [ValidateNotNullOrEmpty]
-        public SwitchParameter FetchPermission { get; set; }
+        public SwitchParameter FetchProperties{ get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "Indicates if will recursively get the Child Item. The default is false.")]
         [ValidateNotNullOrEmpty]
@@ -114,40 +115,28 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             BlobRequestOptions requestOptions = RequestOptions;
             bool useFlatBlobListing = this.Recurse.IsPresent ? true : false;
 
-            Pageable<PathItem> items = fileSystem.GetPaths(this.Path, this.Recurse, this.UserPrincipalName.IsPresent);
-            
-            
-                foreach (PathItem item in items)
-                {
-                    if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
-                    {
-                        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
-                        WriteDataLakeGen2Item(localChannel, dirClient, "");
-                    }
-                    else //File
-                    {
-                        DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
-                        WriteDataLakeGen2Item(Channel, fileClient, "");
-                    }
-                }
+            IEnumerator<Page<PathItem>> enumerator = fileSystem.GetPaths(this.Path, this.Recurse, this.UserPrincipalName.IsPresent)
+                .AsPages(this.ContinuationToken, this.MaxCount)
+                .GetEnumerator();
 
-            //Page<PathItem> pageitems = items.AsPages(this.ContinuationToken, this.MaxCount).GetEnumerator().Current;
-
-
-            //foreach (PathItem item in pageitems.Values)
-            //{
-            //    if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
-            //    {
-            //        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
-            //        WriteDataLakeGen2Item(localChannel, dirClient, pageitems.ContinuationToken);
-            //    }
-            //    else //File
-            //    {
-            //        DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
-            //        WriteDataLakeGen2Item(Channel, fileClient, pageitems.ContinuationToken);
-            //    }
-            //}
-
+            Page<PathItem> page;
+            enumerator.MoveNext();
+            page = enumerator.Current;
+            foreach (PathItem item in page.Values)
+            {
+                WriteDataLakeGen2Item(localChannel, item, fileSystem, page.ContinuationToken, this.FetchProperties.IsPresent);
+                //    if (item.IsDirectory != null && item.IsDirectory.Value) // Directory
+                //    {
+                //        DataLakeDirectoryClient dirClient = fileSystem.GetDirectoryClient(item.Name);
+                //        WriteDataLakeGen2Item(localChannel, item, fileSystem, page.ContinuationToken);
+                //    }
+                //    else //File
+                //    {
+                //        DataLakeFileClient fileClient = fileSystem.GetFileClient(item.Name);
+                //        WriteDataLakeGen2Item(localChannel, fileClient, page.ContinuationToken);
+                //    }
+                //}
+            }
         }
     }
 }

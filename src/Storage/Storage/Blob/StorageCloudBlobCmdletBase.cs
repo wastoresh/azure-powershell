@@ -226,29 +226,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Write a datalake gen2 item  to output. If the input blob represent a folder of datalake gen2 , will output a folder, else output a file of datalake gen2
         /// </summary>
-        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeFileClient fileClient, string ContinuationToken = null, long? taskId = null)
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeFileClient fileClient, long? taskId = null)
         {
             AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(fileClient);
-            //if (!isBlobDirectory(blob)) //normal blob
-            //{
-            //    if (fetchPermission)
-            //    {
-            //        blob.FetchAccessControls();
-            //    }
-            //    azureBlob = new AzureDataLakeGen2Item(blob);
-            //}
-            //else //blobDir
-            //{
-            //    CloudBlobDirectory blobDir = blob.Container.GetDirectoryReference(blob.Name);
-            //    blobDir.FetchAttributes();
-            //    if (fetchPermission)
-            //    {
-            //        blobDir.FetchAccessControls();
-            //    }
-            //    azureBlob = new AzureDataLakeGen2Item(blobDir);
-            //}
             azureDataLakeGen2Item.Context = channel.StorageContext;
-            azureDataLakeGen2Item.ContinuationToken = ContinuationToken;
             //azureDataLakeGen2Item.ContinuationToken = continuationToken;
             if (taskId == null)
             {
@@ -263,7 +244,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <summary>
         /// Write a datalake gen2 folder to output.
         /// </summary>
-        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeDirectoryClient dirClient, string ContinuationToken = null)
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, DataLakeDirectoryClient dirClient)
         {
 
             //if (fetchPermission)
@@ -271,6 +252,22 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             //    blobDir.FetchAccessControls();
             //}
             AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(dirClient);
+            azureDataLakeGen2Item.Context = channel.StorageContext;
+            //azureDataLakeGen2Item.ContinuationToken = continuationToken;
+            WriteObject(azureDataLakeGen2Item);
+        }
+
+        /// <summary>
+        /// Write a datalake gen2 pathitem to output.
+        /// </summary>
+        internal void WriteDataLakeGen2Item(IStorageBlobManagement channel, PathItem item, DataLakeFileSystemClient fileSystem, string ContinuationToken = null, bool fetchPermission = false)
+        {
+
+            //if (fetchPermission)
+            //{
+            //    blobDir.FetchAccessControls();
+            //}
+            AzureDataLakeGen2Item azureDataLakeGen2Item = new AzureDataLakeGen2Item(item, fileSystem, fetchPermission);
             azureDataLakeGen2Item.Context = channel.StorageContext;
             azureDataLakeGen2Item.ContinuationToken = ContinuationToken;
             //azureDataLakeGen2Item.ContinuationToken = continuationToken;
@@ -386,6 +383,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         {
             try
             {
+                if (string.IsNullOrEmpty(path))
+                {
+                    dirClient = fileSystem.GetRootDirectoryClient();
+                    fileClient = null;
+                    return true;
+                }
+
                 fileClient = fileSystem.GetFileClient(path);
                 PathProperties properties = fileClient.GetProperties().Value;
                 if (isDirectory(properties))
@@ -553,29 +557,29 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         {
             if (Metadata != null)
             {
-                IDictionary<string, string> metadata;
-                if (originalMetadata == null)
-                {
-                    metadata = new Dictionary<string, string>();
-                }
-                else
-                {
-                    metadata = originalMetadata;
-                }
-                foreach (DictionaryEntry entry in Metadata)
-                {
-                    string key = entry.Key.ToString();
-                    string value = entry.Value.ToString();
+                IDictionary<string, string> metadata = GetUpdatedMetaData(Metadata, originalMetadata);
+                //if (originalMetadata == null)
+                //{
+                //    metadata = new Dictionary<string, string>();
+                //}
+                //else
+                //{
+                //    metadata = originalMetadata;
+                //}
+                //foreach (DictionaryEntry entry in Metadata)
+                //{
+                //    string key = entry.Key.ToString();
+                //    string value = entry.Value.ToString();
 
-                    if (metadata.ContainsKey(key))
-                    {
-                        metadata[key] = value;
-                    }
-                    else
-                    {
-                        metadata.Add(key, value);
-                    }
-                }
+                //    if (metadata.ContainsKey(key))
+                //    {
+                //        metadata[key] = value;
+                //    }
+                //    else
+                //    {
+                //        metadata.Add(key, value);
+                //    }
+                //}
                 if (setToServer && file != null)
                 {
                     file.SetMetadata(metadata);
@@ -595,6 +599,45 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// <param name="Metadata">Metadata to set</param>
         /// <param name="setToServer">True will set to server, false only set to the local folder object</param>
         protected static IDictionary<string, string> SetBlobDirMetadata(DataLakeDirectoryClient dir, Hashtable Metadata, bool setToServer = true, IDictionary<string, string> originalMetadata = null)
+        {
+            if (Metadata != null)
+            {
+                IDictionary<string, string> metadata = GetUpdatedMetaData (Metadata, originalMetadata);
+                //if (originalMetadata == null)
+                //{
+                //    metadata = new Dictionary<string, string>();
+                //}
+                //else
+                //{
+                //    metadata = originalMetadata;
+                //}
+                //foreach (DictionaryEntry entry in Metadata)
+                //{
+                //    string key = entry.Key.ToString();
+                //    string value = entry.Value.ToString();
+
+                //    if (metadata.ContainsKey(key))
+                //    {
+                //        metadata[key] = value;
+                //    }
+                //    else
+                //    {
+                //        metadata.Add(key, value);
+                //    }
+                //}
+                if (setToServer && dir != null)
+                {
+                    dir.SetMetadata(metadata);
+                }
+                return metadata;
+            }
+            else
+            {
+                return originalMetadata;
+            }
+        }
+
+        public static IDictionary<string, string> GetUpdatedMetaData(Hashtable Metadata, IDictionary<string, string> originalMetadata = null)
         {
             if (Metadata != null)
             {
@@ -621,10 +664,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                         metadata.Add(key, value);
                     }
                 }
-                if (setToServer && dir != null)
-                {
-                    dir.SetMetadata(metadata);
-                }
                 return metadata;
             }
             else
@@ -645,20 +684,28 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 throw new ArgumentException(String.Format(Resources.InvalidContainerName, fileSystemName));
             }
 
-            BlobRequestOptions requestOptions = RequestOptions;
-
-            //// TODO: need update for other credential, and check exist
             Uri fileSystemUri = localChannel.StorageContext.StorageAccount.CreateCloudBlobClient().GetContainerReference(fileSystemName).Uri;
-            DataLakeFileSystemClient fileSystem = new DataLakeFileSystemClient(fileSystemUri, new StorageSharedKeyCredential(localChannel.StorageContext.StorageAccountName, localChannel.StorageContext.StorageAccount.Credentials.ExportBase64EncodedKey()));
+            DataLakeFileSystemClient fileSystem;
+
+            if (localChannel.StorageContext.StorageAccount.Credentials.IsToken) //Oauth
+            {
+                fileSystem = new DataLakeFileSystemClient(fileSystemUri, localChannel.StorageContext.Track2OauthToken);
+            }
+            else if (localChannel.StorageContext.StorageAccount.Credentials.IsSAS) //SAS
+            {
+                fileSystem = new DataLakeFileSystemClient(new Uri (fileSystemUri.ToString() + localChannel.StorageContext.StorageAccount.Credentials.SASToken));
+            }
+            else if (localChannel.StorageContext.StorageAccount.Credentials.IsSharedKey) //Shared Key
+            {
+                fileSystem = new DataLakeFileSystemClient(fileSystemUri,
+                     new StorageSharedKeyCredential(localChannel.StorageContext.StorageAccountName, localChannel.StorageContext.StorageAccount.Credentials.ExportBase64EncodedKey()));
+            }
+            else //Anonymous
+            {
+                fileSystem = new DataLakeFileSystemClient(fileSystemUri);
+            }
 
             return fileSystem;
-            //if (!skipCheckExists && container.ServiceClient.Credentials.IsSharedKey
-            //    && !await localChannel.DoesContainerExistAsync(container, requestOptions, OperationContext, CmdletCancellationToken).ConfigureAwait(false))
-            //{
-            //    throw new ArgumentException(String.Format(Resources.ContainerNotFound, containerName));
-            //}
-
-            //return container;
         }
     }
 }

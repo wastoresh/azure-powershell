@@ -241,19 +241,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 DataLakeDirectoryClient dirClient;
                 if (GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient))
                 {
-                    throw new ArgumentException(String.Format("The input FileSystem '{0}', path '{1}' point to a Directory, which don't have content to get.", this.FileSystem, this.Path));
+                    throw new ArgumentException(String.Format("The input FileSystem '{0}', path '{1}' point to a Directory, can't download it.", this.FileSystem, this.Path));
                 }
 
                 CloudBlobContainer container = GetCloudBlobContainerByName(Channel, this.FileSystem).ConfigureAwait(false).GetAwaiter().GetResult();
                 blob = container.GetBlockBlobReference(this.Path);
-                blob.FetchAttributes();
             }
             else //BlobParameterSet
             {
                 if (!InputObject.IsDirectory)
                 {
                     blob = new CloudBlockBlob(InputObject.File.Uri, Channel.StorageContext.StorageAccount.Credentials);
-                    blob.FetchAttributes();
                     fileClient = InputObject.File;
                 }
                 else

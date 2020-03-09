@@ -25,6 +25,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Collections;
     using System.Collections.Generic;
     using global::Azure.Storage.Files.DataLake;
+    using global::Azure;
 
     /// <summary>
     /// create a new azure FileSystem
@@ -64,6 +65,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(Mandatory = true, HelpMessage = "Dest item path")]
         [ValidateNotNullOrEmpty]
         public string DestPath { get; set; }
+
+        [Parameter(HelpMessage = "Force to remove the ImmutabilityPolicy.")]
+        public SwitchParameter Force { get; set; }
 
         //[Parameter(Mandatory = false, HelpMessage = "The umask restricts the permissions of the file or directory to be created. The resulting permission is given by p & ^u, where p is the permission and u is the umask. Symbolic (rwxrw-rw-) is supported. ")]
         //[ValidateNotNullOrEmpty]
@@ -141,28 +145,48 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             {
                 if (ShouldProcess(srcBlobDir.Uri.ToString(), "Move Directory: "))
                 {
-                    DataLakeDirectoryClient destBlobDir = srcBlobDir.Rename(this.DestPath).Value;
-                    WriteDataLakeGen2Item(localChannel, destBlobDir);
-                    //CloudBlobDirectory destBlobDir = destblobContainer.GetDirectoryReference(this.DestPath);
-                    //srcBlobDir.Move(destBlobDir.Uri, null, null, requestOptions, OperationContext,
-                    //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null,
-                    //this.pathRenameMode);
-                    //destBlobDir.FetchAttributes();
-                    //WriteDataLakeGen2Item(localChannel, destBlobDir, null, fetchPermission: true);
+                    // check dest exist
+                    bool destExist = true;
+                    DataLakeFileSystemClient destFileSystem = GetFileSystemClientByName(localChannel, this.DestFileSystem != null? this.DestFileSystem : this.FileSystem);
+                    DataLakeDirectoryClient destBlobDir = destFileSystem.GetDirectoryClient(this.DestPath);
+                    try
+                    {
+                        destBlobDir.GetProperties();
+                    }
+                    catch (RequestFailedException e) when (e.Status == 404)
+                    {
+                        destExist = false;
+                    }
+
+                    if (this.Force || !destExist || ShouldContinue(string.Format("Overwrite destination {0}", destBlobDir.Uri), ""))
+                    {
+                        destBlobDir = srcBlobDir.Rename(this.DestPath, this.DestFileSystem).Value;
+                        WriteDataLakeGen2Item(localChannel, destBlobDir);
+                    }
                 }
             }
             else
             {
-                if (ShouldProcess(srcBlob.Uri.ToString(), "Move File: "))
+                // check dest exist
+                bool destExist = true;
+                DataLakeFileSystemClient destFileSystem = GetFileSystemClientByName(localChannel, this.DestFileSystem != null ? this.DestFileSystem : this.FileSystem);
+                DataLakeFileClient destBlob = destFileSystem.GetFileClient(this.DestPath);
+                try
                 {
-                    DataLakeFileClient destBlob = srcBlob.Rename(this.DestPath).Value;
-                    WriteDataLakeGen2Item(localChannel, destBlob);
-                    //CloudBlockBlob destBlob = destblobContainer.GetBlockBlobReference(this.DestPath);
-                    //(srcBlob).Move(destBlob.Uri, null, null, requestOptions, OperationContext,
-                    //this.Umask != null ? PathPermissions.ParseSymbolic(this.Umask) : null,
-                    //this.pathRenameMode);
-                    //destBlob.FetchAttributes();
-                    //WriteDataLakeGen2Item(Channel, destBlob, null, fetchPermission: true);
+                    destBlob.GetProperties();
+                }
+                catch (RequestFailedException e) when (e.Status == 404)
+                {
+                    destExist = false;
+                }
+
+                if (this.Force || !destExist || ShouldContinue(string.Format("Overwrite destination {0}", destBlob.Uri), ""))
+                {
+                    if (ShouldProcess(srcBlob.Uri.ToString(), "Move File: "))
+                    {
+                        destBlob = srcBlob.Rename(this.DestPath, this.DestFileSystem).Value;
+                        WriteDataLakeGen2Item(localChannel, destBlob);
+                    }
                 }
             }
 
