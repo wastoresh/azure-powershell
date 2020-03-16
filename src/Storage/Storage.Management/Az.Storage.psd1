@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '2.2.0'
+ModuleVersion = '2.2.10'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core', 'Desktop'
@@ -176,7 +176,9 @@ CmdletsToExport = 'Get-AzStorageAccount', 'Get-AzStorageAccountKey',
                'New-AzStorageObjectReplicationPolicyRule', 
                'Set-AzStorageObjectReplicationPolicy', 
                'Get-AzStorageObjectReplicationPolicy', 
-               'Remove-AzStorageObjectReplicationPolicy'
+               'Remove-AzStorageObjectReplicationPolicy',
+               'Set-AzDataLakeGen2AclRecursive','Update-AzDataLakeGen2AclRecursive',
+               'Remove-AzDataLakeGen2AclRecursive'
 
 # Variables to export from this module
 # VariablesToExport = @()
