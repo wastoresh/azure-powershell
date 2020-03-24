@@ -67,20 +67,32 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             {
                 if (ShouldProcess(dirClient.Uri.ToString(), "Update Acl recursively on Directory: "))
                 {
+                    do
+                    {
                         dirClient.UpdateAccessControlRecursive(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
-                                this.batchSize,
-                                GetProgressHandler(),
-                                this.StopOnFailure.IsPresent);
+                            GetProgressHandler(),
+                            new AccessControlRecursiveChangeOptions()
+                            {
+                                BatchSize = this.batchSize
+                            },
+                            continuationToken);
+                    } while (continuationToken != null);
                 }
             }
             else
             {
                 if (ShouldProcess(fileClient.Uri.ToString(), "Update Acl recursively on File: "))
                 {
-                    fileClient.UpdateAccessControlRecursive(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
-                        this.batchSize,
-                        GetProgressHandler(),
-                        this.StopOnFailure.IsPresent);
+                    do
+                    {
+                        fileClient.UpdateAccessControlRecursive(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
+                            GetProgressHandler(),
+                            new AccessControlRecursiveChangeOptions()
+                            {
+                                BatchSize = this.batchSize
+                            },
+                            continuationToken);
+                    } while (continuationToken != null);
                 }
             }
             WriteResult();

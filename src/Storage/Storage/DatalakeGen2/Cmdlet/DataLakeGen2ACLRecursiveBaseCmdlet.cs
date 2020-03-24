@@ -22,14 +22,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using global::Azure.Storage.Files.DataLake.Models;
     using System;
     using System.Collections.Generic;
+    using global::Azure;
 
     public abstract class DataLakeGen2ACLRecursiveBaseCmdlet : StorageCloudBlobCmdletBase
     {
         protected static readonly object ConsoleOutputLock = new object();
-        protected  List<ChangeAccessControlResultFailedEntry> FailedEntries = new List<ChangeAccessControlResultFailedEntry>();
-        protected int totalDirectoriesSuccessfulCount = 0;
-        protected int totalFilesSuccessfulCount = 0;
-        protected int totalFailureCount = 0;
+        protected  List<AccessControlRecursiveChangeFailure> FailedEntries = new List<AccessControlRecursiveChangeFailure>();
+        protected long totalDirectoriesSuccessfulCount = 0;
+        protected long totalFilesSuccessfulCount = 0;
+        protected long totalFailureCount = 0;
+        protected string continuationToken = null;
         protected string summaryString;
         protected string Operator = "Change";
 
@@ -47,9 +49,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public PSPathAccessControlEntry[] Acl { get; set; }
 
-        [Parameter(Mandatory = false,
-            HelpMessage = "Set this parameter to make the transaction stop at first batch that has any path that failed to change Access Control. Default won't stop.")]
-        public SwitchParameter StopOnFailure { get; set; }
+        //[Parameter(Mandatory = false,
+        //    HelpMessage = "Set this parameter to make the transaction stop at first batch that has any path that failed to change Access Control. Default won't stop.")]
+        //public SwitchParameter StopOnFailure { get; set; }
 
         [Parameter(Mandatory = false,
             HelpMessage = "If data set size exceeds batch size then operation will be split into multiple requests so that progress can be tracked. Batch size should be between 1 and 2000. Default is 2000.")]
@@ -74,7 +76,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         public override int? ClientTimeoutPerRequest { get; set; }
         public override int? ServerTimeoutPerRequest { get; set; }
         
-        protected IProgress<ChangeAccessControlPartialResult> GetProgressHandler()
+        protected IProgress<Response<AccessControlRecursiveChanges>> GetProgressHandler()
         {
             if (this.progressRecord == null)
             {
@@ -88,10 +90,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 {
                     // Size of the source file might be 0, when it is, directly treat the progress as 100 percent.
                     //progressRecord.PercentComplete = (totalTransferLength == 0) ? 100 : (int)(transferProgress.BytesTransferred * 100 / totalTransferLength);
-                    totalDirectoriesSuccessfulCount += setProgress.DirectoriesSuccessfulCount;
-                    totalFilesSuccessfulCount += setProgress.FilesSuccessfulCount;
-                    totalFailureCount += setProgress.FailureCount;
-                    int total = totalDirectoriesSuccessfulCount + totalFilesSuccessfulCount + totalFailureCount;
+                    totalDirectoriesSuccessfulCount += setProgress.Value.ChangedDirectoriesCount;
+                    totalFilesSuccessfulCount += setProgress.Value.ChangedFilesCount;
+                    totalFailureCount += setProgress.Value.FailedChangesCount;
+                    continuationToken = setProgress.Value.ContinuationToken;
+                    long total = totalDirectoriesSuccessfulCount + totalFilesSuccessfulCount + totalFailureCount;
                     summaryString = $"Total Finished: {total}, Directories Success: {totalDirectoriesSuccessfulCount},  File Success: {totalFilesSuccessfulCount}, Failed: {totalFailureCount}";
                     progressRecord.StatusDescription = summaryString;
                     //progressRecord.PercentComplete = (progressRecord.PercentComplete + 10) % 110;
@@ -123,21 +126,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         }       
     }
 
-    public class ChangeChangeAccessControlPartialResultProgress : IProgress<ChangeAccessControlPartialResult>
+    public class ChangeChangeAccessControlPartialResultProgress : IProgress<Response<AccessControlRecursiveChanges>>
     {
-        private Action<ChangeAccessControlPartialResult> progressHandler;
-        private List<ChangeAccessControlResultFailedEntry> FailedEntries = null;
+        private Action<Response<AccessControlRecursiveChanges>> progressHandler;
+        private List<AccessControlRecursiveChangeFailure> FailedEntries = null;
 
-        public ChangeChangeAccessControlPartialResultProgress(List<ChangeAccessControlResultFailedEntry> failedEntries, Action<ChangeAccessControlPartialResult> progressHandler)
+        public ChangeChangeAccessControlPartialResultProgress(List<AccessControlRecursiveChangeFailure> failedEntries, Action<Response<AccessControlRecursiveChanges>> progressHandler)
         {
             this.FailedEntries = failedEntries;
             this.progressHandler = progressHandler;
         }
 
-        public void Report(ChangeAccessControlPartialResult value)
+        public void Report(Response<AccessControlRecursiveChanges> value)
         {
             // Console.WriteLine(String.Format("success dir: {0}, success file: {1}, failed items: {2}", value.DirectoriesSuccessfulCount, value.FilesSuccessfulCount, value.FailureCount));
-            this.FailedEntries.AddRange(value.FailedEntries);
+            this.FailedEntries.AddRange(value.Value.FailedEntries);
             this.progressHandler(value);
             
         }

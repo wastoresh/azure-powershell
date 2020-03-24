@@ -73,12 +73,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
             List<RemovePathAccessControlItem> acls = new List<RemovePathAccessControlItem>();
             foreach (PSPathAccessControlEntry psacl in psacls)
             {
-                acls.Add(new RemovePathAccessControlItem()
-                {
-                    AccessControlType = psacl.AccessControlType,
-                    DefaultScope = psacl.DefaultScope,
-                    EntityId = psacl.EntityId
-                });
+                acls.Add(new RemovePathAccessControlItem(psacl.AccessControlType, psacl.DefaultScope, psacl.EntityId));
             }
             return acls;
         }

@@ -68,11 +68,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 if (ShouldProcess(dirClient.Uri.ToString(), "Remove Acl recursively on Directory: "))
                 {
                     WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
-
-                    dirClient.RemoveAccessControlRecursive(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
-                            this.batchSize,
+                    do
+                    {
+                        dirClient.RemoveAccessControlRecursive(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
                             GetProgressHandler(),
-                            this.StopOnFailure.IsPresent);
+                            new AccessControlRecursiveChangeOptions()
+                            {
+                                BatchSize = this.batchSize
+                            },
+                            continuationToken);
+                    } while (continuationToken != null);
                 }
             }
             else
@@ -80,10 +85,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
                 if (ShouldProcess(fileClient.Uri.ToString(), "Remove Acl recursively on File: "))
                 {
-                    fileClient.RemoveAccessControlRecursive(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
-                        this.batchSize,
-                        GetProgressHandler(),
-                        this.StopOnFailure.IsPresent);
+                    do
+                    {
+                        fileClient.RemoveAccessControlRecursive(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
+                            GetProgressHandler(),
+                            new AccessControlRecursiveChangeOptions()
+                            {
+                                BatchSize = this.batchSize
+                            },
+                            continuationToken);
+                    } while (continuationToken != null);
                 }
             }
             WriteResult();
