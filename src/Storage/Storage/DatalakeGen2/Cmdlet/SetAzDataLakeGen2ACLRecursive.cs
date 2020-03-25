@@ -26,7 +26,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     /// <summary>
     /// create a new azure FileSystem
     /// </summary>
-    [Cmdlet("Set", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "DataLakeGen2AclRecursive", SupportsShouldProcess = true), OutputType(typeof(string))]
+    [Cmdlet("Set", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "DataLakeGen2AclRecursive", SupportsShouldProcess = true), OutputType(typeof(PSACLRecursiveChangeResult))]
     public class SetAzDataLakeGen2AclRecursiveCommand : DataLakeGen2ACLRecursiveBaseCmdlet
     {
         /// <summary>
@@ -76,7 +76,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                                 BatchSize = this.batchSize
                             },
                             continuationToken);
-                    } while (continuationToken != null);
+                    } while (continuationToken != null && FailedEntries.Count != 0);
                 }
             }
             else
@@ -92,7 +92,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                                 BatchSize = this.batchSize
                             },
                             continuationToken);
-                    } while (continuationToken != null);
+                    } while (continuationToken != null && FailedEntries.Count != 0);
                 }
             }
             WriteResult();

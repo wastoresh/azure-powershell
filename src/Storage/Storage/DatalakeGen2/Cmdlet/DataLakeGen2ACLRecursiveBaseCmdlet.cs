@@ -26,7 +26,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
     public abstract class DataLakeGen2ACLRecursiveBaseCmdlet : StorageCloudBlobCmdletBase
     {
-        protected static readonly object ConsoleOutputLock = new object();
         protected  List<AccessControlRecursiveChangeFailure> FailedEntries = new List<AccessControlRecursiveChangeFailure>();
         protected long totalDirectoriesSuccessfulCount = 0;
         protected long totalFilesSuccessfulCount = 0;
@@ -44,6 +43,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 "In the format 'directory/file.txt' or 'directory1/directory2/'. Skip set this parameter to change Acl recursively from root directory of the Filesystem.")]
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
+
+        [Parameter(Mandatory = false, HelpMessage = "Continuation Token.")]
+        public string ContinuationToken { get; set; }
 
         [Parameter(HelpMessage = "The POSIX access control list to set recursively for the file or directory.", Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -93,7 +95,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     totalDirectoriesSuccessfulCount += setProgress.Value.ChangedDirectoriesCount;
                     totalFilesSuccessfulCount += setProgress.Value.ChangedFilesCount;
                     totalFailureCount += setProgress.Value.FailedChangesCount;
-                    continuationToken = setProgress.Value.ContinuationToken;
+                    if (setProgress.Value.FailedEntries == null || new List<AccessControlRecursiveChangeFailure>(setProgress.Value.FailedEntries).Count == 0)
+                    {
+                        continuationToken = setProgress.Value.ContinuationToken;
+                    }
                     long total = totalDirectoriesSuccessfulCount + totalFilesSuccessfulCount + totalFailureCount;
                     summaryString = $"Total Finished: {total}, Directories Success: {totalDirectoriesSuccessfulCount},  File Success: {totalFilesSuccessfulCount}, Failed: {totalFailureCount}";
                     progressRecord.StatusDescription = summaryString;
@@ -118,11 +123,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         protected void WriteResult()
         {
-            WriteObject(summaryString);
-            if (this.FailedEntries != null && this.FailedEntries.Count > 0)
-            {
-                WriteObject(this.FailedEntries, true);
-            }
+            PSACLRecursiveChangeResult result = new PSACLRecursiveChangeResult(this.totalDirectoriesSuccessfulCount,
+                this.totalFilesSuccessfulCount,
+                this.totalFailureCount,
+                this.continuationToken,
+                this.FailedEntries);
+            WriteObject(result, true);
         }       
     }
 
