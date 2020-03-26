@@ -53,6 +53,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         {
             IStorageBlobManagement localChannel = Channel;
             progressRecord = GetProgressRecord("Update");
+            continuationToken = this.ContinuationToken;
 
             bool foundAFolder = false;
 
@@ -71,12 +72,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     {
                         var result = dirClient.UpdateAccessControlRecursive(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
                             GetProgressHandler(),
-                            new AccessControlRecursiveChangeOptions()
+                            new AccessControlChangeOptions()
                             {
                                 BatchSize = this.batchSize
                             },
                             continuationToken);
-                    } while (continuationToken != null && FailedEntries.Count != 0);
+                    } while (continuationToken != null && totalFailureCount == 0);
                 }
             }
             else
@@ -87,12 +88,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     {
                         fileClient.UpdateAccessControlRecursive(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
                             GetProgressHandler(),
-                            new AccessControlRecursiveChangeOptions()
+                            new AccessControlChangeOptions()
                             {
                                 BatchSize = this.batchSize
                             },
                             continuationToken);
-                    } while (continuationToken != null && FailedEntries.Count != 0);
+                    } while (continuationToken != null && totalFailureCount == 0);
                 }
             }
             WriteResult();

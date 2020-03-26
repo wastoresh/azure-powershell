@@ -26,7 +26,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
     public abstract class DataLakeGen2ACLRecursiveBaseCmdlet : StorageCloudBlobCmdletBase
     {
-        protected  List<AccessControlRecursiveChangeFailure> FailedEntries = new List<AccessControlRecursiveChangeFailure>();
+        protected List<AccessControlChangeFailure> FailedEntries = new List<AccessControlChangeFailure>();
         protected long totalDirectoriesSuccessfulCount = 0;
         protected long totalFilesSuccessfulCount = 0;
         protected long totalFailureCount = 0;
@@ -78,7 +78,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         public override int? ClientTimeoutPerRequest { get; set; }
         public override int? ServerTimeoutPerRequest { get; set; }
         
-        protected IProgress<Response<AccessControlRecursiveChanges>> GetProgressHandler()
+        protected IProgress<Response<AccessControlChanges>> GetProgressHandler()
         {
             if (this.progressRecord == null)
             {
@@ -86,16 +86,19 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
             this.WriteProgress(progressRecord);
 
-            return new ChangeChangeAccessControlPartialResultProgress(this.FailedEntries, (setProgress) =>
+            //return new ChangeChangeAccessControlPartialResultProgress(this.FailedEntries, (setProgress) =>
+            return new ChangeChangeAccessControlPartialResultProgress((setProgress) =>
             {
                 if (this.progressRecord != null)
                 {
                     // Size of the source file might be 0, when it is, directly treat the progress as 100 percent.
                     //progressRecord.PercentComplete = (totalTransferLength == 0) ? 100 : (int)(transferProgress.BytesTransferred * 100 / totalTransferLength);
-                    totalDirectoriesSuccessfulCount += setProgress.Value.ChangedDirectoriesCount;
-                    totalFilesSuccessfulCount += setProgress.Value.ChangedFilesCount;
-                    totalFailureCount += setProgress.Value.FailedChangesCount;
-                    if (setProgress.Value.FailedEntries == null || new List<AccessControlRecursiveChangeFailure>(setProgress.Value.FailedEntries).Count == 0)
+                    totalDirectoriesSuccessfulCount += setProgress.Value.BatchCounters.ChangedDirectoriesCount;
+                    totalFilesSuccessfulCount += setProgress.Value.BatchCounters.ChangedFilesCount;
+                    totalFailureCount += setProgress.Value.BatchCounters.FailedChangesCount;
+                    this.FailedEntries.AddRange(setProgress.Value.BatchFailures);
+                    //if (setProgress.Value.BatchCounters.FailedEntries == null || new List<AccessControlChanges>(setProgress.Value.FailedEntries).Count == 0)
+                    if (setProgress.Value.BatchCounters.FailedChangesCount == 0)
                     {
                         continuationToken = setProgress.Value.ContinuationToken;
                     }
@@ -132,21 +135,22 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         }       
     }
 
-    public class ChangeChangeAccessControlPartialResultProgress : IProgress<Response<AccessControlRecursiveChanges>>
+    public class ChangeChangeAccessControlPartialResultProgress : IProgress<Response<AccessControlChanges>>
     {
-        private Action<Response<AccessControlRecursiveChanges>> progressHandler;
-        private List<AccessControlRecursiveChangeFailure> FailedEntries = null;
+        private Action<Response<AccessControlChanges>> progressHandler;
+        //private List<AccessControlChanges> FailedEntries = null;
 
-        public ChangeChangeAccessControlPartialResultProgress(List<AccessControlRecursiveChangeFailure> failedEntries, Action<Response<AccessControlRecursiveChanges>> progressHandler)
+        //public ChangeChangeAccessControlPartialResultProgress(List<AccessControlChanges> failedEntries, Action<Response<AccessControlChanges>> progressHandler)
+        public ChangeChangeAccessControlPartialResultProgress(Action<Response<AccessControlChanges>> progressHandler)
         {
-            this.FailedEntries = failedEntries;
+            //this.FailedEntries = failedEntries;
             this.progressHandler = progressHandler;
         }
 
-        public void Report(Response<AccessControlRecursiveChanges> value)
+        public void Report(Response<AccessControlChanges> value)
         {
             // Console.WriteLine(String.Format("success dir: {0}, success file: {1}, failed items: {2}", value.DirectoriesSuccessfulCount, value.FilesSuccessfulCount, value.FailureCount));
-            this.FailedEntries.AddRange(value.Value.FailedEntries);
+            //this.FailedEntries.AddRange(value.Value.FailedEntries);
             this.progressHandler(value);
             
         }

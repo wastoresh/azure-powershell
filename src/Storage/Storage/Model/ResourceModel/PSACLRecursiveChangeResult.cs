@@ -23,7 +23,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
     /// </summary>
     public class PSACLRecursiveChangeResult
     {
-        public AccessControlRecursiveChangeFailure[] FailedEntries;
+        public AccessControlChangeFailure[] FailedEntries;
         public long TotalDirectoriesSuccessfulCount = 0;
         public long TotalFilesSuccessfulCount = 0;
         public long TotalFailureCount = 0;
@@ -33,7 +33,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel
             long totalFilesSuccessfulCount,
             long totalFailureCount,
             string continuationToken = null,
-            List<AccessControlRecursiveChangeFailure> failedEntries = null)
+            List<AccessControlChangeFailure> failedEntries = null)
         {
             this.FailedEntries = (failedEntries == null || failedEntries.Count == 0) ? null : failedEntries.ToArray();
             this.TotalDirectoriesSuccessfulCount = totalDirectoriesSuccessfulCount;
