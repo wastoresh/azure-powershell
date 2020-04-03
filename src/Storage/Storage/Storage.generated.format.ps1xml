@@ -305,6 +305,60 @@
         <Label>Container Uri</Label>
       </GroupBy>
     </View>
+
+    <View>
+      <Name>Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel.AzureStorageFile</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel.AzureStorageFile</TypeName>
+        <TypeName>Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel.AzureStorageFileDirectory</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <ScriptBlock>$_.Parent.SnapshotQualifiedUri</ScriptBlock>
+        <Label>Directory</Label>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Type</Label>
+            <Width>10</Width>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Name</Label>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Alignment>Left</Alignment>
+            <Label>LastModified</Label>
+            <Width>20</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Length</Label>
+            <Width>15</Width>
+            <Alignment>Right</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <ScriptBlock>if ($_.CloudFile -eq $null) {"Directory"} else {"File"}</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.Name</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Left</Alignment>
+                <ScriptBlock>$_.LastModified.UtcDateTime.ToString("u")</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.Properties.Length</ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
     <View>
       <Name>Microsoft.WindowsAzure.Commands.Storage.Model.ResourceModel.PSFileHandle</Name>
       <ViewSelectedBy>
