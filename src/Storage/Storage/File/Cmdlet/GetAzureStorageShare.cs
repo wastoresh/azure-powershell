@@ -25,7 +25,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 
     [Cmdlet("Get", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageShare", DefaultParameterSetName = Constants.MatchingPrefixParameterSetName)]
     [OutputType(typeof(CloudFileShare))]
-    [CmdletOutputBreakingChange(typeof(CloudFile), ChangeDescription = "The output type will change from CloudFileShare to AzureStorageFileShare, and AzureStorageFileShare will have CloudFileShare as a child property.")]
     public class GetAzureStorageShare : AzureStorageFileCmdletBase
     {
         [Parameter(
@@ -72,7 +71,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         NamingUtil.ValidateShareName(this.Name, false);
                         var share = this.Channel.GetShareReference(this.Name, this.SnapshotTime);
                         await this.Channel.FetchShareAttributesAsync(share, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
-                        this.OutputStream.WriteObject(taskId, share);
+                        //this.OutputStream.WriteObject(taskId, share);
+                        WriteCloudShareObject(taskId, this.Channel, share);
 
                         break;
 
@@ -81,7 +81,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         await this.Channel.EnumerateSharesAsync(
                             this.Prefix,
                             ShareListingDetails.All,
-                            item => this.OutputStream.WriteObject(taskId, item),
+                            item => WriteCloudShareObject(taskId, this.Channel, item),
                             this.RequestOptions,
                             this.OperationContext,
                             this.CmdletCancellationToken).ConfigureAwait(false);
