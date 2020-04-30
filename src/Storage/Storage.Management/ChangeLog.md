@@ -18,6 +18,13 @@
         - Additional information about change #1
 -->
 ## Upcoming Release
+* Support enable/disable versioning on Blob Service of a Storage account
+    - `Update-AzStorageBlobServiceProperty`
+* Support Set/Get/Remove Object Replication Policy on Storage accounts
+    - `New-AzStorageObjectReplicationPolicyRule`
+    - `Set-AzStorageObjectReplicationPolicy`
+    - `Get-AzStorageObjectReplicationPolicy`
+    - `Remove-AzStorageObjectReplicationPolicy`
 
 ## Version 1.14.1
 * Supported create container and upload blob with Encryption Scope setting
@@ -26,6 +33,9 @@
 * Add RestorePolicy.LastEnabledTime to cmdlet output
     - `Get-AzStorageBlobServiceProperty`
     - `Enable-AzStorageBlobRestorePolicy`
+* Supported create container and upload blob with Encryption Scope setting
+    - `New-AzStorageContainer`
+    - `Set-AzStorageBlobContent`
 
 ## Version 1.13.4
 * Support create/update/get/list EncryptionScope of a Storage account
