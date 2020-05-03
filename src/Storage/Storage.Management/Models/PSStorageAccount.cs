@@ -68,7 +68,6 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
 
         public string Id { get; set; }
 
-        [Ps1Xml(Label = "Location", Target = ViewControl.Table, Position = 2)]
         public string Location { get; set; }
 
         [Ps1Xml(Label = "SkuName", Target = ViewControl.Table, ScriptBlock = "$_.Sku.Name", Position = 3)]
@@ -115,10 +114,10 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
 
         public bool? EnableHierarchicalNamespace { get; set; }
 
-        public string LargeFileSharesState { get; set; }
-
         public bool? FailoverInProgress { get; set; }
 
+        public string LargeFileSharesState { get; set; }
+        
         public PSNetworkRuleSet NetworkRuleSet { get; set; }
 
         public PSRoutingPreference RoutingPreference { get; set; }
