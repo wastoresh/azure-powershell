@@ -22,6 +22,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
     using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
     using Microsoft.WindowsAzure.Commands.Storage.Common;
     using global::Azure.Storage;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Azure storage blob object
@@ -85,6 +86,22 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             }
         }
         private global::Azure.Storage.Blobs.Models.BlobProperties privateBlobProperties = null;
+
+        /// <summary>
+        /// XSCL Track2 Blob Tags, will retrieve the properties on server and return to user
+        /// </summary>
+        public IDictionary<string, string> Tags
+        {
+            get
+            {
+                if (tags == null)
+                {
+                    tags = BlobClient.GetTags().Value;
+                }
+                return tags;
+            }
+        }
+        private IDictionary<string, string> tags = null;
 
         /// <summary>
         /// Blob IsDeleted
