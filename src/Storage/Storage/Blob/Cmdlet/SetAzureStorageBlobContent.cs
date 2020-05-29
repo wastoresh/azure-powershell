@@ -671,6 +671,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 case BlobParameterSet:
                     if (ShouldProcess(CloudBlob.Name, VerbsCommon.Set))
                     {
+                        if (CloudBlob is InvalidCloudBlob)
+                        {
+                            throw new InvalidOperationException("This cmdlet not supportted on a blob version.");
+                        }
                         SetAzureBlobContent(ResolvedFileName, CloudBlob.Name);
                         containerName = CloudBlob.Container.Name;
                         UploadRequests.SetDestinationContainer(Channel, containerName);

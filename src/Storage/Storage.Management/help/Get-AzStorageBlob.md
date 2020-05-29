@@ -21,12 +21,28 @@ Get-AzStorageBlob [[-Blob] <String>] [-Container] <String> [-IncludeDeleted] [-M
  [<CommonParameters>]
 ```
 
+### SingleBlobSnapshotTime
+```
+Get-AzStorageBlob [-Blob] <String> [-Container] <String> [-IncludeDeleted] -SnapshotTime <DateTimeOffset>
+ [-MaxCount <Int32>] [-ContinuationToken <BlobContinuationToken>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
+```
+
+### SingleBlobVersionID
+```
+Get-AzStorageBlob [-Blob] <String> [-Container] <String> [-IncludeDeleted] -VersionId <String>
+ [-MaxCount <Int32>] [-ContinuationToken <BlobContinuationToken>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
+```
+
 ### BlobPrefix
 ```
-Get-AzStorageBlob [-Prefix <String>] [-Container] <String> [-IncludeDeleted] [-MaxCount <Int32>]
- [-ContinuationToken <BlobContinuationToken>] [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>]
- [-ClientTimeoutPerRequest <Int32>] [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>]
- [<CommonParameters>]
+Get-AzStorageBlob [-Prefix <String>] [-Container] <String> [-IncludeDeleted] [-IncludeVersion]
+ [-MaxCount <Int32>] [-ContinuationToken <BlobContinuationToken>] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -104,7 +120,19 @@ Required: False
 Position: 0
 Default value: None
 Accept pipeline input: False
-Accept wildcard characters: True
+Accept wildcard characters: False
+```
+
+```yaml
+Type: System.String
+Parameter Sets: SingleBlobSnapshotTime, SingleBlobVersionID
+Aliases:
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
 ```
 
 ### -ClientTimeoutPerRequest
@@ -220,6 +248,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -IncludeVersion
+Blob versions will be listed only if this parameter is present, by default get blob won't include blob versions.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: BlobPrefix
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -MaxCount
 Specifies the maximum number of objects that this cmdlet returns.
 
@@ -263,6 +306,36 @@ Parameter Sets: (All)
 Aliases: ServerTimeoutPerRequestInSeconds
 
 Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -SnapshotTime
+Blob SnapshotTime
+
+```yaml
+Type: System.Nullable`1[System.DateTimeOffset]
+Parameter Sets: SingleBlobSnapshotTime
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -VersionId
+Blob VersionId
+
+```yaml
+Type: System.String
+Parameter Sets: SingleBlobVersionID
+Aliases:
+
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
