@@ -25,6 +25,11 @@ using System.IO;
 using System.Management.Automation;
 using System.Security.Permissions;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs.Specialized;
+using System.Globalization;
+using Track2Models = global::Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs;
+using Azure.Storage;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 {
@@ -51,6 +56,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
         [ValidateNotNull]
         public CloudBlob CloudBlob { get; set; }
+
+        [Parameter(HelpMessage = "BlobBaseClient Object", Mandatory = false,
+            ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
+        [ValidateNotNull]
+        public BlobBaseClient BlobBaseClient { get; set; }
 
         [Parameter(HelpMessage = "Azure Container Object", Mandatory = true,
             ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
@@ -150,6 +160,44 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             this.WriteCloudBlobObject(data.TaskId, data.Channel, blob);
         }
 
+
+
+        /// <summary>
+        /// Download blob to local file
+        /// </summary>
+        /// <param name="blob">Source blob object</param>
+        /// <param name="filePath">Destination file path</param>
+        internal virtual async Task DownloadBlob(long taskId, IStorageBlobManagement localChannel, BlobBaseClient blob, string filePath)
+        {
+            Track2Models.BlobProperties blobProperties = blob.GetProperties(cancellationToken: CmdletCancellationToken);
+
+            ////Prepare progress handler
+            //long fileSize = blobProperties.ContentLength;
+            //string activity = String.Format(Resources.ReceiveAzureBlobActivity, blob.Name, filePath);
+            //string status = Resources.PrepareDownloadingBlob;
+            //ProgressRecord pr = new ProgressRecord(OutputStream.GetProgressId(taskId), activity, status);
+            //IProgress<long> progressHandler = new Progress<long>((finishedBytes) =>
+            //{
+            //    if (pr != null)
+            //    {
+            //        // Size of the source file might be 0, when it is, directly treat the progress as 100 percent.
+            //        pr.PercentComplete = 0 == fileSize ? 100 : (int)(finishedBytes * 100 / fileSize);
+            //        pr.StatusDescription = string.Format(CultureInfo.CurrentCulture, Resources.FileTransmitStatus, pr.PercentComplete);
+            //        Console.WriteLine(finishedBytes);
+            //        this.OutputStream.WriteProgress(pr);
+            //    }
+            //});
+
+            if (this.Force.IsPresent
+                || !System.IO.File.Exists(ResolvedFileName)
+                || ShouldContinue(string.Format(Resources.OverwriteConfirmation, ResolvedFileName), null))
+            {
+                StorageTransferOptions trasnferOption = new StorageTransferOptions() { MaximumConcurrency = this.GetCmdletConcurrency() };
+                await blob.DownloadToAsync(ResolvedFileName, null, trasnferOption, CmdletCancellationToken).ConfigureAwait(false);
+                OutputStream.WriteObject(taskId, new AzureStorageBlob(blob, localChannel.StorageContext, blobProperties, options: ClientOptions));
+            }
+        }
+
         /// <summary>
         /// get blob content
         /// </summary>
@@ -247,6 +295,53 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         }
 
         /// <summary>
+        /// get blob content
+        /// </summary>
+        /// <param name="blob">source BlobBaseClient object</param>
+        /// <param name="fileName">destination file path</param>
+        /// <param name="isValidBlob">whether the source container validated</param>
+        /// <returns>the downloaded AzureStorageBlob object</returns>
+        internal void GetBlobContent(BlobBaseClient blob, string fileName, bool isValidBlob = false)
+        {
+            if (null == blob)
+            {
+                throw new ArgumentNullException(typeof(CloudBlob).Name, String.Format(Resources.ObjectCannotBeNull, typeof(CloudBlob).Name));
+            }
+
+            if (!isValidBlob)
+            {
+                ValidatePipelineCloudBlobTrack2(blob);
+            }
+
+            //skip download the snapshot except the CloudBlob pipeline
+            DateTimeOffset? snapshotTime = Util.GetSnapshotTimeFromBlobUri(blob.Uri);
+            if (snapshotTime != null && ParameterSetName != BlobParameterSet)
+            {
+                WriteWarning(String.Format(Resources.SkipDownloadSnapshot, blob.Name, snapshotTime));
+                return;
+            }
+
+            string filePath = GetFullReceiveFilePath(fileName, blob.Name, snapshotTime);
+
+            if (!isValidBlob)
+            {
+                ValidatePipelineCloudBlobTrack2(blob);
+            }
+
+            //create the destination directory if not exists.
+            String dirPath = Path.GetDirectoryName(filePath);
+
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+
+            IStorageBlobManagement localChannel = Channel;
+            Func<long, Task> taskGenerator = (taskId) => DownloadBlob(taskId, localChannel, blob, filePath);
+            RunTask(taskGenerator);
+        }
+
+        /// <summary>
         /// get full file path according to the specified file name
         /// </summary>
         /// <param name="fileName">File name</param>
@@ -314,7 +409,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 case BlobParameterSet:
                     if (ShouldProcess(CloudBlob.Name, "Download"))
                     {
-                        GetBlobContent(CloudBlob, FileName, true);
+                        if (!(CloudBlob is InvalidCloudBlob))
+                        {
+                            GetBlobContent(CloudBlob, FileName, true);
+                        }
+                        else
+                        {
+                            GetBlobContent(this.BlobBaseClient, FileName, true);
+                        }
                     }
                     break;
 

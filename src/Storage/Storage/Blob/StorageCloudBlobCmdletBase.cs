@@ -31,6 +31,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using global::Azure.Storage;
     using global::Azure;
     using global::Azure.Storage.Files.DataLake.Models;
+    using global::Azure.Core;
+    using Microsoft.WindowsAzure.Commands.Common;
+    using global::Azure.Storage.Blobs.Specialized;
 
     /// <summary>
     /// Base cmdlet for storage blob/container cmdlet
@@ -62,6 +65,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             get
             {
                 return (BlobRequestOptions)GetRequestOptions(StorageServiceType.Blob);
+            }
+        }
+
+        public BlobClientOptions ClientOptions
+        {
+            get
+            {
+                BlobClientOptions options = new BlobClientOptions();
+                options.AddPolicy(new UserAgentPolicy(ApiConstants.UserAgentHeaderValue), HttpPipelinePosition.PerCall);
+                return options;
             }
         }
 
@@ -148,6 +161,28 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             //{
             //    throw new ResourceNotFoundException(String.Format(Resources.BlobNotFound, blob.Name, blob.Container.Name));
             //}
+        }
+
+        /// <summary>
+        /// Make sure the pipeline blob is valid and already existing
+        /// </summary>
+        /// <param name="blob">CloudBlob object</param>
+        internal void ValidatePipelineCloudBlobTrack2(BlobBaseClient blob)
+        {
+            if (null == blob)
+            {
+                throw new ArgumentException(String.Format(Resources.ObjectCannotBeNull, typeof(CloudBlob).Name));
+            }
+
+            if (!NameUtil.IsValidBlobName(blob.Name))
+            {
+                throw new ArgumentException(String.Format(Resources.InvalidBlobName, blob.Name));
+            }
+
+            if (!NameUtil.IsValidContainerName(blob.BlobContainerName))
+            {
+                throw new ArgumentException(String.Format(Resources.InvalidContainerName, blob.BlobContainerName));
+            }
         }
 
         /// <summary>
@@ -660,6 +695,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                     blob.Metadata.Add(key, value);
                 }
             }
-        }
+        }        
     }
 }
