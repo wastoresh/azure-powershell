@@ -122,6 +122,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     target = localName;
                     break;
                 case BlobPipelineParameterSet:
+                    if (CloudBlob is InvalidCloudBlob)
+                    {
+                        throw new InvalidOperationException("This cmdlet not supportted on a blob version.");
+                    }
                     CloudBlob localBlob = CloudBlob;
                     taskGenerator = (taskId) => StopCopyBlob(taskId, localChannel, localBlob, copyId, true);
                     target = localBlob.Name;

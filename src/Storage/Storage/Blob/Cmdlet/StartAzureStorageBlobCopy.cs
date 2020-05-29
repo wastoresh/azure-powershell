@@ -34,6 +34,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Security.Permissions;
     using System.Threading.Tasks;
     using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
+    using global::Azure.Storage.Blobs.Specialized;
+    using global::Azure.Storage.Blobs;
+    using Track2Models = global::Azure.Storage.Blobs.Models;
 
     [Cmdlet("Start", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobCopy", SupportsShouldProcess = true, DefaultParameterSetName = ContainerNameParameterSet),OutputType(typeof(AzureStorageBlob))]
     [Alias("Start-CopyAzureStorageBlob")]
@@ -95,6 +98,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(HelpMessage = "CloudBlob Object", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
         [Parameter(HelpMessage = "CloudBlob Object", Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobToBlobParameterSet)]
         public CloudBlob CloudBlob { get; set; }
+
+        [Parameter(HelpMessage = "BlobBaseClient Object", Mandatory = false,
+            ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
+        [Parameter(HelpMessage = "BlobBaseClient Object", Mandatory = false,
+            ValueFromPipelineByPropertyName = true, ParameterSetName = BlobToBlobParameterSet)]
+        [ValidateNotNull]
+        public BlobBaseClient BlobBaseClient { get; set; }
 
         [Alias("SourceCloudBlobContainer")]
         [Parameter(HelpMessage = "CloudBlobContainer Object", Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
@@ -224,7 +234,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         [Parameter(HelpMessage = "Block Blob RehydratePriority. Indicates the priority with which to rehydrate an archived blob. Valid values are High/Standard.", Mandatory = false)]
         [ValidateSet("Standard", "High", IgnoreCase = true)]
-        public RehydratePriority RehydratePriority
+        public Azure.Storage.Blob.RehydratePriority RehydratePriority
         {
             get
             {
@@ -236,7 +246,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 rehydratePriority = value;
             }
         }
-        private RehydratePriority? rehydratePriority = null;
+        private Azure.Storage.Blob.RehydratePriority? rehydratePriority = null;
 
         [Alias("SrcContext", "SourceContext")]
         [Parameter(HelpMessage = "Source Azure Storage Context Object", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerNameParameterSet)]
@@ -347,13 +357,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     break;
 
                 case UriParameterSet:
-                    copyAction = () => StartCopyBlob(destChannel, AbsoluteUri, DestContainer, DestBlob, (Context != null? GetCmdletStorageContext(Context) : null));
+                    copyAction = () => StartCopyBlob(destChannel, AbsoluteUri, DestContainer, DestBlob, (Context != null ? GetCmdletStorageContext(Context) : null));
                     target = AbsoluteUri;
                     break;
 
                 case BlobParameterSet:
-                    copyAction = () => StartCopyBlob(destChannel, CloudBlob, DestContainer, DestBlob);
-                    target = CloudBlob.Name;
+                    if (CloudBlob is InvalidCloudBlob)
+                    {
+                        copyAction = () => StartCopyBlob(destChannel, BlobBaseClient, DestContainer, DestBlob);
+                        target = BlobBaseClient.Name;
+                    }
+                    else
+                    {
+                        copyAction = () => StartCopyBlob(destChannel, CloudBlob, DestContainer, DestBlob);
+                        target = CloudBlob.Name;
+                    }
                     break;
 
                 case ContainerParameterSet:
@@ -362,8 +380,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     break;
 
                 case BlobToBlobParameterSet:
-                    copyAction = () => StartCopyBlob(destChannel, CloudBlob, DestCloudBlob);
-                    target = CloudBlob.Name;
+                    if (CloudBlob is InvalidCloudBlob)
+                    {
+                        BlobBaseClient destBlobClient = AzureStorageBlob.GetTrack2BlobClient(DestCloudBlob, destChannel.StorageContext, ClientOptions);
+                        copyAction = () => StartCopyBlob(destChannel, BlobBaseClient, destBlobClient);
+                        target = BlobBaseClient.Name;
+                    }
+                    else
+                    {
+                        copyAction = () => StartCopyBlob(destChannel, CloudBlob, DestCloudBlob);
+                        target = CloudBlob.Name;
+                    }
                     break;
                 case ShareNameParameterSet:
                     copyAction = () => StartCopyFromFile(
@@ -431,6 +458,23 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             RunTask(taskGenerator);
         }
 
+        private void StartCopyBlob(IStorageBlobManagement destChannel, BlobBaseClient srcCloudBlob, BlobBaseClient destCloudBlob)
+        {
+            global::Azure.Storage.Blobs.Models.BlobType srcBlobType = Util.GetBlobType(srcCloudBlob, true).Value;
+            if (srcCloudBlob is BlobClient)
+            {
+                srcCloudBlob = Util.GetTrack2BlobClientWithType(srcCloudBlob, Channel.StorageContext, srcBlobType);
+            }
+            if (destCloudBlob is BlobClient)
+            {
+                destCloudBlob = Util.GetTrack2BlobClientWithType(destCloudBlob, destChannel.StorageContext, srcBlobType);
+            }
+            ValidateBlobTier(Util.convertBlobType_Track2ToTrack1(srcBlobType), pageBlobTier, standardBlobTier, rehydratePriority);
+
+            Func<long, Task> taskGenerator = (taskId) => StartCopyAsync(taskId, destChannel, srcCloudBlob, destCloudBlob);
+            RunTask(taskGenerator);
+        }
+
         /// <summary>
         /// Start copy operation by source CloudBlob object
         /// </summary>
@@ -446,6 +490,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
 
             CloudBlob destBlob = this.GetDestBlob(destChannel, destContainer, destBlobName, srcCloudBlob.BlobType);
+
+            this.StartCopyBlob(destChannel, srcCloudBlob, destBlob);
+        }
+
+        private void StartCopyBlob(IStorageBlobManagement destChannel, BlobBaseClient srcCloudBlob, string destContainer, string destBlobName)
+        {
+            if (string.IsNullOrEmpty(destBlobName))
+            {
+                destBlobName = srcCloudBlob.Name;
+            }
+
+            BlobBaseClient destBlob = this.GetDestBlob(destChannel, destContainer, destBlobName, Util.GetBlobType(srcCloudBlob));
 
             this.StartCopyBlob(destChannel, srcCloudBlob, destBlob);
         }
@@ -587,6 +643,28 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
         }
 
+        private async Task StartCopyFromBlob(long taskId, IStorageBlobManagement destChannel, BlobBaseClient srcBlob, BlobBaseClient destBlob)
+        {
+            try
+            {
+                await StartCopyFromUri(taskId, destChannel, srcBlob.GenerateUriWithCredentials(Channel.StorageContext), destBlob).ConfigureAwait(false);
+            }
+            catch (StorageException ex)
+            {
+                if (0 == string.Compare(ex.Message, BlobTypeMismatch, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Current use error message to decide whether it caused by blob type mismatch,
+                    // We should ask xscl to expose an error code for this..
+                    // Opened workitem 1487579 to track this.
+                    throw new InvalidOperationException(Resources.DestinationBlobTypeNotMatch);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
         private async Task StartCopyFromUri(long taskId, IStorageBlobManagement destChannel, Uri srcUri, CloudBlob destBlob)
         {
 
@@ -635,6 +713,47 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
         }
 
+        private async Task StartCopyFromUri(long taskId, IStorageBlobManagement destChannel, Uri srcUri, BlobBaseClient destBlob)
+        {
+            bool destExist = true;
+            Track2Models.BlobType? destBlobType = Util.GetBlobType(destBlob);
+            Track2Models.BlobProperties properties = null;
+
+            try
+            {
+                properties = (await destBlob.GetPropertiesAsync(cancellationToken: this.CmdletCancellationToken).ConfigureAwait(false)).Value;
+                destBlobType = properties.BlobType;
+            }
+            catch (global::Azure.RequestFailedException e) when (e.Status == 404)
+            {
+                destExist = false;
+            }
+            if (destBlobType != null)
+            {
+                ValidateBlobTier(Util.convertBlobType_Track2ToTrack1(destBlobType), pageBlobTier, standardBlobTier, rehydratePriority);
+            }
+
+            if (!destExist || this.ConfirmOverwrite(srcUri.AbsoluteUri.ToString(), destBlob.Uri.ToString()))
+            {
+                Track2Models.BlobCopyFromUriOptions options = new global::Azure.Storage.Blobs.Models.BlobCopyFromUriOptions();
+
+                // The Blob Type and Blob Tier must match, since already checked they are match at the begin of ExecuteCmdlet().
+                if (pageBlobTier != null)
+                {
+                    options.AccessTier = Util.ConvertAccessTier_Track1ToTrack2(pageBlobTier);
+                }
+                else if (standardBlobTier != null || rehydratePriority != null)
+                {
+                    options.AccessTier = Util.ConvertAccessTier_Track1ToTrack2(standardBlobTier);
+                    options.RehydratePriority = Util.ConvertRehydratePriority_Track1ToTrack2(rehydratePriority);
+                }
+                Track2Models.CopyFromUriOperation copyId = await destBlob.StartCopyFromUriAsync(srcUri, options, this.CmdletCancellationToken).ConfigureAwait(false);
+
+                this.OutputStream.WriteVerbose(taskId, String.Format(Resources.CopyDestinationBlobPending, destBlob.Name, destBlob.BlobContainerName, copyId));
+                OutputStream.WriteObject(taskId, new AzureStorageBlob(destBlob, destChannel.StorageContext, properties, options: ClientOptions));
+            }
+        }
+
         private async Task StartCopyFromFile(long taskId, IStorageBlobManagement destChannel, CloudFile srcFile, CloudBlockBlob destBlob)
         {
             await this.StartCopyFromUri(taskId, destChannel, srcFile.GenerateUriWithCredentials(), destBlob).ConfigureAwait(false);
@@ -667,6 +786,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             return destBlob;
         }
 
+        private BlobBaseClient GetDestBlob(IStorageBlobManagement destChannel, string destContainerName, string destBlobName, global::Azure.Storage.Blobs.Models.BlobType? blobType)
+        {
+            NameUtil.ValidateContainerName(destContainerName);
+            NameUtil.ValidateBlobName(destBlobName);
+
+            BlobContainerClient container = AzureStorageContainer.GetTrack2BlobContainerClient(destChannel.GetContainerReference(destContainerName), destChannel.StorageContext, ClientOptions);
+            BlobBaseClient destBlob = Util.GetTrack2BlobClient(container, destBlobName, destChannel.StorageContext, null, null, null, ClientOptions, blobType is null ? global::Azure.Storage.Blobs.Models.BlobType.Block : blobType.Value);
+            return destBlob;
+        }
+
         /// <summary>
         /// Start copy using transfer mangager by source CloudBlob object
         /// </summary>
@@ -678,6 +807,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         {
             NameUtil.ValidateBlobName(sourceBlob.Name);
             NameUtil.ValidateContainerName(destBlob.Container.Name);
+            NameUtil.ValidateBlobName(destBlob.Name);
+
+            await this.StartCopyFromBlob(taskId, destChannel, sourceBlob, destBlob).ConfigureAwait(false);
+        }
+
+        private async Task StartCopyAsync(long taskId, IStorageBlobManagement destChannel, BlobBaseClient sourceBlob, BlobBaseClient destBlob)
+        {
+            NameUtil.ValidateBlobName(sourceBlob.Name);
+            NameUtil.ValidateContainerName(destBlob.BlobContainerName);
             NameUtil.ValidateBlobName(destBlob.Name);
 
             await this.StartCopyFromBlob(taskId, destChannel, sourceBlob, destBlob).ConfigureAwait(false);
