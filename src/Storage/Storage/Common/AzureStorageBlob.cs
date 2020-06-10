@@ -174,6 +174,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         public string AccessTier { get; set; }
 
         /// <summary>
+        /// Blob TagCount.
+        /// </summary>
+        public long TagCount { get; set; }
+
+        /// <summary>
+        /// Blob Tags
+        /// </summary>
+        public Hashtable Tags { get; set; }
+
+        /// <summary>
         /// Azure storage blob constructor
         /// </summary>
         /// <param name="blob">ICloud blob object</param>
@@ -235,6 +245,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             VersionId = listBlobItem.VersionId;
             IsCurrentVersion = listBlobItem.IsCurrentVersion;
             AccessTier = listBlobItem.Properties.AccessTier is null? null: listBlobItem.Properties.AccessTier.ToString();
+            if (listBlobItem.Tags != null)
+            {
+                Tags = listBlobItem.Tags.ToHashtable();
+                TagCount = listBlobItem.Tags.Count;
+            }
         }
 
 
@@ -289,6 +304,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                     BlobType = Util.convertBlobType_Track2ToTrack1(privateBlobProperties.BlobType);
                 }
                 AccessTier = privateBlobProperties.AccessTier is null ? null : privateBlobProperties.AccessTier.ToString();
+                TagCount = privateBlobProperties.TagCount;
             }
         }
 

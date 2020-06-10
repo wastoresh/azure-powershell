@@ -29,6 +29,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Collections.Generic;
     using global::Azure.Storage.Blobs.Specialized;
     using global::Azure.Storage;
+    using Microsoft.WindowsAzure.Commands.Common;
 
     /// <summary>
     /// list azure blobs in specified azure container
@@ -116,6 +117,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(Mandatory = false, HelpMessage = "Blob versions will be listed only if this parameter is present, by default get blob won't include blob versions.", ParameterSetName = PrefixParameterSet)]
         [ValidateNotNullOrEmpty]
         public SwitchParameter IncludeVersion { get; set; }
+
+        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.")]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter IncludeTag { get; set; }
 
         [Parameter(HelpMessage = "Blob SnapshotTime", Mandatory = true, ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
         [ValidateNotNullOrEmpty]
@@ -206,7 +211,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
 
                 BlobBaseClient blobClient = null;
-                if (this.VersionId != null) // User Track2 SDK
+                if (this.VersionId != null || this.IncludeTag.IsPresent) // User Track2 SDK
                 {
                     blobClient = Util.GetTrack2BlobClient(track2container, blobName, localChannel.StorageContext, this.VersionId, false, this.SnapshotTime is null ? null : this.SnapshotTime.Value.ToString("o"), ClientOptions);
                     global::Azure.Storage.Blobs.Models.BlobProperties blobProperties;
@@ -219,8 +224,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                         throw new ResourceNotFoundException(String.Format(Resources.BlobNotFound, blobName, containerName));
                     }
                     blobClient = Util.GetTrack2BlobClient(track2container, blobName, localChannel.StorageContext, this.VersionId, blobProperties.IsCurrentVersion, this.SnapshotTime is null ? null : this.SnapshotTime.Value.ToString("o"), ClientOptions, blobProperties.BlobType);
-                 
-                    OutputStream.WriteObject(taskId, new AzureStorageBlob(blobClient, localChannel.StorageContext, blobProperties, ClientOptions));
+
+                    AzureStorageBlob outputBlob = new AzureStorageBlob(blobClient, localChannel.StorageContext, blobProperties, ClientOptions);
+                    if (this.IncludeTag.IsPresent)
+                    {
+                        IDictionary<string, string> tags = (await blobClient.GetTagsAsync(this.CmdletCancellationToken).ConfigureAwait(false)).Value;
+                        if (tags != null)
+                        {
+                            outputBlob.Tags = tags.ToHashtable();
+                            outputBlob.TagCount = tags.Count;
+                        }
+                    }
+                    OutputStream.WriteObject(taskId, outputBlob);
                 }
                 else // Use Track1 SDK
                 {
@@ -256,7 +271,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             BlobContinuationToken continuationToken = ContinuationToken;
             string track2ContinuationToken = this.ContinuationToken is null? null : this.ContinuationToken.NextMarker;
 
-            //if (includeVersion) // For new feature only available on Track2 SDK, need list with Track2 SDK.
+            //if (includeVersion|| IncludeTag.IsPresent) // For new feature only available on Track2 SDK, need list with Track2 SDK.
             //{
                 BlobTraits blobTraits = BlobTraits.Metadata | BlobTraits.CopyStatus; // | BlobTraits.Tags;
                 BlobStates blobStates = BlobStates.Snapshots;
@@ -267,6 +282,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 if (includeVersion)
                 {
                     blobStates = blobStates | BlobStates.Version;
+                }
+                if(IncludeTag.IsPresent)
+                {
+                    blobTraits = blobTraits | BlobTraits.Tags;
                 }
 
                 do
