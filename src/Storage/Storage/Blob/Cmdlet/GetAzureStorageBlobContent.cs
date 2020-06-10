@@ -192,7 +192,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 || !System.IO.File.Exists(filePath)
                 || ShouldContinue(string.Format(Resources.OverwriteConfirmation, filePath), null))
             {
-                StorageTransferOptions trasnferOption = new StorageTransferOptions() { MaximumConcurrency = this.GetCmdletConcurrency() };
+                StorageTransferOptions trasnferOption = new StorageTransferOptions()
+                {
+                    MaximumConcurrency = this.GetCmdletConcurrency(),
+                    MaximumTransferSize = 4 * 1024 * 1024,
+                    InitialTransferSize = 4 * 1024 * 1024
+                };
                 await blob.DownloadToAsync(filePath, null, trasnferOption, CmdletCancellationToken).ConfigureAwait(false);
                 OutputStream.WriteObject(taskId, new AzureStorageBlob(blob, localChannel.StorageContext, blobProperties, options: ClientOptions));
             }
