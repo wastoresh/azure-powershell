@@ -18,6 +18,13 @@ Add-AzStorageAccountManagementPolicyAction -BaseBlobAction <String> -DaysAfterMo
  [-InputObject <PSManagementPolicyActionGroup>] [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
 ```
 
+### BaseBlobLastAccessTime
+```
+Add-AzStorageAccountManagementPolicyAction -BaseBlobAction <String> -DaysAfterLastAccessTimeGreaterThan <Int32>
+ [-EnableAutoTierToHotFromCool] [-InputObject <PSManagementPolicyActionGroup>]
+ [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
+```
+
 ### Snapshot
 ```
 Add-AzStorageAccountManagementPolicyAction -SnapshotAction <String> -DaysAfterCreationGreaterThan <Int32>
@@ -56,7 +63,7 @@ The management policy action for baseblob.
 
 ```yaml
 Type: System.String
-Parameter Sets: BaseBlob
+Parameter Sets: BaseBlob, BaseBlobLastAccessTime
 Aliases:
 Accepted values: Delete, TierToArchive, TierToCool
 
@@ -73,6 +80,21 @@ Integer value indicating the age in days after creation.
 ```yaml
 Type: System.Int32
 Parameter Sets: Snapshot
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -DaysAfterLastAccessTimeGreaterThan
+Integer value indicating the age in days after last blob access. This property can only be used in conjuction with last access time tracking policy.
+
+```yaml
+Type: System.Int32
+Parameter Sets: BaseBlobLastAccessTime
 Aliases:
 
 Required: True
@@ -104,6 +126,21 @@ The credentials, account, tenant, and subscription used for communication with A
 Type: Microsoft.Azure.Commands.Common.Authentication.Abstractions.Core.IAzureContextContainer
 Parameter Sets: (All)
 Aliases: AzContext, AzureRmContext, AzureCredential
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnableAutoTierToHotFromCool
+Enables auto tiering of a blob from cool to hot on a blob access. It only works with TierToCool action and DaysAfterLastAccessTimeGreaterThan.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: BaseBlobLastAccessTime
+Aliases:
 
 Required: False
 Position: Named
