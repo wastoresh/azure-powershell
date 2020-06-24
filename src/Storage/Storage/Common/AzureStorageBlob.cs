@@ -209,7 +209,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// Azure storage blob constructor
         /// </summary>
         /// <param name="blob">ICloud blob object</param>
-        public AzureStorageBlob(BlobBaseClient track2BlobClient, AzureStorageContext storageContext, BlobItem listBlobItem = null, BlobClientOptions options = null)
+        public AzureStorageBlob(BlobBaseClient track2BlobClient, AzureStorageContext storageContext, BlobClientOptions options = null, BlobItem listBlobItem = null)
         {
             if (listBlobItem == null)
             {
@@ -243,7 +243,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             ContentType = listBlobItem.Properties.ContentType;
             LastModified = listBlobItem.Properties.LastModified;
             VersionId = listBlobItem.VersionId;
-            IsCurrentVersion = listBlobItem.IsCurrentVersion;
+            IsCurrentVersion = listBlobItem.IsLatestVersion;
             AccessTier = listBlobItem.Properties.AccessTier is null? null: listBlobItem.Properties.AccessTier.ToString();
             if (listBlobItem.Tags != null)
             {
@@ -258,7 +258,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             SetProperties(track2BlobClient, storageContext, blobProperties, options);
         }
 
-        public void SetProperties(BlobBaseClient track2BlobClient, AzureStorageContext storageContext, global::Azure.Storage.Blobs.Models.BlobProperties blobProperties = null, BlobClientOptions options = null)
+        private void SetProperties(BlobBaseClient track2BlobClient, AzureStorageContext storageContext, global::Azure.Storage.Blobs.Models.BlobProperties blobProperties = null, BlobClientOptions options = null)
         {
             if (blobProperties == null)
             {
@@ -298,7 +298,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                 ContentType = privateBlobProperties.ContentType;
                 LastModified = privateBlobProperties.LastModified;
                 VersionId = privateBlobProperties.VersionId;
-                IsCurrentVersion = privateBlobProperties.IsCurrentVersion;
+                IsCurrentVersion = privateBlobProperties.IsLatestVersion;
                 if (ICloudBlob is InvalidCloudBlob)
                 {
                     BlobType = Util.convertBlobType_Track2ToTrack1(privateBlobProperties.BlobType);

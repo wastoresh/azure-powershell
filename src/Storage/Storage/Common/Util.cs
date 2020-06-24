@@ -488,6 +488,27 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             return blobClient;
         }
 
+        public static BlobServiceClient GetTrack2BlobServiceClient(AzureStorageContext context, BlobClientOptions options = null)
+        {
+            BlobServiceClient blobServiceClient;
+            if (context.StorageAccount.Credentials.IsToken) //Oauth
+            {
+                blobServiceClient = new BlobServiceClient(context.StorageAccount.BlobEndpoint, context.Track2OauthToken, options);
+            }
+            else  //sas , key or Anonymous, use connection string
+            {
+                string connectionString = context.ConnectionString;
+
+                // remove the "?" at the begin of SAS if any
+                if (context.StorageAccount.Credentials.IsSAS)
+                {
+                    connectionString = connectionString.Replace("SharedAccessSignature=?", "SharedAccessSignature=");
+                }
+                blobServiceClient = new BlobServiceClient(connectionString, options);
+            }
+            return blobServiceClient;
+        }
+
         /// <summary>
         /// Validate if Start Time and Expire time meet the requirement of userDelegationKey
         /// </summary>

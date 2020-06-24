@@ -198,7 +198,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     MaximumTransferSize = 4 * 1024 * 1024,
                     InitialTransferSize = 4 * 1024 * 1024
                 };
-                await blob.DownloadToAsync(filePath, null, trasnferOption, CmdletCancellationToken).ConfigureAwait(false);
+                await blob.DownloadToAsync(filePath, BlobRequestConditions, trasnferOption, CmdletCancellationToken).ConfigureAwait(false);
                 OutputStream.WriteObject(taskId, new AzureStorageBlob(blob, localChannel.StorageContext, blobProperties, options: ClientOptions));
             }
         }
@@ -212,10 +212,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// <returns>the downloaded AzureStorageBlob object</returns>
         internal void GetBlobContent(string containerName, string blobName, string fileName)
         {
-            if (!NameUtil.IsValidBlobName(blobName))
-            {
-                throw new ArgumentException(String.Format(Resources.InvalidBlobName, blobName));
-            }
+            //if (!NameUtil.IsValidBlobName(blobName))
+            //{
+            //    throw new ArgumentException(String.Format(Resources.InvalidBlobName, blobName));
+            //}
 
             if (!NameUtil.IsValidContainerName(containerName))
             {
@@ -223,12 +223,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
 
             CloudBlobContainer container = Channel.GetContainerReference(containerName);
-            BlobRequestOptions requestOptions = RequestOptions;
-            AccessCondition accessCondition = null;
+            GetBlobContent(container, blobName, fileName);
+            //BlobRequestOptions requestOptions = RequestOptions;
+            //AccessCondition accessCondition = null;
 
-            CloudBlob blob = GetBlobReferenceFromServerWithContainer(Channel, container, blobName, accessCondition, requestOptions, OperationContext);
+            //CloudBlob blob = GetBlobReferenceFromServerWithContainer(Channel, container, blobName, accessCondition, requestOptions, OperationContext);
 
-            GetBlobContent(blob, fileName, true);
+            //GetBlobContent(blob, fileName, true);
         }
 
         /// <summary>
@@ -248,12 +249,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             string filePath = GetFullReceiveFilePath(fileName, blobName, null);
 
             ValidatePipelineCloudBlobContainer(container);
-            AccessCondition accessCondition = null;
-            BlobRequestOptions requestOptions = RequestOptions;
 
-            CloudBlob blob = GetBlobReferenceFromServerWithContainer(Channel, container, blobName, accessCondition, requestOptions, OperationContext);
+            if (UseTrack2SDK())
+            {
+                BlobContainerClient track2container = AzureStorageContainer.GetTrack2BlobContainerClient(container, Channel.StorageContext, ClientOptions);
+                BlobBaseClient blobClient = track2container.GetBlobBaseClient(blobName);
+                GetBlobContent(blobClient, filePath, true);
+            }
+            else
+            {
+                AccessCondition accessCondition = null;
+                BlobRequestOptions requestOptions = RequestOptions;
+                CloudBlob blob = GetBlobReferenceFromServerWithContainer(Channel, container, blobName, accessCondition, requestOptions, OperationContext);
 
-            GetBlobContent(blob, filePath, true);
+                GetBlobContent(blob, filePath, true);
+            }
         }
 
         /// <summary>
@@ -414,7 +424,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 case BlobParameterSet:
                     if (ShouldProcess(CloudBlob.Name, "Download"))
                     {
-                        if (!(CloudBlob is InvalidCloudBlob))
+                        if (!(CloudBlob is InvalidCloudBlob) && !UseTrack2SDK())
                         {
                             GetBlobContent(CloudBlob, FileName, true);
                         }

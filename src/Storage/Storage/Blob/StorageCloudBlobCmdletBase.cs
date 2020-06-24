@@ -35,12 +35,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using Microsoft.WindowsAzure.Commands.Common;
     using Track2blobModel = global::Azure.Storage.Blobs.Models;
     using global::Azure.Storage.Blobs.Specialized;
+    using System.Management.Automation;
 
     /// <summary>
     /// Base cmdlet for storage blob/container cmdlet
     /// </summary>
     public class StorageCloudBlobCmdletBase : StorageCloudCmdletBase<IStorageBlobManagement>
     {
+        [Parameter(HelpMessage = "Optional Query statement to apply to the Tags of the Blob. The blob request will fail when the blob tags not match the given tag conditions.", Mandatory = false)]
+        [ValidateNotNullOrEmpty]
+        public virtual string TagCondition { get; set; }        
+
         /// <summary>
         /// Initializes a new instance of the StorageCloudBlobCmdletBase class.
         /// </summary>
@@ -78,6 +83,47 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 return options;
             }
         }
+
+        public global::Azure.Storage.Blobs.Models.BlobRequestConditions BlobRequestConditions
+        {
+            get
+            {
+                global::Azure.Storage.Blobs.Models.BlobRequestConditions requestConditions = new global::Azure.Storage.Blobs.Models.BlobRequestConditions();
+                if (this.TagCondition != null)
+                {
+                    requestConditions.TagConditions = this.TagCondition;
+                }
+                return requestConditions;
+            }
+        }
+
+        public global::Azure.Storage.Blobs.Models.PageBlobRequestConditions PageBlobRequestConditions
+        {
+            get
+            {
+                global::Azure.Storage.Blobs.Models.PageBlobRequestConditions requestConditions = new global::Azure.Storage.Blobs.Models.PageBlobRequestConditions();
+                if (this.TagCondition != null)
+                {
+                    requestConditions.TagConditions = this.TagCondition;
+                }
+                return requestConditions;
+            }
+        }
+
+        public global::Azure.Storage.Blobs.Models.AppendBlobRequestConditions AppendBlobRequestConditions
+        {
+            get
+            {
+                global::Azure.Storage.Blobs.Models.AppendBlobRequestConditions requestConditions = new global::Azure.Storage.Blobs.Models.AppendBlobRequestConditions();
+                if (this.TagCondition != null)
+                {
+                    requestConditions.TagConditions = this.TagCondition;
+                }
+                return requestConditions;
+            }
+        }
+
+
 
         protected static CloudBlob GetBlobReferenceFromServerWithContainer(
             IStorageBlobManagement localChannel,
@@ -946,6 +992,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             }
 
             return blobClient;
+        }
+
+        protected virtual bool UseTrack2SDK()
+        {
+            if (this.TagCondition != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

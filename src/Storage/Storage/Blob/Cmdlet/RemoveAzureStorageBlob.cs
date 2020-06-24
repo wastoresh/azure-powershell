@@ -107,6 +107,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         [Parameter(Mandatory = false, HelpMessage = "Return whether the specified blob is successfully removed")]
         public SwitchParameter PassThru { get; set; }
 
+        protected override bool UseTrack2SDK()
+        {
+            if(this.VersionId != null)
+            {
+                return true;
+            }
+            return base.UseTrack2SDK();
+        }
+
         /// <summary>
         /// Initializes a new instance of the RemoveStorageAzureBlobCommand class.
         /// </summary>
@@ -302,7 +311,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         internal async Task DeleteCloudAsyncTrack2(long taskId, IStorageBlobManagement localChannel, BlobBaseClient blob, Track2Models.DeleteSnapshotsOption deleteSnapshotsOption)
         {
 
-            var responds = await blob.DeleteAsync(deleteSnapshotsOption, null, CmdletCancellationToken).ConfigureAwait(false);
+            var responds = await blob.DeleteAsync(deleteSnapshotsOption, this.BlobRequestConditions, CmdletCancellationToken).ConfigureAwait(false);
 
             string result = String.Format(Resources.RemoveBlobSuccessfully, blob.Name, blob.BlobContainerName);
 
@@ -329,7 +338,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 
             ValidatePipelineCloudBlobContainer(container);
 
-            if (this.VersionId == null)
+            if (!UseTrack2SDK())
             {
                 AccessCondition accessCondition = null;
                 BlobRequestOptions requestOptions = null;
@@ -367,7 +376,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 }
 
                 BlobContainerClient track2container = AzureStorageContainer.GetTrack2BlobContainerClient(container, localChannel.StorageContext, ClientOptions);
-                BlobBaseClient blobClient = Util.GetTrack2BlobClient(track2container, blobName, localChannel.StorageContext, this.VersionId, null, null, ClientOptions);
+                BlobBaseClient blobClient = Util.GetTrack2BlobClient(track2container, blobName, localChannel.StorageContext, this.VersionId, null,
+                    this.SnapshotTime is null? null : this.SnapshotTime.Value.ToString("o"), ClientOptions);
                 // Skip check blob existance, as Server will report error is necessary
 
                 await RemoveAzureBlobTrack2(taskId, localChannel, blobClient, true).ConfigureAwait(false);
@@ -425,7 +435,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 switch (ParameterSetName)
                 {
                     case BlobPipelineParameterSet:                     
-                        if (!(this.CloudBlob is InvalidCloudBlob))
+                        if (!(this.CloudBlob is InvalidCloudBlob) && !UseTrack2SDK())
                         {
                             CloudBlob localBlob = CloudBlob;
                             taskGenerator = (taskId) => RemoveAzureBlob(taskId, localChannel, localBlob, false);

@@ -23,7 +23,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
     using System.Security.Permissions;
     using System.Threading.Tasks;
     using global::Azure.Storage.Blobs.Specialized;
-    using Track2Models = global::Azure.Storage.Blobs.Models;
     using global::Azure.Storage.Blobs;
     using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
     using System.Collections;
@@ -148,7 +147,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 ValidatePipelineCloudBlobTrack2(blob);
             }
 
-            IDictionary<string, string> tags = (await blob.GetTagsAsync(
+            IDictionary<string, string> tags = (await blob.GetTagsAsync(BlobRequestConditions,
                 this.CmdletCancellationToken).ConfigureAwait(false)).Value;
 
             OutputStream.WriteObject(taskId, tags is null? null: tags.ToHashtable());

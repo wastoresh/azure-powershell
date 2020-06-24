@@ -148,7 +148,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 
             await blob.SetTagsAsync(
                 this.BlobTag.Cast<DictionaryEntry>().ToDictionary(d => (string)d.Key, d => (string)d.Value),
-                this.CmdletCancellationToken).ConfigureAwait(false);
+                this.BlobRequestConditions, this.CmdletCancellationToken).ConfigureAwait(false);
 
             OutputStream.WriteObject(taskId, this.BlobTag);
         }

@@ -131,7 +131,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         public override int? ServerTimeoutPerRequest { get; set; }
         public override int? ClientTimeoutPerRequest { get; set; }
         public override int? ConcurrentTaskCount { get; set; }
+        public override string TagCondition { get; set; }
 
+        protected override bool UseTrack2SDK()
+        {
+            if (this.Permission.ToLower().Contains("t"))
+            {
+                return true;
+            }
+            return base.UseTrack2SDK();
+        }
         /// <summary>
         /// Initializes a new instance of the NewAzureStorageBlobSasCommand class.
         /// </summary>
@@ -186,7 +195,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
             }
 
-            if (!(blob is InvalidCloudBlob))
+            if (!(blob is InvalidCloudBlob) && !UseTrack2SDK())
             {
 
                 SharedAccessBlobPolicy accessPolicy = new SharedAccessBlobPolicy();
@@ -215,7 +224,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
             else // Use Track2 SDk
             {
-                BlobBaseClient blobClient = this.BlobBaseClient;
+                BlobBaseClient blobClient;
+                if (this.BlobBaseClient != null)
+                {
+                    blobClient = this.BlobBaseClient;
+                }
+                else
+                {
+                    blobClient = AzureStorageBlob.GetTrack2BlobClient(blob, Channel.StorageContext, this.ClientOptions);
+                }
 
                 BlobSasBuilder sasBuilder;
                 if (ParameterSetName == BlobNamePipelineParmeterSetWithPolicy || ParameterSetName == BlobPipelineParameterSetWithPolicy)
@@ -334,7 +351,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
                 if (Util.GetVersionIdFromBlobUri(blobClient.Uri) != null)
                 {
-                    sasBuilder.BlobVersion = Util.GetVersionIdFromBlobUri(blobClient.Uri);
+                    sasBuilder.BlobVersionId = Util.GetVersionIdFromBlobUri(blobClient.Uri);
                 }
                 if (Util.GetSnapshotTimeFromBlobUri(blobClient.Uri) != null)
                 {

@@ -251,7 +251,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             };
             if (Util.GetVersionIdFromBlobUri(blob.Uri) != null)
             {
-                sasBuilder.BlobVersion = Util.GetVersionIdFromBlobUri(blob.Uri);
+                sasBuilder.BlobVersionId = Util.GetVersionIdFromBlobUri(blob.Uri);
             }
             sasBuilder.SetPermissions("r");
             string sasToken = sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(context.StorageAccountName, context.StorageAccount.Credentials.ExportBase64EncodedKey())).ToString();
