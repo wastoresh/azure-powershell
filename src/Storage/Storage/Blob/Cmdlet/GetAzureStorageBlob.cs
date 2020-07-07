@@ -57,6 +57,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         /// </summary>
         private const string SingleBlobVersionIDParameterSet = "SingleBlobVersionID";
 
+        /// <summary>
+        /// Query by Blob tags across all containers
+        /// </summary>
+        private const string QuerybyBlobTagParameterSet = "QuerybyBlobTag";
+
         [Parameter(Position = 0, HelpMessage = "Blob name", ParameterSetName = NameParameterSet)]
         [Parameter(Position = 0, Mandatory = true, HelpMessage = "Blob name", ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
         [Parameter(Position = 0, Mandatory = true, HelpMessage = "Blob name", ParameterSetName = SingleBlobVersionIDParameterSet)]
@@ -123,6 +128,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public SwitchParameter IncludeVersion { get; set; }
 
+        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = NameParameterSet)]
+        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = PrefixParameterSet)]
+        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
+        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = SingleBlobVersionIDParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter IncludeTag { get; set; }
+
         [Parameter(HelpMessage = "Blob SnapshotTime", Mandatory = true, ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
         [ValidateNotNullOrEmpty]
         public DateTimeOffset? SnapshotTime { get; set; }
@@ -130,6 +142,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(HelpMessage = "Blob VersionId", Mandatory = true, ParameterSetName = SingleBlobVersionIDParameterSet)]
         [ValidateNotNullOrEmpty]
         public string VersionId { get; set; }
+
+        [Parameter(HelpMessage = "This parameter enables the caller to query blobs whose tags match a given expression. " +
+            "The given expression must evaluate to true for a blob to be returned in the results. " +
+            "The [OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter; however, only a subset of the OData filter syntax is supported in the Blob service.", 
+            Mandatory = true, ParameterSetName = QuerybyBlobTagParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public string TagFilterSqlExpression { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
         public int? MaxCount
@@ -155,9 +174,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         private bool NeedWarningForContinuationToken = false;
 
+        // Overwrite the parameter, function
+        [Parameter(HelpMessage = "Optional Query statement to apply to the Tags of the Blob. The blob request will fail when the blob tags not match the given tag conditions.", Mandatory = false, ParameterSetName = NameParameterSet)]
+        [Parameter(HelpMessage = "Optional Query statement to apply to the Tags of the Blob. The blob request will fail when the blob tags not match the given tag conditions.", Mandatory = false, ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
+        [Parameter(HelpMessage = "Optional Query statement to apply to the Tags of the Blob. The blob request will fail when the blob tags not match the given tag conditions.", Mandatory = false, ParameterSetName = SingleBlobVersionIDParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public override string TagCondition { get; set; }
+
         protected override bool UseTrack2SDK()
         {
-            if (this.IncludeVersion.IsPresent || this.VersionId != null)
+            if (this.IncludeVersion.IsPresent || this.IncludeTag.IsPresent || this.VersionId != null || this.TagFilterSqlExpression != null)
             {
                 return true;
             }
@@ -236,6 +262,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     blobClient = Util.GetTrack2BlobClient(track2container, blobName, localChannel.StorageContext, this.VersionId, blobProperties.IsLatestVersion, this.SnapshotTime is null ? null : this.SnapshotTime.Value.ToString("o"), ClientOptions, blobProperties.BlobType);
 
                     AzureStorageBlob outputBlob = new AzureStorageBlob(blobClient, localChannel.StorageContext, blobProperties, ClientOptions);
+                    if (this.IncludeTag.IsPresent)
+                    {
+                        IDictionary<string, string> tags = (await blobClient.GetTagsAsync(null, this.CmdletCancellationToken).ConfigureAwait(false)).Value;
+                        if (tags != null)
+                        {
+                            outputBlob.Tags = tags.ToHashtable();
+                            outputBlob.TagCount = tags.Count;
+                        }
+                    }
                     OutputStream.WriteObject(taskId, outputBlob);
                 }
                 else // Use Track1 SDK
@@ -283,6 +318,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 if (includeVersion)
                 {
                     blobStates = blobStates | BlobStates.Version;
+                }
+                if (IncludeTag.IsPresent)
+                {
+                    blobTraits = blobTraits | BlobTraits.Tags;
                 }
 
                 do
@@ -435,7 +474,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             Func<long, Task> taskGenerator = null;
             IStorageBlobManagement localChannel = Channel;
 
-            if (ParameterSetName == PrefixParameterSet)
+            if (ParameterSetName == QuerybyBlobTagParameterSet)
+            {
+                taskGenerator = (taskId) => ListBlobsByTag(taskId, localChannel, this.TagFilterSqlExpression);
+            }
+            else if (ParameterSetName == PrefixParameterSet)
             {
                 string localContainerName = containerName;
                 string localPrefix = blobPrefix;

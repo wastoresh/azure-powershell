@@ -163,6 +163,22 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
 
         private Hashtable BlobMetadata = null;
 
+        [Parameter(HelpMessage = "Blob Tags", Mandatory = false)]
+        [ValidateNotNullOrEmpty]
+        public Hashtable Tag
+        {
+            get
+            {
+                return BlobTag;
+            }
+
+            set
+            {
+                BlobTag = value;
+            }
+        }
+        private Hashtable BlobTag = null;
+
         [Parameter(HelpMessage = "Premium Page Blob Tier", Mandatory = false)]
         public PremiumPageBlobTier PremiumPageBlobTier
         {
@@ -207,6 +223,20 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
             Mandatory = false)]
         [ValidateNotNullOrEmpty]
         public string EncryptionScope { get; set; }
+
+        protected override bool UseTrack2SDK()
+        {
+            if (this.BlobTag != null)
+            {
+                return true;
+            }
+            if (!string.IsNullOrEmpty(this.EncryptionScope))
+            {
+                return true;
+            }
+
+            return base.UseTrack2SDK();
+        }
 
         private BlobUploadRequestQueue UploadRequests = new BlobUploadRequestQueue();
         
@@ -375,7 +405,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                 Tuple<string, StorageBlob.CloudBlob> uploadRequest = UploadRequests.DequeueRequest();
                 IStorageBlobManagement localChannel = Channel;
                 Func<long, Task> taskGenerator;
-                if (!UseTrack2SDK() && string.IsNullOrEmpty(this.EncryptionScope))
+                if (!UseTrack2SDK())
                 {
                     //Upload with DMlib
                     taskGenerator = (taskId) => Upload2Blob(taskId, localChannel, uploadRequest.Item1, uploadRequest.Item2);
@@ -466,7 +496,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                         BlobClient blobClient = GetTrack2BlobClient(blob, localChannel.StorageContext, options);
                         StorageTransferOptions trasnferOption = new StorageTransferOptions() { MaximumConcurrency = this.GetCmdletConcurrency() };
                         BlobUploadOptions uploadOptions = new BlobUploadOptions();
-
+                        if (this.BlobTag != null)
+                        {
+                            uploadOptions.Tags = this.BlobTag.Cast<DictionaryEntry>().ToDictionary(d => (string)d.Key, d => (string)d.Value);
+                        }
                         uploadOptions.Metadata = metadata;
                         uploadOptions.HttpHeaders = blobHttpHeaders;
                         uploadOptions.Conditions = this.BlobRequestConditions;
@@ -492,7 +525,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                             }
                             pageblobClient = GetTrack2PageBlobClient(blob, localChannel.StorageContext, options);
                             PageBlobCreateOptions createOptions = new PageBlobCreateOptions();
-
+                            if (this.BlobTag != null)
+                            {
+                                createOptions.Tags = this.BlobTag.Cast<DictionaryEntry>().ToDictionary(d => (string)d.Key, d => (string)d.Value);
+                            }
                             createOptions.Metadata = metadata;
                             createOptions.HttpHeaders = blobHttpHeaders;
                             createOptions.Conditions = this.PageBlobRequestConditions;
@@ -502,7 +538,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                         {
                             appendblobClient = GetTrack2AppendBlobClient(blob, localChannel.StorageContext, options);
                             AppendBlobCreateOptions createOptions = new AppendBlobCreateOptions();
-
+                            if (this.BlobTag != null)
+                            {
+                                createOptions.Tags = this.BlobTag.Cast<DictionaryEntry>().ToDictionary(d => (string)d.Key, d => (string)d.Value);
+                            }
                             createOptions.Metadata = metadata;
                             createOptions.HttpHeaders = blobHttpHeaders;
                             createOptions.Conditions = this.AppendBlobRequestConditions;
