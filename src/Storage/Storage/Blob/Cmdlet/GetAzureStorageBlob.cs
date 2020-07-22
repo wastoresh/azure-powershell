@@ -97,10 +97,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         private string blobPrefix = String.Empty;
 
         [Alias("N", "Name")]
-        [Parameter(Position = 1, Mandatory = true, HelpMessage = "Container name", ValueFromPipelineByPropertyName = true, ParameterSetName = NameParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, HelpMessage = "Container name", ValueFromPipelineByPropertyName = true, ParameterSetName = PrefixParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, HelpMessage = "Container name", ValueFromPipelineByPropertyName = true, ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, HelpMessage = "Container name", ValueFromPipelineByPropertyName = true, ParameterSetName = SingleBlobVersionIDParameterSet)]
+        [Parameter(Position = 1, Mandatory = true, HelpMessage = "Container name", ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         public string Container
         {
@@ -117,10 +114,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         private string containerName = String.Empty;
 
-        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs, by default get blob won't include deleted blobs", ParameterSetName = NameParameterSet)]
-        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs, by default get blob won't include deleted blobs", ParameterSetName = PrefixParameterSet)]
-        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs, by default get blob won't include deleted blobs", ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
-        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs, by default get blob won't include deleted blobs", ParameterSetName = SingleBlobVersionIDParameterSet)]
+        [Parameter(Mandatory = false, HelpMessage = "Include deleted blobs, by default get blob won't include deleted blobs")]
         [ValidateNotNullOrEmpty]
         public SwitchParameter IncludeDeleted { get; set; }
 
@@ -128,10 +122,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNullOrEmpty]
         public SwitchParameter IncludeVersion { get; set; }
 
-        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = NameParameterSet)]
-        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = PrefixParameterSet)]
-        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = SingleBlobSnapshotTimeParameterSet)]
-        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.", ParameterSetName = SingleBlobVersionIDParameterSet)]
+        [Parameter(Mandatory = false, HelpMessage = "Include blob tags, by default get blob won't include blob tags.")]
         [ValidateNotNullOrEmpty]
         public SwitchParameter IncludeTag { get; set; }
 
@@ -142,13 +133,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(HelpMessage = "Blob VersionId", Mandatory = true, ParameterSetName = SingleBlobVersionIDParameterSet)]
         [ValidateNotNullOrEmpty]
         public string VersionId { get; set; }
-
-        //[Parameter(HelpMessage = "This parameter enables the caller to query blobs whose tags match a given expression. " +
-        //    "The given expression must evaluate to true for a blob to be returned in the results. " +
-        //    "The [OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter; however, only a subset of the OData filter syntax is supported in the Blob service.", 
-        //    Mandatory = true, ParameterSetName = QuerybyBlobTagParameterSet)]
-        //[ValidateNotNullOrEmpty]
-        //public string TagFilterSqlExpression { get; set; }
 
         [Parameter(Mandatory = false, HelpMessage = "The max count of the blobs that can return.")]
         public int? MaxCount

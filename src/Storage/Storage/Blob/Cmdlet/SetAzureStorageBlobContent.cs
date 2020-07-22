@@ -488,12 +488,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                     }
                 });
 
+                BlobBaseClient outputBlobClient = null;
                 using (FileStream stream = System.IO.File.OpenRead(ResolvedFileName))
                 {
                     //block blob
                     if (string.Equals(blobType, BlockBlobType, StringComparison.InvariantCultureIgnoreCase))
                     {
                         BlobClient blobClient = GetTrack2BlobClient(blob, localChannel.StorageContext, options);
+                        outputBlobClient = blobClient;
                         StorageTransferOptions trasnferOption = new StorageTransferOptions() { MaximumConcurrency = this.GetCmdletConcurrency() };
                         BlobUploadOptions uploadOptions = new BlobUploadOptions();
                         if (this.BlobTag != null)
@@ -524,6 +526,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                                 throw new ArgumentException(String.Format("File size {0} Bytes is invalid for PageBlob, must be a multiple of 512 bytes.", fileSize.ToString()));
                             }
                             pageblobClient = GetTrack2PageBlobClient(blob, localChannel.StorageContext, options);
+                            outputBlobClient = pageblobClient;
                             PageBlobCreateOptions createOptions = new PageBlobCreateOptions();
                             if (this.BlobTag != null)
                             {
@@ -537,6 +540,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                         else //append
                         {
                             appendblobClient = GetTrack2AppendBlobClient(blob, localChannel.StorageContext, options);
+                            outputBlobClient = appendblobClient;
                             AppendBlobCreateOptions createOptions = new AppendBlobCreateOptions();
                             if (this.BlobTag != null)
                             {
@@ -610,8 +614,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
                             BlobName));
                     }
                 }
-
-                WriteCloudBlobObject(taskId, localChannel, blob);
+                AzureStorageBlob outputBlob = new AzureStorageBlob(outputBlobClient, localChannel.StorageContext, null, ClientOptions);
+                //await blob.FetchAttributesAsync(CmdletCancellationToken).ConfigureAwait(false); ;
+                //WriteCloudBlobObject(taskId, localChannel, blob);
             }
         }
 

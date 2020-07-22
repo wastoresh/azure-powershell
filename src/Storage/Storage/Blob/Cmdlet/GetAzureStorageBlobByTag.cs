@@ -33,9 +33,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     [Cmdlet("Get", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobByTag"),OutputType(typeof(AzureStorageBlob))]
     public class GetAzureStorageBlobByTagCommand : StorageCloudBlobCmdletBase
     {
-        [Parameter(HelpMessage = "This parameter enables the caller to query blobs whose tags match a given expression. " +
-            "The given expression must evaluate to true for a blob to be returned in the results. " +
-            "The [OData - ABNF] filter syntax rule defines the formal grammar for the value of the where query parameter; however, only a subset of the OData filter syntax is supported in the Blob service.",
+        [Parameter(HelpMessage = "Filters the result set to only include blobs whose tags match the specified expression." +
+            "See details in https://docs.microsoft.com/en-us/rest/api/storageservices/find-blobs-by-tags#remarks.",
             Mandatory = true)]
         [ValidateNotNullOrEmpty]
         public string TagFilterSqlExpression { get; set; }

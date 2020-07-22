@@ -187,7 +187,22 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// <summary>
         /// Blob TagCount.
         /// </summary>
-        public long TagCount { get; set; }
+        public long TagCount
+        {
+            get
+            {
+                if (tagcount == -1)
+                {
+                    tagcount = BlobProperties.TagCount;
+                }
+                    return tagcount;
+            }
+            set
+            {
+                tagcount = value;
+            }
+        }
+        private long tagcount = -1;
 
         /// <summary>
         /// Blob Tags

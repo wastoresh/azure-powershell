@@ -14,8 +14,8 @@ Lists blobs in a storage account across containers, with a blob tag filter sql e
 
 ```
 Get-AzStorageBlobByTag -TagFilterSqlExpression <String> [-MaxCount <Int32>]
- [-ContinuationToken <BlobContinuationToken>] [-GetBlobProperty] [-TagCondition <String>]
- [-Context <IStorageContext>] [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
+ [-ContinuationToken <BlobContinuationToken>] [-GetBlobProperty] [-Context <IStorageContext>]
+ [-ServerTimeoutPerRequest <Int32>] [-ClientTimeoutPerRequest <Int32>]
  [-DefaultProfile <IAzureContextContainer>] [-ConcurrentTaskCount <Int32>] [<CommonParameters>]
 ```
 
@@ -24,7 +24,28 @@ The **Get-AzStorageBlobByTag** cmdlet lists blobs in a storage account across co
 
 ## EXAMPLES
 
-### Example 1: List blobs in a specific container and match a apecific blob tag
+### Example 1: List all blobs match a specific blob tag, across containers.
+```
+PS C:\> Get-AzStorageBlobByTag -TagFilterSqlExpression """tag1""='value1'" -Context $ctx 
+
+   AccountName: storageaccountname, ContainerName: containername1
+
+Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
+----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
+testblob                                                                                                                                   False                                    
+testblob2                                                                                                                                  False                                    
+
+   AccountName: storageaccountname, ContainerName: containername2
+
+Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
+----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
+testblob3                                                                                                                                   False                                    
+testblob4                                                                                                                                   False
+```
+
+This command lists all blobs in a storage accoun, which contains a tag with name "tag1" and value "value1".
+
+### Example 2: List blobs in a specific container and match a specific blob tag
 ```
 PS C:\> Get-AzStorageBlobByTag -TagFilterSqlExpression "@container='containername' AND ""tag1""='value1'" -Context $ctx
 
@@ -33,10 +54,32 @@ PS C:\> Get-AzStorageBlobByTag -TagFilterSqlExpression "@container='containernam
 Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
 ----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
 test1                                                                                                                                      False                                    
-test2                                                                                                                                      False              
+test2                                                                                                                                      False
 ```
 
 This command lists blobs in a container and match a specific blob tag.
+
+### Example 3: List all blobs match a specific blob tag, across containers, and get the blob properties.
+```
+PS C:\> Get-AzStorageBlobByTag -TagFilterSqlExpression """tag1""='value1'" -GetBlobProperty
+
+   AccountName: storageaccountname, ContainerName: containername1
+
+Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
+----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
+testblob             BlockBlob 2097152         application/octet-stream       2020-07-23 09:35:02Z Hot                                     False      2020-07-23T09:35:02.8527357Z *                                   
+testblob2            BlockBlob 1048012         application/octet-stream       2020-07-23 09:35:05Z Hot                                     False      2020-07-23T09:35:05.2504530Z *                             
+
+   AccountName: storageaccountname, ContainerName: containername2
+
+Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
+----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
+testblob3            BlockBlob 100             application/octet-stream       2020-07-01 09:55:14Z Hot                                     False      2020-07-01T09:55:14.6507341Z *                      
+testblob4            BlockBlob 2024            application/octet-stream       2020-07-01 09:42:11Z Hot                                     False      2020-07-01T09:42:11.4283807Z *
+```
+
+This command lists all blobs in a storage accoun, which contains a tag with name "tag1" and value "value1"， and get the blob properties.
+Please note, to get blob properties with parameter -GetBlobProperty, each blob will need an addtional request, so the cmdlet runs show when there are many blobs.
 
 ## PARAMETERS
 
@@ -161,26 +204,9 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -TagCondition
-Optional Query statement to apply to the Tags of the Blob.
-The blob request will fail when the blob tags not match the given tag conditions.
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -TagFilterSqlExpression
-This parameter enables the caller to query blobs whose tags match a given expression.
-The given expression must evaluate to true for a blob to be returned in the results.
-The \[OData - ABNF\] filter syntax rule defines the formal grammar for the value of the where query parameter; however, only a subset of the OData filter syntax is supported in the Blob service.
+Filters the result set to only include blobs whose tags match the specified expression.
+See details in https://docs.microsoft.com/en-us/rest/api/storageservices/find-blobs-by-tags#remarks.
 
 ```yaml
 Type: System.String

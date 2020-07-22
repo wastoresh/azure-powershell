@@ -148,6 +148,43 @@ blob1                BlockBlob 2097152         application/octet-stream       20
 
 This command gets a single blobs snapshot with SnapshotTime.
 
+### Example 7: Get blob include blob tags
+```
+PS C:\> $blobs = Get-AzStorageBlob -Container "containername" -IncludeTag
+
+PS C:\> $blobs
+
+   AccountName: storageaccountname, ContainerName: containername
+
+Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
+----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
+testblob             BlockBlob 2097152         application/octet-stream       2020-07-23 09:35:02Z Hot                                     False      2020-07-23T09:35:02.8527357Z *
+testblob2            BlockBlob 2097152         application/octet-stream       2020-07-23 09:35:04Z Hot                                     False      2020-07-23T09:35:04.0856187Z *
+
+
+PS C:\> $blobs[0].Tags
+Name          Value 
+----          -----
+tag1          value1
+tag2          value2
+```
+
+This command lists blobs from a container with blob tags, and show the tags of the first blob.
+
+### Example 8: Get a single blob with blob tag condition
+```
+PS C:\> Get-AzStorageBlob -Container "containername" -Blob testblob -TagCondition """tag1""='value1'"
+
+   AccountName: storageaccountname, ContainerName: containername
+
+Name                 BlobType  Length          ContentType                    LastModified         AccessTier SnapshotTime                 IsDeleted  VersionId                     
+----                 --------  ------          -----------                    ------------         ---------- ------------                 ---------  ---------                     
+testblob             BlockBlob 2097152         application/octet-stream       2020-07-23 09:35:02Z Hot                                     False      2020-07-23T09:35:02.8527357Z *
+```
+
+This command gets a single blob with blob tag condition. 
+The cmdlet will only success when the blob contains a tag with name "tag1" and value "value1", else the cmdlet will fail with error code 412.
+
 ## PARAMETERS
 
 ### -Blob
@@ -387,7 +424,9 @@ Accept wildcard characters: False
 ```
 
 ### -TagCondition
-Optional Query statement to apply to the Tags of the Blob. The blob request will fail when the blob tags not match the given tag conditions.
+Optional Query statement to apply to the Tags of the Blob.
+The blob request will fail when the blob tags not match the given tag conditions.
+See details in https://docs.microsoft.com/en-us/rest/api/storageservices/specifying-conditional-headers-for-blob-service-operations#tags-conditional-operations.
 
 ```yaml
 Type: System.String
