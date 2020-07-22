@@ -171,6 +171,23 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         {
             Track2Models.BlobProperties blobProperties = blob.GetProperties(cancellationToken: CmdletCancellationToken);
 
+            ////Prepare progress handler
+            //long fileSize = blobProperties.ContentLength;
+            //string activity = String.Format(Resources.ReceiveAzureBlobActivity, blob.Name, filePath);
+            //string status = Resources.PrepareDownloadingBlob;
+            //ProgressRecord pr = new ProgressRecord(OutputStream.GetProgressId(taskId), activity, status);
+            //IProgress<long> progressHandler = new Progress<long>((finishedBytes) =>
+            //{
+            //    if (pr != null)
+            //    {
+            //        // Size of the source file might be 0, when it is, directly treat the progress as 100 percent.
+            //        pr.PercentComplete = 0 == fileSize ? 100 : (int)(finishedBytes * 100 / fileSize);
+            //        pr.StatusDescription = string.Format(CultureInfo.CurrentCulture, Resources.FileTransmitStatus, pr.PercentComplete);
+            //        Console.WriteLine(finishedBytes);
+            //        this.OutputStream.WriteProgress(pr);
+            //    }
+            //});
+
             if (this.Force.IsPresent
                 || !System.IO.File.Exists(filePath)
                 || ShouldContinue(string.Format(Resources.OverwriteConfirmation, filePath), null))
