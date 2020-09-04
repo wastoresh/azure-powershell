@@ -150,7 +150,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 }
             }
 
-            if (ShouldProcess("BlobServiceProperties", "Update"))
+            if (ShouldProcess("FileServiceProperties", "Update"))
             {
                 switch (ParameterSetName)
                 {
@@ -189,6 +189,8 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
                 FileServiceProperties serviceProperties = this.StorageClient.FileServices.SetServiceProperties(this.ResourceGroupName, this.StorageAccountName, 
                     new FileServiceProperties(shareDeleteRetentionPolicy: deleteRetentionPolicy, protocolSettings: protocolSettings));
+
+                serviceProperties = this.StorageClient.FileServices.GetServiceProperties(this.ResourceGroupName, this.StorageAccountName);
 
                 WriteObject(new PSFileServiceProperties(serviceProperties));
             }
