@@ -24,7 +24,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
     using System.Threading.Tasks;
     using System.Collections;
     using System.Collections.Generic;
-    using Microsoft.Azure.Storage.DataMovement;
+    using Microsoft.Azure.Storage.DMLib;
     using System.IO;
     using Microsoft.WindowsAzure.Commands.Common;
     using Microsoft.WindowsAzure.Commands.Utilities.Common;
@@ -311,10 +311,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 TotalSize = fileInfo.Length
             };
 
-            SingleTransferContext transferContext = this.GetTransferContext(data);
+            TransferContext transferContext = this.GetTransferContext(data);
+            TransferOptions transferOptions = this.GetTransferOptions(data);
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-            transferContext.SetAttributesCallbackAsync = async (source, destination) =>
+            transferOptions.SetAttributesCallback = (source, destination) =>
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
             {
                 CloudBlob destBlob = destination as CloudBlob;
@@ -325,8 +326,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             await DataMovementTransferHelper.DoTransfer(() =>
             {
                 return this.TransferManager.UploadAsync(filePath,
-                    blob,
-                    null,
+                    GetTransferBlob(blob, Channel.StorageContext),
+                    transferOptions,
                     transferContext,
                     this.CmdletCancellationToken);
             },

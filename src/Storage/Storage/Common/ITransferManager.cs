@@ -13,7 +13,7 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.Storage.DataMovement;
+using Microsoft.Azure.Storage.DMLib;
 using Microsoft.Azure.Storage.File;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,17 +22,17 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
     public interface ITransferManager
     {
-        /// <summary>
-        /// Download an Azure file from Azure File Storage.
-        /// </summary>
-        /// <param name="sourceFile">The Microsoft.Azure.Storage.File.CloudFile that is the source Azure file.</param>
-        /// <param name="destPath">Path to the destination file.</param>
-        /// <param name="options">A Microsoft.WindowsAzure.Storage.DataMovement.DownloadOptions object that specifies additional options for the operation.</param>
-        /// <param name="context">A Microsoft.WindowsAzure.Storage.DataMovement.TransferContext object that represents
-        ///     the context for the current operation.</param>
-        /// <param name="cancellationToken">A System.Threading.CancellationToken object to observe while waiting for a task to complete.</param>
-        /// <returns>A System.Threading.Tasks.Task object that represents the asynchronous operation.</returns>
-        Task DownloadAsync(CloudFile sourceFile, string destPath, DownloadOptions options, SingleTransferContext context, CancellationToken cancellationToken);
+        ///// <summary>
+        ///// Download an Azure file from Azure File Storage.
+        ///// </summary>
+        ///// <param name="sourceFile">The Microsoft.Azure.Storage.File.CloudFile that is the source Azure file.</param>
+        ///// <param name="destPath">Path to the destination file.</param>
+        ///// <param name="options">A Microsoft.WindowsAzure.Storage.DataMovement.DownloadOptions object that specifies additional options for the operation.</param>
+        ///// <param name="context">A Microsoft.WindowsAzure.Storage.DataMovement.TransferContext object that represents
+        /////     the context for the current operation.</param>
+        ///// <param name="cancellationToken">A System.Threading.CancellationToken object to observe while waiting for a task to complete.</param>
+        ///// <returns>A System.Threading.Tasks.Task object that represents the asynchronous operation.</returns>
+        //Task DownloadAsync(CloudFile sourceFile, string destPath, TransferOptions options, TransferContext context, CancellationToken cancellationToken);
 
         /// <summary>
         /// Download an Azure blob from Azure Blob Storage.
@@ -46,21 +46,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// <param name="cancellationToken">A System.Threading.CancellationToken object to observe while waiting for a task
         ///     to complete.</param>
         /// <returns>A System.Threading.Tasks.Task object that represents the asynchronous operation.</returns>
-        Task DownloadAsync(CloudBlob sourceBlob, string destPath, DownloadOptions options, SingleTransferContext context, CancellationToken cancellationToken);
+        Task DownloadAsync(TransferBlob sourceBlob, string destPath, TransferOptions options, TransferContext context, CancellationToken cancellationToken);
 
-        /// <summary>
-        /// Upload a file to Azure File Storage.
-        /// </summary>
-        /// <param name="sourcePath">Path to the source file.</param>
-        /// <param name="destFile">The Microsoft.Azure.Storage.File.CloudFile that is the destination Azure file.</param>
-        /// <param name="options">An Microsoft.WindowsAzure.Storage.DataMovement.UploadOptions object that specifies
-        ///     additional options for the operation.</param>
-        /// <param name="context"> A Microsoft.WindowsAzure.Storage.DataMovement.TransferContext object that represents
-        ///     the context for the current operation.</param>
-        /// <param name="cancellationToken"> A System.Threading.CancellationToken object to observe while waiting for a task
-        ///     to complete.</param>
-        /// <returns>A System.Threading.Tasks.Task object that represents the asynchronous operation.</returns>
-        Task UploadAsync(string sourcePath, CloudFile destFile, UploadOptions options, SingleTransferContext context, CancellationToken cancellationToken);
+        ///// <summary>
+        ///// Upload a file to Azure File Storage.
+        ///// </summary>
+        ///// <param name="sourcePath">Path to the source file.</param>
+        ///// <param name="destFile">The Microsoft.Azure.Storage.File.CloudFile that is the destination Azure file.</param>
+        ///// <param name="options">An Microsoft.WindowsAzure.Storage.DataMovement.UploadOptions object that specifies
+        /////     additional options for the operation.</param>
+        ///// <param name="context"> A Microsoft.WindowsAzure.Storage.DataMovement.TransferContext object that represents
+        /////     the context for the current operation.</param>
+        ///// <param name="cancellationToken"> A System.Threading.CancellationToken object to observe while waiting for a task
+        /////     to complete.</param>
+        ///// <returns>A System.Threading.Tasks.Task object that represents the asynchronous operation.</returns>
+        //Task UploadAsync(string sourcePath, CloudFile destFile, TransferOptions options, TransferContext context, CancellationToken cancellationToken);
 
         /// <summary>
         /// Upload a file to Azure Blob Storage.
@@ -74,6 +74,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// <param name="cancellationToken">A System.Threading.CancellationToken object to observe while waiting for a task
         ///     to complete.</param>
         /// <returns>A System.Threading.Tasks.Task object that represents the asynchronous operation.</returns>
-        Task UploadAsync(string sourcePath, CloudBlob destBlob, UploadOptions options, SingleTransferContext context, CancellationToken cancellationToken);
+        Task UploadAsync(string sourcePath, TransferBlob destBlob, TransferOptions options, TransferContext context, CancellationToken cancellationToken);
     }
 }

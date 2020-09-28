@@ -19,7 +19,7 @@ using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.Storage.DataMovement;
+using Microsoft.Azure.Storage.DMLib;
 using System;
 using System.IO;
 using System.Management.Automation;
@@ -121,11 +121,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
             await DataMovementTransferHelper.DoTransfer(() =>
                 {
-                    return this.TransferManager.DownloadAsync(blob, filePath,
-                        new DownloadOptions()
-                        {
-                            DisableContentMD5Validation = !this.checkMd5
-                        },
+                return this.TransferManager.DownloadAsync(GetTransferBlob(blob, Channel.StorageContext), filePath,
+                        this.GetTransferOptions(data),
+                        //new TransferOptions()
+                        //{
+                        //    //DisableContentMD5Validation = !this.checkMd5
+                        //},
                         this.GetTransferContext(data),
                         this.CmdletCancellationToken);
                 },

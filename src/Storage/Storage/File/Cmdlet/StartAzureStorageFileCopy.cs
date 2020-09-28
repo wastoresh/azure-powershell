@@ -29,7 +29,7 @@ using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
 namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
     [Cmdlet("Start", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageFileCopy", SupportsShouldProcess = true), OutputType(typeof(AzureStorageFile))]
-    public class StartAzureStorageFileCopyCommand : StorageFileDataManagementCmdletBase
+    public class StartAzureStorageFileCopyCommand : AzureStorageFileCmdletBase
     {
         private const string ContainerNameParameterSet = "ContainerName";
         private const string ContainerParameterSet = "ContainerInstance";
@@ -143,7 +143,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         public IStorageContext DestContext { get; set; }
 
         // Overwrite the useless parameter
-        public override SwitchParameter AsJob { get; set; }
+        //public override SwitchParameter AsJob { get; set; }
 
         private IStorageBlobManagement blobChannel = null;
 
