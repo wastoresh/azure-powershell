@@ -19,7 +19,7 @@ using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.Storage.DMLib;
+using Azure.Storage.DataMovement;
 using System;
 using System.IO;
 using System.Management.Automation;

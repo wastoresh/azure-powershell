@@ -13,7 +13,7 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Storage.Blob;
-using Microsoft.Azure.Storage.DMLib;
+using Azure.Storage.DataMovement;
 using Microsoft.Azure.Storage.File;
 using System.Threading;
 using System.Threading.Tasks;

@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Storage.DMLib;
+﻿using Azure.Storage.DataMovement;
 using System;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common

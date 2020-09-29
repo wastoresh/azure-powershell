@@ -36,6 +36,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
     using Track2blobModel = global::Azure.Storage.Blobs.Models;
     using global::Azure.Storage.Blobs.Specialized;
     using System.Management.Automation;
+    using global::Azure.Storage.DataMovement;
 
     /// <summary>
     /// Base cmdlet for storage blob/container cmdlet
@@ -648,8 +649,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage
 
         //only support the common blob properties for block blob and page blob
         //http://msdn.microsoft.com/en-us/library/windowsazure/ee691966.aspx
-        protected static Dictionary<string, Action<BlobProperties, string>> validCloudBlobProperties =
-            new Dictionary<string, Action<BlobProperties, string>>(StringComparer.OrdinalIgnoreCase)
+        protected static Dictionary<string, Action<TransferBlobProperties, string>> validCloudBlobProperties =
+            new Dictionary<string, Action<TransferBlobProperties, string>>(StringComparer.OrdinalIgnoreCase)
             {
                 {"CacheControl", (p, v) => p.CacheControl = v},
                 {"ContentDisposition", (p, v) => p.ContentDisposition = v},
@@ -684,7 +685,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// </summary>
         /// <param name="azureBlob">CloudBlob object</param>
         /// <param name="meta">blob properties hashtable</param>
-        protected static void SetBlobProperties(CloudBlob blob, Hashtable properties)
+        protected static void SetBlobProperties(TransferBlob blob, Hashtable properties)
         {
             if (properties == null)
             {
@@ -695,11 +696,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage
             {
                 string key = entry.Key.ToString();
                 string value = entry.Value.ToString();
-                Action<BlobProperties, string> action = validCloudBlobProperties[key];
+                Action<TransferBlobProperties, string> action = validCloudBlobProperties[key];
 
                 if (action != null)
                 {
-                    action(blob.Properties, value);
+                    action(blob.BlobProperties, value);
                 }
             }
         }
@@ -709,7 +710,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage
         /// </summary>
         /// <param name="azureBlob">CloudBlob object</param>
         /// <param name="meta">meta data hashtable</param>
-        protected static void SetBlobMeta(CloudBlob blob, Hashtable meta)
+        protected static void SetBlobMeta(TransferBlob blob, Hashtable meta)
         {
             if (meta == null)
             {
@@ -721,13 +722,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 string key = entry.Key.ToString();
                 string value = entry.Value.ToString();
 
-                if (blob.Metadata.ContainsKey(key))
+                if (blob.MetaData.ContainsKey(key))
                 {
-                    blob.Metadata[key] = value;
+                    blob.MetaData[key] = value;
                 }
                 else
                 {
-                    blob.Metadata.Add(key, value);
+                    blob.MetaData.Add(key, value);
                 }
             }
         }

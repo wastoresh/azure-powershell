@@ -16,7 +16,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
 {
     using Microsoft.WindowsAzure.Commands.Common;
     using Microsoft.Azure.Storage.Blob;
-    using Microsoft.Azure.Storage.DMLib;
+    using global::Azure.Storage.DataMovement;
     using Microsoft.Azure.Storage.File;
     using System.Threading;
     using System.Threading.Tasks;

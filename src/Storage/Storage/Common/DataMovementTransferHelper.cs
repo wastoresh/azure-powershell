@@ -1,5 +1,5 @@
 ﻿using Microsoft.Azure.Storage;
-using Microsoft.Azure.Storage.DMLib;
+using Azure.Storage.DataMovement;
 using System;
 using System.Globalization;
 using System.Management.Automation;

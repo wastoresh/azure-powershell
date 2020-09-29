@@ -29,7 +29,7 @@ using StorageBlob = Microsoft.Azure.Storage.Blob;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using Microsoft.WindowsAzure.Commands.Common;
 using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
-using Microsoft.Azure.Storage.DMLib;
+using Azure.Storage.DataMovement;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage;
@@ -251,7 +251,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
             transferOptions.SetAttributesCallback =  (source, destination) =>
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
             {
-                CloudBlob destBlob = destination as CloudBlob;
+                TransferBlob destBlob = destination as TransferBlob;
+
                 SetBlobProperties(destBlob, this.BlobProperties);
                 SetBlobMeta(destBlob, this.BlobMetadata);
             };
