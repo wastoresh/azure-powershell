@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-AzIscsiTarget
 
 ## SYNOPSIS
-Gets an iSCSI Target.
+Get an iSCSI Target.
 
 ## SYNTAX
 
@@ -30,7 +30,7 @@ Get-AzIscsiTarget -InputObject <IDiskPoolIdentity> [-DefaultProfile <PSObject>] 
 ```
 
 ## DESCRIPTION
-Gets an iSCSI Target.
+Get an iSCSI Target.
 
 ## EXAMPLES
 

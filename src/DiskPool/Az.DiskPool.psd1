@@ -11,7 +11,7 @@
   DotNetFrameworkVersion = '4.7.2'
   RequiredAssemblies = './bin/Az.DiskPool.private.dll'
   FormatsToProcess = './Az.DiskPool.format.ps1xml'
-  FunctionsToExport = 'Get-AzDiskPool', 'Get-AzIscsiTarget', 'New-AzDiskPool', 'New-AzIscsiTarget', 'Remove-AzDiskPool', 'Remove-AzIscsiTarget', 'Update-AzDiskPool', '*'
+  FunctionsToExport = 'Get-AzDiskPool', 'Get-AzIscsiTarget', 'New-AzDiskPool', 'New-AzDiskPoolAclObject', 'New-AzDiskPoolIscsiLunObject', 'New-AzDiskPoolTargetPortalGroupObject', 'New-AzDiskPoolTargetPortalGroupUpdateObject', 'New-AzIscsiTarget', 'Remove-AzDiskPool', 'Remove-AzIscsiTarget', 'Update-AzDiskPool', 'Update-AzIscsiTarget', '*'
   AliasesToExport = '*'
   PrivateData = @{
     PSData = @{

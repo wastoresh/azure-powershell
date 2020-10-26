@@ -15,20 +15,35 @@ Microsoft Azure PowerShell: DiskPool cmdlets
 Get a Disk Pool.
 
 ### [Get-AzIscsiTarget](Get-AzIscsiTarget.md)
-Gets an iSCSI Target.
+Get an iSCSI Target.
 
 ### [New-AzDiskPool](New-AzDiskPool.md)
-Create a new Disk Pool.
+Create or Update Disk Pool.
+
+### [New-AzDiskPoolAclObject](New-AzDiskPoolAclObject.md)
+Create a in-memory object for Acl
+
+### [New-AzDiskPoolIscsiLunObject](New-AzDiskPoolIscsiLunObject.md)
+Create a in-memory object for IscsiLun
+
+### [New-AzDiskPoolTargetPortalGroupObject](New-AzDiskPoolTargetPortalGroupObject.md)
+Create a in-memory object for TargetPortalGroup
+
+### [New-AzDiskPoolTargetPortalGroupUpdateObject](New-AzDiskPoolTargetPortalGroupUpdateObject.md)
+Create a in-memory object for TargetPortalGroupUpdate
 
 ### [New-AzIscsiTarget](New-AzIscsiTarget.md)
-Create or Update an iSCSI target.
+Create or Update an iSCSI Target.
 
 ### [Remove-AzDiskPool](Remove-AzDiskPool.md)
 Delete a Disk Pool.
 
 ### [Remove-AzIscsiTarget](Remove-AzIscsiTarget.md)
-Deletes an iSCSI Target
+Delete an iSCSI Target.
 
 ### [Update-AzDiskPool](Update-AzDiskPool.md)
-Update a Storage Pool.
+Update a Disk Pool.
+
+### [Update-AzIscsiTarget](Update-AzIscsiTarget.md)
+Update an iSCSI target.
 

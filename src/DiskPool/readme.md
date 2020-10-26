@@ -51,7 +51,8 @@ require:
   - $(this-folder)/../readme.azure.noprofile.md
 input-file:
 # You need to specify your swagger files here.
-  - C:\code\swagger\specification\storagepool\resource-manager\Microsoft.StoragePool\preview\2020-03-15-preview\storagepool.json
+ # - C:\code\swagger\specification\storagepool\resource-manager\Microsoft.StoragePool\preview\2020-03-15-preview\storagepool.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/hakkaraj/storagepool/specification/storagepool/resource-manager/Microsoft.StoragePool/preview/2020-03-15-preview/storagepool.json
 # If the swagger has not been put in the repo, you may uncomment the following line and refer to it locally
 # - (this-folder)/relative-path-to-your-swagger 
 
@@ -66,6 +67,22 @@ subject-prefix: ''
 # identity-correction-for-post: true
 
 directive:
+  - where:
+      model-name: DiskPool
+    set:
+      suppress-format: true
+  - where:
+      model-name: TargetPortalGroup
+    set:
+      suppress-format: true
+  - where:
+      model-name: Acl
+    set:
+      suppress-format: true
+  - where:
+      model-name: IscsiTarget
+    set:
+      suppress-format: true
   # Following is two common directive which are normally required in all the RPs
   # 1. Remove the unexpanded parameter set
   # 2. For New-* cmdlets, ViaIdentity is not required, so CreateViaIdentityExpanded is removed as well

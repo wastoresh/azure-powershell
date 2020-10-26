@@ -1,32 +1,32 @@
 ---
 external help file:
 Module Name: Az.DiskPool
-online version: https://docs.microsoft.com/en-us/powershell/module/az.diskpool/remove-aziscsitarget
+online version: https://docs.microsoft.com/en-us/powershell/module/az.diskpool/update-aziscsitarget
 schema: 2.0.0
 ---
 
-# Remove-AzIscsiTarget
+# Update-AzIscsiTarget
 
 ## SYNOPSIS
-Delete an iSCSI Target.
+Update an iSCSI target.
 
 ## SYNTAX
 
-### Delete (Default)
+### UpdateViaIdentityExpanded (Default)
 ```
-Remove-AzIscsiTarget -DiskPoolName <String> -Name <String> -ResourceGroupName <String>
- [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-PassThru] [-Confirm] [-WhatIf]
- [<CommonParameters>]
+Update-AzIscsiTarget -InputObject <IDiskPoolIdentity> -Tpg <ITargetPortalGroupUpdate[]>
+ [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
-### DeleteViaIdentity
+### UpdateExpanded
 ```
-Remove-AzIscsiTarget -InputObject <IDiskPoolIdentity> [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
- [-PassThru] [-Confirm] [-WhatIf] [<CommonParameters>]
+Update-AzIscsiTarget -DiskPoolName <String> -Name <String> -ResourceGroupName <String>
+ -Tpg <ITargetPortalGroupUpdate[]> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Delete an iSCSI Target.
+Update an iSCSI target.
 
 ## EXAMPLES
 
@@ -85,7 +85,7 @@ The name of the Disk Pool.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: UpdateExpanded
 Aliases:
 
 Required: True
@@ -101,7 +101,7 @@ To construct, see NOTES section for INPUTOBJECT properties and create a hash tab
 
 ```yaml
 Type: Microsoft.Azure.PowerShell.Cmdlets.DiskPool.Models.IDiskPoolIdentity
-Parameter Sets: DeleteViaIdentity
+Parameter Sets: UpdateViaIdentityExpanded
 Aliases:
 
 Required: True
@@ -116,7 +116,7 @@ The name of the iSCSI target.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: UpdateExpanded
 Aliases: IscsiTargetName
 
 Required: True
@@ -141,28 +141,13 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PassThru
-Returns true when the command succeeds
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -ResourceGroupName
 The name of the resource group.
 The name is case insensitive.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: UpdateExpanded
 Aliases:
 
 Required: True
@@ -177,12 +162,28 @@ The ID of the target subscription.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: UpdateExpanded
 Aliases:
 
 Required: False
 Position: Named
 Default value: (Get-AzContext).Subscription.Id
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -Tpg
+List of iSCSI target portal groups.
+To construct, see NOTES section for TPG properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.DiskPool.Models.Api20200315Preview.ITargetPortalGroupUpdate[]
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -227,7 +228,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
-### System.Boolean
+### Microsoft.Azure.PowerShell.Cmdlets.DiskPool.Models.Api20200315Preview.IIscsiTarget
 
 ## NOTES
 
@@ -244,6 +245,16 @@ INPUTOBJECT <IDiskPoolIdentity>: Identity Parameter
   - `[IscsiTargetName <String>]`: The name of the iSCSI target.
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
+
+TPG <ITargetPortalGroupUpdate[]>: List of iSCSI target portal groups.
+  - `[Acls <IAcl[]>]`: Access Control List (ACL) for an iSCSI Target Portal Group.
+    - `InitiatorIqn <String>`: iSCSI initiator IQN (iSCSI Qualified Name); example: "iqn.2005-03.org.iscsi:client".
+    - `MappedLun <String[]>`: List of LUN names mapped to the ACL.
+    - `[CredentialsPassword <String>]`: Password for Challenge Handshake Authentication Protocol (CHAP) authentication.
+    - `[CredentialsUsername <String>]`: Username for Challenge Handshake Authentication Protocol (CHAP) authentication.
+  - `[Lun <IIscsiLun[]>]`: List of LUNs to be exposed through the iSCSI Target Portal Group.
+    - `ManagedDiskAzureResourceId <String>`: Azure Resource ID of the Managed Disk.
+    - `Name <String>`: User defined name for iSCSI LUN; example: "lun0"
 
 ## RELATED LINKS
 

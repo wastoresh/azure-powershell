@@ -8,18 +8,18 @@ schema: 2.0.0
 # New-AzIscsiTarget
 
 ## SYNOPSIS
-Create or Update an iSCSI target.
+Create or Update an iSCSI Target.
 
 ## SYNTAX
 
 ```
-New-AzIscsiTarget -DiskPoolName <String> -Name <String> -ResourceGroupName <String> [-SubscriptionId <String>]
- [-TargetIqn <String>] [-Tpg <ITargetPortalGroup[]>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+New-AzIscsiTarget -DiskPoolName <String> -Name <String> -ResourceGroupName <String> -TargetIqn <String>
+ -Tpg <ITargetPortalGroupCreate[]> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
  [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Create or Update an iSCSI target.
+Create or Update an iSCSI Target.
 
 ## EXAMPLES
 
@@ -150,14 +150,14 @@ Accept wildcard characters: False
 ```
 
 ### -TargetIqn
-iSCSI target iqn (iSCSI Qualified Name); example: iqn.2005-03.org.iscsi:server
+iSCSI target IQN (iSCSI Qualified Name); example: "iqn.2005-03.org.iscsi:server".
 
 ```yaml
 Type: System.String
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -165,15 +165,15 @@ Accept wildcard characters: False
 ```
 
 ### -Tpg
-list of iSCSI target portal groups
+List of iSCSI target portal groups.
 To construct, see NOTES section for TPG properties and create a hash table.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.DiskPool.Models.Api20200315Preview.ITargetPortalGroup[]
+Type: Microsoft.Azure.PowerShell.Cmdlets.DiskPool.Models.Api20200315Preview.ITargetPortalGroupCreate[]
 Parameter Sets: (All)
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -229,17 +229,17 @@ COMPLEX PARAMETER PROPERTIES
 To create the parameters described below, construct a hash table containing the appropriate properties. For information on hash tables, run Get-Help about_Hash_Tables.
 
 
-TPG <ITargetPortalGroup[]>: list of iSCSI target portal groups
-  - `Acls <IAcl[]>`: Access Control List (ACL) for an iSCSI target lun
-    - `CredentialsPassword <String>`: Password for Challenge Handshake Authentication Protocol (CHAP) authentication
-    - `CredentialsUsername <String>`: Username for Challenge Handshake Authentication Protocol (CHAP) authentication
-    - `InitiatorIqn <String>`: iSCSI initiator iqn (iSCSI Qualified Name); example: iqn.2005-03.org.iscsi:client
-    - `MappedLun <String[]>`: Array of lun names mapped to the ACL
+TPG <ITargetPortalGroupCreate[]>: List of iSCSI target portal groups.
+  - `Acls <IAcl[]>`: Access Control List (ACL) for an iSCSI Target Portal Group.
+    - `InitiatorIqn <String>`: iSCSI initiator IQN (iSCSI Qualified Name); example: "iqn.2005-03.org.iscsi:client".
+    - `MappedLun <String[]>`: List of LUN names mapped to the ACL.
+    - `[CredentialsPassword <String>]`: Password for Challenge Handshake Authentication Protocol (CHAP) authentication.
+    - `[CredentialsUsername <String>]`: Username for Challenge Handshake Authentication Protocol (CHAP) authentication.
   - `AttributeAuthentication <Boolean>`: Indicates whether or not authentication is enabled on the ACL.
-  - `AttributeProdModeWriteProtect <Boolean>`: Indicates whether or not write protect is enabled on the luns.
-  - `Lun <IIscsiLun[]>`: Lun list to be exposed through the iSCSI target. Required
-    - `ManagedDiskAzureResourceId <String>`: Unique Azure resource id of the managed disk. Required.
-    - `Name <String>`: Lun name.
+  - `AttributeProdModeWriteProtect <Boolean>`: Indicates whether or not write protect is enabled on the LUNs.
+  - `Lun <IIscsiLun[]>`: List of LUNs to be exposed through the iSCSI Target Portal Group.
+    - `ManagedDiskAzureResourceId <String>`: Azure Resource ID of the Managed Disk.
+    - `Name <String>`: User defined name for iSCSI LUN; example: "lun0"
 
 ## RELATED LINKS
 
