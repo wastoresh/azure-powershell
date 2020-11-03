@@ -25,8 +25,8 @@ using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
-    [Cmdlet("Set", ResourceManager.Common.AzureRMConstants.AzureRMPrefix + "StorageAccountManagementPolicy", SupportsShouldProcess = true, DefaultParameterSetName = AccountNamePolicyRuleParameterSet), OutputType(typeof(PSManagementPolicy))]
-    public class SetAzureStorageAccountManagementPolicyCommand : StorageAccountBaseCmdlet
+    [Cmdlet("Set", ResourceManager.Common.AzureRMConstants.AzureRMPrefix + "StorageBlobInventoryPolicy", SupportsShouldProcess = true, DefaultParameterSetName = AccountNamePolicyRuleParameterSet), OutputType(typeof(PSManagementPolicy))]
+    public class SetAzureStorageBlobInventoryPolicyCommand : StorageAccountBaseCmdlet
     {
         /// <summary>
         /// AccountName Parameter Set
@@ -116,39 +116,70 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
-            HelpMessage = "The Management Policy rules. Get the object with New-AzStorageAccountManagementPolicyRule cmdlet.",
+            HelpMessage = "The Blob Inventory  Policy rules. Get the object with New-AzStorageBlobInventoryPolicyRule cmdlet.",
            ParameterSetName = AccountNamePolicyRuleParameterSet)]
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
-            HelpMessage = "The Management Policy rules. Get the object with New-AzStorageAccountManagementPolicyRule cmdlet.",
+            HelpMessage = "The Blob Inventory  Policy rules. Get the object with New-AzStorageBlobInventoryPolicyRule cmdlet.",
            ParameterSetName = AccountObjectPolicyRuleParameterSet)]
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
-            HelpMessage = "The Management Policy rules. Get the object with New-AzStorageAccountManagementPolicyRule cmdlet.",
+            HelpMessage = "The Blob Inventory  Policy rules. Get the object with New-AzStorageBlobInventoryPolicyRule cmdlet.",
            ParameterSetName = AccountResourceIdPolicyRuleParameterSet)]
         [ValidateNotNullOrEmpty]
-        public PSManagementPolicyRule[] Rule { get; set; }
+        public PSBlobInventoryPolicyRule[] Rule { get; set; }
 
-        [Alias("ManagementPolicy")]
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "The Blob Inventory Policy is enabled by default, specify this parameter to disable it.",
+           ParameterSetName = AccountNamePolicyRuleParameterSet)]
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "The Blob Inventory Policy is enabled by default, specify this parameter to disable it.",
+           ParameterSetName = AccountObjectPolicyRuleParameterSet)]
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "The Blob Inventory Policy is enabled by default, specify this parameter to disable it.",
+           ParameterSetName = AccountResourceIdPolicyRuleParameterSet)]
+        public SwitchParameter Disabled { get; set; }
+
         [Parameter(
             Mandatory = true,
-            HelpMessage = "Management Policy Object to Set",
+            HelpMessage = "The container name where blob inventory files are stored. Must be pre-created.",
+           ParameterSetName = AccountNamePolicyRuleParameterSet)]
+        [Parameter(
+            Mandatory = true,
+            HelpMessage = "The container name where blob inventory files are stored. Must be pre-created.",
+           ParameterSetName = AccountObjectPolicyRuleParameterSet)]
+        [Parameter(
+            Mandatory = true,
+            HelpMessage = "The container name where blob inventory files are stored. Must be pre-created.",
+           ParameterSetName = AccountResourceIdPolicyRuleParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public string Destination { get; set; }
+
+        [Parameter(
+            Mandatory = true,
+            HelpMessage = "Blob Inventory Policy Object to Set",
             ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true,
             ParameterSetName = AccountNamePolicyObjectParameterSet)]
         [Parameter(
             Mandatory = true,
-            HelpMessage = "Management Policy Object to Set",
+            HelpMessage = "Blob Inventory Policy Object to Set",
             ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true,
             ParameterSetName = AccountObjectPolicyObjectParameterSet)]
         [Parameter(
             Mandatory = true,
-            HelpMessage = "Management Policy Object to Set",
+            HelpMessage = "Blob Inventory Policy Object to Set",
             ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true,
             ParameterSetName = AccountResourceIdPolicyObjectParameterSet)]
         [ValidateNotNullOrEmpty]
-        public PSManagementPolicy Policy { get; set; }
+        public PSBlobInventoryPolicy Policy { get; set; }
 
         public override void ExecuteCmdlet()
         {
@@ -168,35 +199,34 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     this.ResourceGroupName = accountResource.ResourceGroupName;
                     this.StorageAccountName = accountResource.ResourceName;
                 }
-                ManagementPolicy managementPolicy;
+                BlobInventoryPolicy blobInventoryPolicy;
 
                 switch (this.ParameterSetName)
                 {
                     case AccountObjectPolicyRuleParameterSet:
                     case AccountNamePolicyRuleParameterSet:
                     case AccountResourceIdPolicyRuleParameterSet:
-                        managementPolicy = this.StorageClient.ManagementPolicies.CreateOrUpdate(
+                        blobInventoryPolicy = this.StorageClient.BlobInventoryPolicies.CreateOrUpdate(
                             this.ResourceGroupName,
                             this.StorageAccountName,
-                            new ManagementPolicySchema(
-                                //this.version,
-                                PSManagementPolicyRule.ParseManagementPolicyRules(this.Rule)));
+                            new BlobInventoryPolicySchema(
+                                enabled: !(this.Disabled.IsPresent),
+                                destination: this.Destination,
+                                rules: PSBlobInventoryPolicy.ParseBlobInventoryPolicyRules(this.Rule)));
                         break;
                     case AccountObjectPolicyObjectParameterSet:
                     case AccountNamePolicyObjectParameterSet:
                     case AccountResourceIdPolicyObjectParameterSet:
-                        managementPolicy = this.StorageClient.ManagementPolicies.CreateOrUpdate(
+                        blobInventoryPolicy = this.StorageClient.BlobInventoryPolicies.CreateOrUpdate(
                             this.ResourceGroupName,
                             this.StorageAccountName,
-                            new ManagementPolicySchema(
-                                //this.Policy.Version,
-                                PSManagementPolicyRule.ParseManagementPolicyRules(this.Policy.Rules)));
+                            this.Policy.ParseBlobInventoryPolicy().Policy);
                         break;
                     default:
                         throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid ParameterSet: {0}", this.ParameterSetName));
                 }
 
-                WriteObject(new PSManagementPolicy(managementPolicy, this.ResourceGroupName, this.StorageAccountName), true);
+                WriteObject(new PSBlobInventoryPolicy(blobInventoryPolicy, this.ResourceGroupName, this.StorageAccountName), true);
             }
         }
     }

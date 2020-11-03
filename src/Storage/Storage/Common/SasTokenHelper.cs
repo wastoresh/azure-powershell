@@ -424,42 +424,51 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// </summary>
         public static BlobSasBuilder SetBlobPermission(BlobSasBuilder sasBuilder, string rawPermission)
         {
-            BlobContainerSasPermissions permission = 0;
-            foreach (char c in rawPermission)
+            try
             {
-                switch (c)
-                {
-                    case 'r':
-                        permission = permission | BlobContainerSasPermissions.Read;
-                        break;
-                    case 'a':
-                        permission = permission | BlobContainerSasPermissions.Add;
-                        break;
-                    case 'c':
-                        permission = permission | BlobContainerSasPermissions.Create;
-                        break;
-                    case 'w':
-                        permission = permission | BlobContainerSasPermissions.Write;
-                        break;
-                    case 'd':
-                        permission = permission | BlobContainerSasPermissions.Delete;
-                        break;
-                    case 'l':
-                        permission = permission | BlobContainerSasPermissions.List;
-                        break;
-                    case 't':
-                        permission = permission | BlobContainerSasPermissions.Tag;
-                        break;
-                    case 'x':
-                        permission = permission | BlobContainerSasPermissions.DeleteBlobVersion;
-                        break;
-                    default:
-                        // Can't convert to permission supported by XSCL, so use raw permission string
-                        sasBuilder.SetPermissions(rawPermission);
-                        return sasBuilder;
-                }
+                sasBuilder.SetPermissions(rawPermission, true);
             }
-            sasBuilder.SetPermissions(permission);
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                sasBuilder.SetPermissions(rawPermission);
+            }
+            //BlobContainerSasPermissions permission = 0;
+            //foreach (char c in rawPermission)
+            //{
+            //    switch (c)
+            //    {
+            //        case 'r':
+            //            permission = permission | BlobContainerSasPermissions.Read;
+            //            break;
+            //        case 'a':
+            //            permission = permission | BlobContainerSasPermissions.Add;
+            //            break;
+            //        case 'c':
+            //            permission = permission | BlobContainerSasPermissions.Create;
+            //            break;
+            //        case 'w':
+            //            permission = permission | BlobContainerSasPermissions.Write;
+            //            break;
+            //        case 'd':
+            //            permission = permission | BlobContainerSasPermissions.Delete;
+            //            break;
+            //        case 'l':
+            //            permission = permission | BlobContainerSasPermissions.List;
+            //            break;
+            //        case 't':
+            //            permission = permission | BlobContainerSasPermissions.Tag;
+            //            break;
+            //        case 'x':
+            //            permission = permission | BlobContainerSasPermissions.DeleteBlobVersion;
+            //            break;
+            //        default:
+            //            // Can't convert to permission supported by XSCL, so use raw permission string
+            //            sasBuilder.SetPermissions(rawPermission);
+            //            return sasBuilder;
+            //    }
+            //}
+            //sasBuilder.SetPermissions(permission);
             return sasBuilder;
         }
 

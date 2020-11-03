@@ -12,7 +12,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '3.0.0'
+ModuleVersion = '3.0.11'
 
 # Supported PSEditions
 CompatiblePSEditions = 'Core', 'Desktop'
@@ -186,7 +186,10 @@ CmdletsToExport = 'Get-AzStorageAccount', 'Get-AzStorageAccountKey',
                'Disable-AzStorageBlobLastAccessTimeTracking', 
                'Enable-AzStorageContainerDeleteRetentionPolicy', 
                'Disable-AzStorageContainerDeleteRetentionPolicy', 
-               'Restore-AzStorageContainer'
+               'Restore-AzStorageContainer', 
+               'Restore-AzStorageContainer', 
+               'Set-AzStorageBlobInventoryPolicy', 'New-AzStorageBlobInventoryPolicyRule', 
+               'Get-AzStorageBlobInventoryPolicy', 'Remove-AzStorageBlobInventoryPolicy' 
 
 # Variables to export from this module
 # VariablesToExport = @()
@@ -257,7 +260,7 @@ PrivateData = @{
     -  ''Set-AzStorageAccountManagementPolicy'''
 
         # Prerelease string of this module
-        Prerelease = 'preview'
+       # Prerelease = 'preview'
 
         # Flag to indicate whether the module requires explicit user acceptance for install/update/save
         # RequireLicenseAcceptance = $false
