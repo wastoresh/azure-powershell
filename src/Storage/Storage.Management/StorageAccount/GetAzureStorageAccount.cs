@@ -125,6 +125,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     this.ResourceGroupName,
                     this.Name,
                     expandproperties);
+               
 
                 WriteStorageAccount(storageAccount);
             }
