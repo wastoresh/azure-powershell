@@ -355,6 +355,10 @@ namespace Microsoft.Azure.Commands.Management.Storage
         }
         private string minimumTlsVersion = null;
 
+        [Parameter(Mandatory = false, HelpMessage = "Set the extended location name for EdgeZone. If not set, the storage account will be created in Azure main region. Otherwise it will be created in the specified extended location")]
+        [ValidateNotNullOrEmpty]
+        public string EdgeZone { get; set; }
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -488,6 +492,16 @@ namespace Microsoft.Azure.Commands.Management.Storage
             if (this.allowBlobPublicAccess != null)
             {
                 createParameters.AllowBlobPublicAccess = this.allowBlobPublicAccess;
+            }
+
+            if(this.EdgeZone != null)
+            {
+                //this.StorageClient.BaseUri = new Uri("https://eastus2euap.management.azure.com/"); // To Remove after the feature deployed to all regions
+                createParameters.ExtendedLocation = new ExtendedLocation()
+                {
+                    Type = ExtendedLocationTypes.EdgeZone,
+                    Name = this.EdgeZone
+                };
             }
 
             var createAccountResponse = this.StorageClient.StorageAccounts.Create(

@@ -60,6 +60,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.AllowBlobPublicAccess = storageAccount.AllowBlobPublicAccess;
             this.MinimumTlsVersion = storageAccount.MinimumTlsVersion;
             this.BlobRestoreStatus = storageAccount.BlobRestoreStatus is null ? null : new PSBlobRestoreStatus(storageAccount.BlobRestoreStatus);
+            this.ExtendedLocation = storageAccount.ExtendedLocation is null ? null : new PSExtendedLocation(storageAccount.ExtendedLocation);
         }
 
         [Ps1Xml(Label = "ResourceGroupName", Target = ViewControl.Table, Position = 1)]
@@ -132,6 +133,8 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
 
         public string MinimumTlsVersion { get; set; }
 
+        public PSExtendedLocation ExtendedLocation { get; set; }
+
         public static PSStorageAccount Create(StorageModels.StorageAccount storageAccount, IStorageManagementClient client)
         {
             var result = new PSStorageAccount(storageAccount);
@@ -198,5 +201,20 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         {
             return new Sku(Name, Tier);
         }
+    }
+
+    public class PSExtendedLocation
+    {
+        public PSExtendedLocation()
+        { }
+
+        public PSExtendedLocation(ExtendedLocation extendedLocation)
+        {
+            this.Name = extendedLocation.Name;
+            this.Type = extendedLocation.Type;
+        }
+
+        public string Name { get; set; }
+        public string Type { get; set; }
     }
 }
