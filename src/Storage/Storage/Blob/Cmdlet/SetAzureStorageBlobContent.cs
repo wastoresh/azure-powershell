@@ -61,21 +61,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         /// </summary>
         private const string ContainerParameterSet = "ContainerPipeline";
 
-        /// <summary>
-        /// block blob type
-        /// </summary>
-        private const string BlockBlobType = "Block";
-
-        /// <summary>
-        /// page blob type
-        /// </summary>
-        private const string PageBlobType = "Page";
-
-        /// <summary>
-        /// append blob type
-        /// </summary>
-        private const string AppendBlobType = "Append";
-
         [Alias("FullName")]
         [Parameter(Position = 0, Mandatory = true, HelpMessage = "file Path.",
             ValueFromPipelineByPropertyName = true, ParameterSetName = ManualParameterSet)]

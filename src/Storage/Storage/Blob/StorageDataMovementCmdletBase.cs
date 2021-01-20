@@ -27,6 +27,21 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
         protected const int size4MB = 4 * 1024 * 1024;
 
         /// <summary>
+        /// block blob type
+        /// </summary>
+        protected const string BlockBlobType = "Block";
+
+        /// <summary>
+        /// page blob type
+        /// </summary>
+        protected const string PageBlobType = "Page";
+
+        /// <summary>
+        /// append blob type
+        /// </summary>
+        protected const string AppendBlobType = "Append";
+
+        /// <summary>
         /// Blob Transfer Manager
         /// </summary>
         protected ITransferManager TransferManager
