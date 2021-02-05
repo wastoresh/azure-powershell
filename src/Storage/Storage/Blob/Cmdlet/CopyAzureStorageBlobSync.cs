@@ -12,51 +12,31 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Commands.Common.Authentication;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 {
-    using Adapters;
     using Azure.Commands.Common.Authentication.Abstractions;
-    using Commands.Common;
     using Commands.Common.Storage.ResourceModel;
-    using Microsoft.WindowsAzure.Commands.Common.Storage;
-    using Microsoft.WindowsAzure.Commands.Storage.Common;
-    using Microsoft.WindowsAzure.Commands.Storage.File;
-    using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
-    using Microsoft.Azure.Storage;
+    using global::Azure.Storage.Blobs;
+    using global::Azure.Storage.Blobs.Specialized;
+    using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
     using Microsoft.Azure.Storage.Blob;
-    using Microsoft.Azure.Storage.File;
+    using Microsoft.WindowsAzure.Commands.Storage.Common;
+    using Microsoft.WindowsAzure.Commands.Storage.Model.Contract;
     using System;
-    using System.IO;
+    using System.Collections.Generic;
     using System.Management.Automation;
-    using System.Reflection;
     using System.Security.Permissions;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
-    using global::Azure.Storage.Blobs.Specialized;
-    using global::Azure.Storage.Blobs;
     using Track2Models = global::Azure.Storage.Blobs.Models;
-    using System.Collections;
-    using System.Linq;
 
-    [Cmdlet("Copy", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlobCopy", SupportsShouldProcess = true, DefaultParameterSetName = ContainerNameParameterSet),OutputType(typeof(AzureStorageBlob))]
+    [Cmdlet("Copy", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageBlob", SupportsShouldProcess = true, DefaultParameterSetName = ContainerNameParameterSet),OutputType(typeof(AzureStorageBlob))]
     public class CopyAzureStorageBlob : StorageDataMovementCmdletBase
     {
         /// <summary>
         /// Blob Pipeline parameter set name
         /// </summary>
         private const string BlobParameterSet = "BlobInstance";
-
-        /// <summary>
-        /// Blob Pipeline parameter set name
-        /// </summary>
-        private const string BlobToBlobParameterSet = "BlobInstanceToBlobInstance";
-
-        /// <summary>
-        /// Container pipeline paremeter set name
-        /// </summary>
-        private const string ContainerParameterSet = "ContainerInstance";
 
         /// <summary>
         /// Blob name and container name parameter set
@@ -70,14 +50,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 
         [Parameter(HelpMessage = "BlobBaseClient Object", Mandatory = false,
             ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
-        [Parameter(HelpMessage = "BlobBaseClient Object", Mandatory = false,
-            ValueFromPipelineByPropertyName = true, ParameterSetName = BlobToBlobParameterSet)]
         [ValidateNotNull]
         public BlobBaseClient BlobBaseClient { get; set; }
-
-        [Alias("SourceCloudBlobContainer")]
-        [Parameter(HelpMessage = "CloudBlobContainer Object", Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
-        public BlobContainerClient BlobContainerClient { get; set; }
 
         [Parameter(HelpMessage = "Destiantion Blob Type('Block', 'Page', 'Append'), by default will be same as source.")]
         [ValidateSet(BlockBlobType, PageBlobType, AppendBlobType, IgnoreCase = true)]
@@ -89,7 +63,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         private string blobType = BlockBlobType;
 
         [Alias("SourceBlob")]
-        [Parameter(HelpMessage = "Blob name", ParameterSetName = ContainerParameterSet, Mandatory = true, Position = 0)]
         [Parameter(HelpMessage = "Blob name", ParameterSetName = ContainerNameParameterSet, Mandatory = true, Position = 0)]
         public string SrcBlob
         {
@@ -117,38 +90,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = ContainerNameParameterSet)]
         [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = UriParameterSet)]
         [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = BlobParameterSet)]
-        [Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = ContainerParameterSet)]
+        //[Parameter(HelpMessage = "Destination container name", Mandatory = true, ParameterSetName = ContainerParameterSet)]
         public string DestContainer { get; set; }
 
         [Alias("DestinationBlob")]
         [Parameter(HelpMessage = "Destination blob name", Mandatory = true, ParameterSetName = UriParameterSet)]
         [Parameter(HelpMessage = "Destination blob name", Mandatory = false, ParameterSetName = ContainerNameParameterSet)]
         [Parameter(HelpMessage = "Destination blob name", Mandatory = false, ParameterSetName = BlobParameterSet)]
-        [Parameter(HelpMessage = "Destination blob name", Mandatory = false, ParameterSetName = ContainerParameterSet)]
+        //[Parameter(HelpMessage = "Destination blob name", Mandatory = false, ParameterSetName = ContainerParameterSet)]
         public string DestBlob { get; set; }
-
-        [Alias("DestICloudBlob", "DestinationCloudBlob", "DestinationICloudBlob")]
-        [Parameter(HelpMessage = "Destination CloudBlob object", Mandatory = true, ParameterSetName = BlobToBlobParameterSet)]
-        //[Parameter(HelpMessage = "Destination CloudBlob object", Mandatory = true, ParameterSetName = FileToBlobParameterSet)]
-        public CloudBlob DestCloudBlob { get; set; }
-
-        [Parameter(HelpMessage = "Premium Page Blob Tier", Mandatory = false, ParameterSetName = ContainerNameParameterSet)]
-        [Parameter(HelpMessage = "Premium Page Blob Tier", Mandatory = false, ParameterSetName = BlobParameterSet)]
-        [Parameter(HelpMessage = "Premium Page Blob Tier", Mandatory = false, ParameterSetName = BlobToBlobParameterSet)]
-        [Parameter(HelpMessage = "Premium Page Blob Tier", Mandatory = false, ParameterSetName = ContainerParameterSet)]
-        public PremiumPageBlobTier PremiumPageBlobTier
-        {
-            get
-            {
-                return pageBlobTier.Value;
-            }
-
-            set
-            {
-                pageBlobTier = value;
-            }
-        }
-        private PremiumPageBlobTier? pageBlobTier = null;
 
         [Parameter(HelpMessage = "Block Blob Tier, valid values are Hot/Cool/Archive. See detail in https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-storage-tiers", Mandatory = false)]
         [PSArgumentCompleter("Hot", "Cool", "Archive")]
@@ -190,11 +140,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         }
         private Azure.Storage.Blob.RehydratePriority? rehydratePriority = null;
 
+        [Parameter(HelpMessage = "Encryption scope to be used when making requests to the dest blob.",
+            Mandatory = false)]
+        [ValidateNotNullOrEmpty]
+        public string EncryptionScope { get; set; }
+
         [Alias("SrcContext", "SourceContext")]
         [Parameter(HelpMessage = "Source Azure Storage Context Object", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerNameParameterSet)]
         [Parameter(HelpMessage = "Source Azure Storage Context Object", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobParameterSet)]
-        [Parameter(HelpMessage = "Source Azure Storage Context Object", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = BlobToBlobParameterSet)]
-        [Parameter(HelpMessage = "Source Azure Storage Context Object", ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ContainerParameterSet)]
         [Parameter(HelpMessage = "Source Azure Storage Context Object", ParameterSetName = UriParameterSet)]
         public override IStorageContext Context { get; set; }
 
@@ -202,7 +155,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [Parameter(HelpMessage = "Destination Storage context object", Mandatory = false)]
         public IStorageContext DestContext { get; set; }
 
-        public override SwitchParameter AsJob { get; set; }
+        public override int? ServerTimeoutPerRequest { get; set; }
+        public override int? ClientTimeoutPerRequest { get; set; }
+        public override int? ConcurrentTaskCount { get; set; }
 
         private bool skipSourceChannelInit;
 
@@ -283,6 +238,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             IStorageBlobManagement destChannel = GetDestinationChannel();
             IStorageBlobManagement srcChannel = Channel;
 
+            if (!string.IsNullOrEmpty(this.EncryptionScope))
+            {
+                SetClientOptionsWithEncryptionScope(this.EncryptionScope);
+            }
+
             string target = string.Empty;
             Action copyAction = null;
             switch (ParameterSetName)
@@ -301,17 +261,6 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     copyAction = () => CopyBlobSync(destChannel, BlobBaseClient, DestContainer, DestBlob);
                     target = BlobBaseClient.Name;
                     break;
-
-                case ContainerParameterSet:
-                    copyAction = () => CopyBlobSync(srcChannel, destChannel, BlobContainerClient.Name, SrcBlob, DestContainer, DestBlob);
-                    target = SrcBlob;
-                    break;
-
-                case BlobToBlobParameterSet:
-                    BlobBaseClient destBlobClient = AzureStorageBlob.GetTrack2BlobClient(DestCloudBlob, destChannel.StorageContext, ClientOptions);
-                    copyAction = () => CopyBlobSync(destChannel, BlobBaseClient, destBlobClient);
-                    target = BlobBaseClient.Name;
-                    break;
             }
 
             if (copyAction != null && ShouldProcess(target, VerbsCommon.Copy))
@@ -320,131 +269,73 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
         }
 
-        private void CopyBlobSync(IStorageBlobManagement destChannel, BlobBaseClient srcCloudBlob, BlobBaseClient destCloudBlob)
-        {
-            global::Azure.Storage.Blobs.Models.BlobType srcBlobType = Util.GetBlobType(srcCloudBlob, true).Value;
-            if (srcCloudBlob is BlobClient)
-            {
-                srcCloudBlob = Util.GetTrack2BlobClientWithType(srcCloudBlob, Channel.StorageContext, srcBlobType);
-            }
-            if (destCloudBlob is BlobClient)
-            {
-                destCloudBlob = Util.GetTrack2BlobClientWithType(destCloudBlob, destChannel.StorageContext, srcBlobType);
-            }
-            ValidateBlobTier(Util.convertBlobType_Track2ToTrack1(srcBlobType), pageBlobTier, standardBlobTier, rehydratePriority);
-
-            Func<long, Task> taskGenerator = (taskId) => StartCopyAsync(taskId, destChannel, srcCloudBlob, destCloudBlob);
-            RunTask(taskGenerator);
-        }
-
-        private void CopyBlobSync(IStorageBlobManagement destChannel, BlobBaseClient srcCloudBlob, string destContainer, string destBlobName)
-        {
-            if (string.IsNullOrEmpty(destBlobName))
-            {
-                destBlobName = srcCloudBlob.Name;
-            }
-
-            BlobBaseClient destBlob = this.GetDestBlob(destChannel, destContainer, destBlobName, Util.GetBlobType(srcCloudBlob));
-
-            this.CopyBlobSync(destChannel, srcCloudBlob, destBlob);
-        }
-
-        /// <summary>
-        /// Start copy operation by source uri
-        /// </summary>
-        /// <param name="srcCloudBlob">Source uri</param>
-        /// <param name="destContainer">Destinaion container name</param>
-        /// <param name="destBlobName">Destination blob name</param>
-        /// <returns>Destination CloudBlob object</returns>
-        private void CopyBlobSync(IStorageBlobManagement destChannel, string srcUri, string destContainer, string destBlobName, AzureStorageContext context)
-        {
-            //if (context != null)
-            //{
-            //    Uri sourceUri = new Uri(srcUri);
-            //    Uri contextUri = new Uri(context.BlobEndPoint);
-
-            //    if (sourceUri.Host.ToLower() == contextUri.Host.ToLower())
-            //    {
-            //        CloudBlobClient blobClient = context.StorageAccount.CreateCloudBlobClient();
-            //        CloudBlob blobReference = null;
-            //        BlobBaseClient srcBlobBaseClient = new BlobBaseClient(new Uri(srcUri));
-
-            //        try
-            //        {
-            //            blobReference = Util.GetBlobReferenceFromServer(blobClient, sourceUri);
-            //        }
-            //        catch (InvalidOperationException)
-            //        {
-            //            blobReference = null;
-            //        }
-
-            //        if (null == blobReference)
-            //        {
-            //            throw new ResourceNotFoundException(String.Format(Resources.BlobUriNotFound, sourceUri.ToString()));
-            //        }
-
-            //        CopyBlobSync(destChannel, blobReference, destContainer, destBlobName);
-            //    }
-            //    else
-            //    {
-            //        WriteWarning(String.Format(Resources.StartCopySourceContextMismatch, srcUri, context.BlobEndPoint));
-            //    }
-            //}
-            //else
-            //{
-
-            BlobBaseClient destBlob = this.GetDestBlob(destChannel, destContainer, destBlobName, Util.GetBlobType(new BlobBaseClient(new Uri(srcUri), ClientOptions)));
-            Func<long, Task> taskGenerator = (taskId) => CopyFromUri(taskId, destChannel, new Uri(srcUri), destBlob);
-                RunTask(taskGenerator);
-            //}
-        }
-
-        /// <summary>
-        /// Start copy operation by container name and blob name
-        /// </summary>
-        /// <param name="srcContainerName">Source container name</param>
-        /// <param name="srcBlobName">Source blob name</param>
-        /// <param name="destContainer">Destinaion container name</param>
-        /// <param name="destBlobName">Destination blob name</param>
-        /// <returns>Destination CloudBlob object</returns>
         private void CopyBlobSync(IStorageBlobManagement SrcChannel, IStorageBlobManagement destChannel, string srcContainerName, string srcBlobName, string destContainerName, string destBlobName)
         {
             NameUtil.ValidateBlobName(srcBlobName);
             NameUtil.ValidateContainerName(srcContainerName);
-            NameUtil.ValidateContainerName(destContainerName);
 
-            if (string.IsNullOrEmpty(destBlobName))
-            {
-                destBlobName = srcBlobName;
-            }
+            //if (string.IsNullOrEmpty(destBlobName))
+            //{
+            //    destBlobName = srcBlobName;
+            //}
+            //else
+            //{
+            //    NameUtil.ValidateBlobName(destBlobName);
+            //}
 
             BlobBaseClient srcBlobBaseClient = Util.GetTrack2BlobServiceClient(SrcChannel.StorageContext, ClientOptions).GetBlobContainerClient(srcContainerName).GetBlobBaseClient(srcBlobName);
-            BlobBaseClient destBlobBaseClient = Util.GetTrack2BlobServiceClient(destChannel.StorageContext, ClientOptions).GetBlobContainerClient(destContainerName).GetBlobBaseClient(destBlobName);
 
+            this.CopyBlobSync(destChannel, srcBlobBaseClient, destContainerName, destBlobName);
+        }
 
-            this.CopyBlobSync(destChannel, srcBlobBaseClient, destBlobBaseClient);
-        }     
-
-        private async Task StartCopyFromBlob(long taskId, IStorageBlobManagement destChannel, BlobBaseClient srcBlob, BlobBaseClient destBlob)
+        private void CopyBlobSync(IStorageBlobManagement destChannel, BlobBaseClient srcBlobBaseClient, string destContainerName, string destBlobName)
         {
-            //try
-            //{
-                await CopyFromUri(taskId, destChannel, srcBlob.GenerateUriWithCredentials(Channel.StorageContext), destBlob).ConfigureAwait(false);
-            //}
-            //catch (StorageException ex)
-            //{
-            //    if (0 == string.Compare(ex.Message, BlobTypeMismatch, StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        // Current use error message to decide whether it caused by blob type mismatch,
-            //        // We should ask xscl to expose an error code for this..
-            //        // Opened workitem 1487579 to track this.
-            //        throw new InvalidOperationException(Resources.DestinationBlobTypeNotMatch);
-            //    }
-            //    else
-            //    {
-            //        throw;
-            //    }
-            //}
+            NameUtil.ValidateContainerName(destContainerName);
+            if (string.IsNullOrEmpty(destBlobName))
+            {
+                destBlobName = srcBlobBaseClient.Name;
+            }
+            else
+            {
+                NameUtil.ValidateBlobName(destBlobName);
+            }
+            BlobBaseClient destBlob = this.GetDestBlob(destChannel, destContainerName, destBlobName, Util.GetBlobType(srcBlobBaseClient));
+
+            this.CopyBlobSync(destChannel, srcBlobBaseClient, destBlob);
+        }
+
+        private void CopyBlobSync(IStorageBlobManagement destChannel, BlobBaseClient srcCloudBlob, BlobBaseClient destCloudBlob)
+        {
+            Track2Models.BlobType srcBlobType = Util.GetBlobType(srcCloudBlob, true).Value;
+            if (srcBlobType != Track2Models.BlobType.Block)
+            {
+                throw new ArgumentException(string.Format("The cmdlet currently only support souce blob and destination blob are both block blob. The source blob type is {0}.", srcBlobType));
+            }
+
+            if (srcCloudBlob is BlobClient)
+            {
+                srcCloudBlob = Util.GetTrack2BlobClientWithType(srcCloudBlob, Channel.StorageContext, srcBlobType, ClientOptions);
+            }
+            if (destCloudBlob is BlobClient)
+            {
+                destCloudBlob = Util.GetTrack2BlobClientWithType(destCloudBlob, destChannel.StorageContext, srcBlobType, ClientOptions);
+            }
+
+            Func<long, Task> taskGenerator = (taskId) => CopyFromUri(taskId, destChannel, srcCloudBlob.GenerateUriWithCredentials(Channel.StorageContext), destCloudBlob);
+            RunTask(taskGenerator);
+        }
+
+        private void CopyBlobSync(IStorageBlobManagement destChannel, string srcUri, string destContainer, string destBlobName, AzureStorageContext context)
+        {
+            Track2Models.BlobType srcBlobType = Util.GetBlobType(new BlobBaseClient(new Uri(srcUri), ClientOptions), true).Value;
+            if (srcBlobType != Track2Models.BlobType.Block)
+            {
+                throw new ArgumentException(string.Format("The cmdlet currently only support souce blob and destination blob are both block blob. The source blob type is {0}.", srcBlobType));
+            }
+
+            BlobBaseClient destBlob = this.GetDestBlob(destChannel, destContainer, destBlobName, srcBlobType);
+            Func<long, Task> taskGenerator = (taskId) => CopyFromUri(taskId, destChannel, new Uri(srcUri), destBlob);
+            RunTask(taskGenerator);
         }
 
         private async Task CopyFromUri(long taskId, IStorageBlobManagement destChannel, Uri srcUri, BlobBaseClient destBlob)
@@ -471,12 +362,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             {
                 Track2Models.BlobCopyFromUriOptions options = new global::Azure.Storage.Blobs.Models.BlobCopyFromUriOptions();
 
-                // The Blob Type and Blob Tier must match, since already checked they are match at the begin of ExecuteCmdlet().
-                if (pageBlobTier != null)
-                {
-                    options.AccessTier = Util.ConvertAccessTier_Track1ToTrack2(pageBlobTier);
-                }
-                else
+                // The Blob Type and Blob Tier must match, since already checked before
                 if (standardBlobTier != null || rehydratePriority != null)
                 {
                     options.AccessTier = Util.ConvertAccessTier_Track1ToTrack2(standardBlobTier);
@@ -484,10 +370,114 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
                 options.SourceConditions = this.BlobRequestConditions;
 
-                Track2Models.BlobCopyInfo blobCopyInfo = await destBlob.SyncCopyFromUriAsync(srcUri, options, this.CmdletCancellationToken).ConfigureAwait(false);
+                BlockBlobClient srcBlockblob = new BlockBlobClient(srcUri, ClientOptions);
+                Track2Models.BlobProperties srcProperties = srcBlockblob.GetProperties(cancellationToken: this.CmdletCancellationToken).Value;
 
-                OutputStream.WriteObject(taskId, new AzureStorageBlob(destBlob, destChannel.StorageContext, properties, options: ClientOptions));
+                //Prepare progress handler
+                //long fileSize = srcProperties.ContentLength;
+                string activity = String.Format("Copy Blob {0} to {1}", srcBlockblob.Name, destBlob.Name);
+                string status = "Prepare to Copy Blob";
+                ProgressRecord pr = new ProgressRecord(OutputStream.GetProgressId(taskId), activity, status);
+                IProgress<long> progressHandler = new Progress<long>((finishedBytes) =>
+                {
+                    if (pr != null)
+                    {
+                        // Size of the source file might be 0, when it is, directly treat the progress as 100 percent.
+                        pr.PercentComplete = 0 == srcProperties.ContentLength ? 100 : (int)(finishedBytes * 100 / srcProperties.ContentLength);
+                        pr.StatusDescription = string.Format("Percent: {0}%.", pr.PercentComplete);
+                        Console.WriteLine(finishedBytes);
+                        this.OutputStream.WriteProgress(pr);
+                    }
+                });
+
+                switch (destBlobType)
+                {
+                    case Track2Models.BlobType.Block:
+
+                        BlockBlobClient destBlockBlob = (BlockBlobClient)Util.GetTrack2BlobClientWithType(destBlob, Channel.StorageContext, Track2Models.BlobType.Block, ClientOptions);
+
+                        Track2Models.CommitBlockListOptions commitBlockListOptions = new Track2Models.CommitBlockListOptions();
+                        commitBlockListOptions.HttpHeaders = new Track2Models.BlobHttpHeaders();
+                        commitBlockListOptions.HttpHeaders.ContentType = srcProperties.ContentType;
+                        commitBlockListOptions.HttpHeaders.ContentHash = srcProperties.ContentHash;
+                        commitBlockListOptions.HttpHeaders.ContentEncoding = srcProperties.ContentEncoding;
+                        commitBlockListOptions.HttpHeaders.ContentLanguage = srcProperties.ContentLanguage;
+                        commitBlockListOptions.HttpHeaders.ContentDisposition = srcProperties.ContentDisposition;
+                        commitBlockListOptions.Metadata = srcProperties.Metadata;
+                        try
+                        {
+                            commitBlockListOptions.Tags = srcBlockblob.GetTags(cancellationToken: this.CmdletCancellationToken).Value.Tags;
+                        }
+                        catch (global::Azure.RequestFailedException e) when (e.Status == 403 || e.Status == 404 || e.Status == 401)
+                        {
+                            if (!this.Force && !OutputStream.ConfirmAsync("Can't get source blob Tags, so source blob tags won't be copied to dest blob. Do you want to continue the blob copy?").Result)
+                            {
+                                return;
+                            }
+                        }
+
+                        long blockLength = GetBlockLength(srcProperties.ContentLength);
+                        string[] blockIDs = GetBlockIDs(srcProperties.ContentLength, blockLength, destBlockBlob.Name);
+                        long copyoffset = 0;
+                        progressHandler.Report(copyoffset);
+                        foreach (string id in blockIDs)
+                        {
+                            long blocksize = blockLength;
+                            if (copyoffset + blocksize > srcProperties.ContentLength)
+                            {
+                                blocksize = srcProperties.ContentLength - copyoffset;
+                            }
+                            destBlockBlob.StageBlockFromUri(srcUri, id, new global::Azure.HttpRange(copyoffset, blocksize), cancellationToken: this.CmdletCancellationToken);
+                            copyoffset += blocksize;
+                            progressHandler.Report(copyoffset);
+
+                        }
+                        destBlockBlob.CommitBlockList(blockIDs, commitBlockListOptions, this.CmdletCancellationToken);
+
+                        break;
+                    case Track2Models.BlobType.Page:
+                    case Track2Models.BlobType.Append:
+                    default:
+                        throw new ArgumentException(string.Format("The cmdlet currently only support souce blob and destination blob are both block blob. The dest blob type is {0}.", destBlobType));
+                }
+
+                OutputStream.WriteObject(taskId, new AzureStorageBlob(destBlob, destChannel.StorageContext, null, options: ClientOptions));
             }
+        }
+
+        public long GetBlockLength(long contentLength)
+        {
+            long blockLength = contentLength / 50000;
+            if (blockLength % (8 * 1024 * 1024) != 0)
+            {
+                blockLength = (blockLength / (8 * 1024 * 1024) + 1) * (8 * 1024 * 1024);
+            }
+            return blockLength;
+        }
+
+        public string[] GetBlockIDs(long contentLength, long blockLength, string blobname)
+        {
+            long blockCount = 0;
+            if (blockLength != 0)
+            {
+                blockCount = contentLength / blockLength;
+            }
+            if (blockCount * blockLength != contentLength)
+            {
+                blockCount++;
+            }
+            List<string> blockIDs = new List<string>();
+            for (int i = 0; i<(int)blockCount; i++)
+            {
+                string idNo = i.ToString();
+                while(idNo.Length < 5)
+                {
+                    idNo = "0" + idNo;
+                }
+                string blockID = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(blobname + idNo));
+                blockIDs.Add(blockID);
+            }
+            return blockIDs.ToArray();
         }
 
         private BlobBaseClient GetDestBlob(IStorageBlobManagement destChannel, string destContainerName, string destBlobName, global::Azure.Storage.Blobs.Models.BlobType? blobType)
@@ -500,14 +490,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             return destBlob;
         }
 
-        private async Task StartCopyAsync(long taskId, IStorageBlobManagement destChannel, BlobBaseClient sourceBlob, BlobBaseClient destBlob)
-        {
-            NameUtil.ValidateBlobName(sourceBlob.Name);
-            NameUtil.ValidateContainerName(destBlob.BlobContainerName);
-            NameUtil.ValidateBlobName(destBlob.Name);
+        //private async Task StartCopyAsync(long taskId, IStorageBlobManagement destChannel, BlobBaseClient sourceBlob, BlobBaseClient destBlob)
+        //{
+        //    NameUtil.ValidateBlobName(sourceBlob.Name);
+        //    NameUtil.ValidateContainerName(destBlob.BlobContainerName);
+        //    NameUtil.ValidateBlobName(destBlob.Name);
 
-            await this.StartCopyFromBlob(taskId, destChannel, sourceBlob, destBlob).ConfigureAwait(false);
-        }
+        //    await this.StartCopyFromBlob(taskId, destChannel, sourceBlob, destBlob).ConfigureAwait(false);
+        //}
 
     }
 }

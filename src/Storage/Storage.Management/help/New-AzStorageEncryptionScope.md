@@ -15,28 +15,29 @@ Creates an encryption scope for a Storage account.
 ### AccountName (Default)
 ```
 New-AzStorageEncryptionScope [-ResourceGroupName] <String> [-StorageAccountName] <String>
- -EncryptionScopeName <String> [-StorageEncryption] [-DefaultProfile <IAzureContextContainer>] [-WhatIf]
- [-Confirm] [<CommonParameters>]
+ -EncryptionScopeName <String> [-StorageEncryption] [-RequireInfrastructureEncryption]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AccountNameKeyVault
 ```
 New-AzStorageEncryptionScope [-ResourceGroupName] <String> [-StorageAccountName] <String>
- -EncryptionScopeName <String> [-KeyvaultEncryption] -KeyUri <String>
+ -EncryptionScopeName <String> [-KeyvaultEncryption] -KeyUri <String> [-RequireInfrastructureEncryption]
  [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AccountObject
 ```
 New-AzStorageEncryptionScope -StorageAccount <PSStorageAccount> -EncryptionScopeName <String>
- [-StorageEncryption] [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-StorageEncryption] [-RequireInfrastructureEncryption] [-DefaultProfile <IAzureContextContainer>] [-WhatIf]
+ [-Confirm] [<CommonParameters>]
 ```
 
 ### AccountObjectKeyVault
 ```
 New-AzStorageEncryptionScope -StorageAccount <PSStorageAccount> -EncryptionScopeName <String>
- [-KeyvaultEncryption] -KeyUri <String> [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ [-KeyvaultEncryption] -KeyUri <String> [-RequireInfrastructureEncryption]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -127,6 +128,21 @@ Parameter Sets: AccountNameKeyVault, AccountObjectKeyVault
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RequireInfrastructureEncryption
+The encryption scope will apply a secondary layer of encryption with platform managed keys for data at rest.
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False

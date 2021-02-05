@@ -656,6 +656,10 @@
             <Alignment>Left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>RequireInfrastructureEncryption</Label>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>KeyVaultKeyUri</Label>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
@@ -671,6 +675,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Source</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>RequireInfrastructureEncryption</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <ScriptBlock>$_.KeyVaultProperties.keyUri</ScriptBlock>
