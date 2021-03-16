@@ -17,6 +17,7 @@ using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 using Microsoft.Rest.Azure;
+using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System.Management.Automation;
 
 namespace Microsoft.Azure.Commands.Management.Storage
@@ -79,6 +80,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
             HelpMessage = "Get the BlobRestoreStatus of the Storage account.")]
         public SwitchParameter IncludeBlobRestoreStatus { get; set; }
 
+        [Parameter(
+             Mandatory = false,
+             HelpMessage = "Specify this parameterto make the cmdlet fail without retry when server request fail.")]
+        public SwitchParameter NoRetry { get; set; }
+
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
 
@@ -86,25 +92,42 @@ namespace Microsoft.Azure.Commands.Management.Storage
         {
             base.ExecuteCmdlet();
 
+
+            StorageManagementClient client = (StorageManagementClient)this.StorageClient;
+            
+            if (this.NoRetry.IsPresent)
+            {
+                client = new StorageManagementClient(this.StorageClient.Credentials, new System.Net.Http.HttpClient(), true);
+                client.SubscriptionId = this.StorageClient.SubscriptionId;
+                var userAgent = ((StorageManagementClient)this.StorageClient).HttpClient.DefaultRequestHeaders.UserAgent;
+                foreach (var agent in userAgent)
+                {
+                    if (agent.Product.Name.ToLower().Contains("powershell") || agent.Product.Name.ToLower().Contains("ps"))
+                    {
+                        client.SetUserAgent(agent.Product.Name, agent.Product.Version);
+                    }
+                }
+            }
+
             if (string.IsNullOrEmpty(this.ResourceGroupName))
             {
-                IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = this.StorageClient.StorageAccounts.List();
+                IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = client.StorageAccounts.List();
                 WriteStorageAccountList(storageAccounts);
 
                 while (storageAccounts.NextPageLink != null)
                 {
-                    storageAccounts = this.StorageClient.StorageAccounts.ListNext(storageAccounts.NextPageLink);
+                    storageAccounts = client.StorageAccounts.ListNext(storageAccounts.NextPageLink);
                     WriteStorageAccountList(storageAccounts);
                 }
             }
             else if (string.IsNullOrEmpty(this.Name))
             {
-                IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = this.StorageClient.StorageAccounts.ListByResourceGroup(this.ResourceGroupName);
+                IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = client.StorageAccounts.ListByResourceGroup(this.ResourceGroupName);
                 WriteStorageAccountList(storageAccounts);
 
                 while (storageAccounts.NextPageLink != null)
                 {
-                    storageAccounts = this.StorageClient.StorageAccounts.ListByResourceGroupNext(storageAccounts.NextPageLink);
+                    storageAccounts = client.StorageAccounts.ListByResourceGroupNext(storageAccounts.NextPageLink);
                     WriteStorageAccountList(storageAccounts);
                 }
             }
@@ -121,7 +144,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     expandproperties = StorageAccountExpand.BlobRestoreStatus;
                 }
 
-                var storageAccount = this.StorageClient.StorageAccounts.GetProperties(
+                var storageAccount = client.StorageAccounts.GetProperties(
                     this.ResourceGroupName,
                     this.Name,
                     expandproperties);
