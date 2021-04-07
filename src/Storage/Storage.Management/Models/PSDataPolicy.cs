@@ -194,7 +194,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         {
             this.BaseBlob = (action is null || action.BaseBlob is null) ? null : new PSManagementPolicyBaseBlob(action.BaseBlob);
             this.Snapshot = (action is null || action.Snapshot is null) ? null : new PSManagementPolicySnapShot(action.Snapshot);
-            this.Version = (action is null || action.Version is null) ? null : new PSManagementPolicyVersion(action.Version);
+            //this.Version = (action is null || action.Version is null) ? null : new PSManagementPolicyVersion(action.Version);
         }
         public ManagementPolicyAction ParseManagementPolicyAction()
         {
@@ -202,7 +202,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             {
                 BaseBlob = this.BaseBlob is null ? null : this.BaseBlob.ParseManagementPolicyBaseBlob(),
                 Snapshot = this.Snapshot is null ? null : this.Snapshot.ParseManagementPolicySnapShot(),
-                Version = this.Version is null ? null : this.Version.ParseManagementPolicyVersion(),
+                //Version = this.Version is null ? null : this.Version.ParseManagementPolicyVersion(),
             };
         }
     }
@@ -251,16 +251,16 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public PSManagementPolicySnapShot(ManagementPolicySnapShot blobAction)
         {
             this.Delete = blobAction.Delete is null ? null : new PSDateAfterCreation(blobAction.Delete);
-            this.TierToCool = blobAction.TierToCool is null ? null : new PSDateAfterCreation(blobAction.TierToCool);
-            this.TierToArchive = blobAction.TierToArchive is null ? null : new PSDateAfterCreation(blobAction.TierToArchive);
+            //this.TierToCool = blobAction.TierToCool is null ? null : new PSDateAfterCreation(blobAction.TierToCool);
+            //this.TierToArchive = blobAction.TierToArchive is null ? null : new PSDateAfterCreation(blobAction.TierToArchive);
         }
         public ManagementPolicySnapShot ParseManagementPolicySnapShot()
         {
             return new ManagementPolicySnapShot()
             {
                 Delete = this.Delete is null ? null : this.Delete.ParseDateAfterCreation(),
-                TierToCool = this.TierToCool is null ? null : this.TierToCool.ParseDateAfterCreation(),
-                TierToArchive = this.TierToArchive is null ? null : this.TierToArchive.ParseDateAfterCreation()
+                //TierToCool = this.TierToCool is null ? null : this.TierToCool.ParseDateAfterCreation(),
+                //TierToArchive = this.TierToArchive is null ? null : this.TierToArchive.ParseDateAfterCreation()
             };
         }
     }
@@ -277,21 +277,21 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public PSManagementPolicyVersion()
         { }
 
-        public PSManagementPolicyVersion(ManagementPolicyVersion blobAction)
-        {
-            this.Delete = blobAction.Delete is null ? null : new PSDateAfterCreation(blobAction.Delete);
-            this.TierToCool = blobAction.TierToCool is null ? null : new PSDateAfterCreation(blobAction.TierToCool);
-            this.TierToArchive = blobAction.TierToArchive is null ? null : new PSDateAfterCreation(blobAction.TierToArchive);
-        }
-        public ManagementPolicyVersion ParseManagementPolicyVersion()
-        {
-            return new ManagementPolicyVersion()
-            {
-                Delete = this.Delete is null ? null : this.Delete.ParseDateAfterCreation(),
-                TierToCool = this.TierToCool is null ? null : this.TierToCool.ParseDateAfterCreation(),
-                TierToArchive = this.TierToArchive is null ? null : this.TierToArchive.ParseDateAfterCreation()
-            };
-        }
+        //public PSManagementPolicyVersion(ManagementPolicyVersion blobAction)
+        //{
+        //    this.Delete = blobAction.Delete is null ? null : new PSDateAfterCreation(blobAction.Delete);
+        //    this.TierToCool = blobAction.TierToCool is null ? null : new PSDateAfterCreation(blobAction.TierToCool);
+        //    this.TierToArchive = blobAction.TierToArchive is null ? null : new PSDateAfterCreation(blobAction.TierToArchive);
+        //}
+        //public ManagementPolicyVersion ParseManagementPolicyVersion()
+        //{
+        //    return new ManagementPolicyVersion()
+        //    {
+        //        Delete = this.Delete is null ? null : this.Delete.ParseDateAfterCreation(),
+        //        TierToCool = this.TierToCool is null ? null : this.TierToCool.ParseDateAfterCreation(),
+        //        TierToArchive = this.TierToArchive is null ? null : this.TierToArchive.ParseDateAfterCreation()
+        //    };
+        //}
     }
 
     /// <summary>

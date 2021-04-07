@@ -150,7 +150,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 }
                 if (this.RequireInfrastructureEncryption.IsPresent)
                 {
-                    scope.RequireInfrastructureEncryption = true;
+                    //scope.RequireInfrastructureEncryption = true;
                 }
 
                 scope = this.StorageClient.EncryptionScopes.Put(

@@ -167,7 +167,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     serviceProperties.ChangeFeed.Enabled = enableChangeFeed;
                     if (this.changeFeedRetentionInDays != null)
                     {
-                        serviceProperties.ChangeFeed.RetentionInDays = this.changeFeedRetentionInDays;
+                        //serviceProperties.ChangeFeed.RetentionInDays = this.changeFeedRetentionInDays;
                     }
                 }
                 else

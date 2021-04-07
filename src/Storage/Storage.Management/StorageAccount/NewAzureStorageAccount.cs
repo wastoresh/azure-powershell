@@ -534,7 +534,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
             }
             if (allowSharedKeyAccess != null)
             {
-                createParameters.AllowSharedKeyAccess = allowSharedKeyAccess;
+                //createParameters.AllowSharedKeyAccess = allowSharedKeyAccess;
             }
 
             var createAccountResponse = this.StorageClient.StorageAccounts.Create(

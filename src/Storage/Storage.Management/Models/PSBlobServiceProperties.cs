@@ -117,7 +117,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public PSChangeFeed(ChangeFeed changeFeed)
         {
             this.Enabled = changeFeed.Enabled;
-            this.RetentionInDays = changeFeed.RetentionInDays;
+            //this.RetentionInDays = changeFeed.RetentionInDays;
         }
 
         public ChangeFeed ParseChangeFeed()
@@ -125,7 +125,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             return new ChangeFeed
             {
                 Enabled = this.Enabled,
-                RetentionInDays = this.RetentionInDays
+                //RetentionInDays = this.RetentionInDays
             };
         }
     }

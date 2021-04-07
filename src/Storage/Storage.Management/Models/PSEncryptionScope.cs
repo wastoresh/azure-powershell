@@ -40,7 +40,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.Source = scope.Source;
             this.State = scope.State;
             this.KeyVaultProperties = scope.KeyVaultProperties is null ? null : new PSEncryptionScopeKeyVaultProperties(scope.KeyVaultProperties);
-            this.RequireInfrastructureEncryption = scope.RequireInfrastructureEncryption;
+            //this.RequireInfrastructureEncryption = scope.RequireInfrastructureEncryption;
         }
 
         [Ps1Xml(Label = "ResourceGroupName", Target = ViewControl.List, Position = 0)]

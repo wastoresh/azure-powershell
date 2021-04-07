@@ -60,8 +60,8 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.MinimumTlsVersion = storageAccount.MinimumTlsVersion;
             this.RoutingPreference = PSRoutingPreference.ParsePSRoutingPreference(storageAccount.RoutingPreference);
             this.BlobRestoreStatus = storageAccount.BlobRestoreStatus is null ? null : new PSBlobRestoreStatus(storageAccount.BlobRestoreStatus);
-            this.EnableNfsV3 = storageAccount.EnableNfsV3;
-            this.AllowSharedKeyAccess = storageAccount.AllowSharedKeyAccess;
+            //this.EnableNfsV3 = storageAccount.EnableNfsV3;
+            //this.AllowSharedKeyAccess = storageAccount.AllowSharedKeyAccess;
 
         }
 
