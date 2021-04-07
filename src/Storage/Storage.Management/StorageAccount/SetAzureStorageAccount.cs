@@ -373,6 +373,17 @@ namespace Microsoft.Azure.Commands.Management.Storage
         }
         private bool? allowSharedKeyAccess = null;
 
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Default share permission for users using Kerberos authentication if RBAC role is not assigned.")]
+        [ValidateSet(DefaultSharePermissionType.None,
+            DefaultSharePermissionType.StorageFileDataSmbShareContributor,
+            DefaultSharePermissionType.StorageFileDataSmbShareReader,
+            DefaultSharePermissionType.StorageFileDataSmbShareElevatedContributor,
+            DefaultSharePermissionType.StorageFileDataSmbShareOwner,
+            IgnoreCase = true)]
+        public string DefaultSharePermission { get; set; }
+
 
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
@@ -534,6 +545,14 @@ namespace Microsoft.Azure.Commands.Management.Storage
                                 updateParameters.AzureFilesIdentityBasedAuthentication = originStorageAccount.AzureFilesIdentityBasedAuthentication;
                             }
                         }
+                    }
+                    if (this.DefaultSharePermission != null)
+                    {
+                        if (updateParameters.AzureFilesIdentityBasedAuthentication == null)
+                        {
+                            updateParameters.AzureFilesIdentityBasedAuthentication = new AzureFilesIdentityBasedAuthentication();
+                        }
+                        updateParameters.AzureFilesIdentityBasedAuthentication.DefaultSharePermission = this.DefaultSharePermission;
                     }
                     if (this.EnableLargeFileShare.IsPresent)
                     {
