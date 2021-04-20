@@ -157,10 +157,10 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
             if (!string.IsNullOrEmpty(this.Name))
             {
-                GetShareExpand? expend = null;
+                string expend = null;
                 if(this.GetShareUsage)
                 {
-                    expend = GetShareExpand.Stats;
+                    expend = "stats";
                 }
                 var Share = this.StorageClient.FileShares.Get(
                            this.ResourceGroupName,
@@ -174,7 +174,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 string listSharesExpand = null;
                 if (this.IncludeDeleted.IsPresent)
                 {
-                    listSharesExpand = ListSharesExpand.Deleted;
+                    listSharesExpand = "deleted";
                 }
                 IPage<FileShareItem> shares = this.StorageClient.FileShares.List(
                            this.ResourceGroupName,
