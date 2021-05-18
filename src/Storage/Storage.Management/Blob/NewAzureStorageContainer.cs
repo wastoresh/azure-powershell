@@ -147,6 +147,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [ValidateNotNull]
         public Hashtable Metadata { get; set; }
 
+        [Parameter(HelpMessage = "Enable object level immutability at the container level.", Mandatory = false)]
+        public SwitchParameter EnableImmutableStorageWithVersioning { get; set; }        
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -162,7 +165,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
                 Dictionary<string, string> MetadataDictionary = CreateMetadataDictionary(Metadata, validate: true);
 
-                var contaienr =
+                var container =
                     this.StorageClient.BlobContainers.Create(
                             this.ResourceGroupName,
                             this.StorageAccountName,
@@ -171,9 +174,16 @@ namespace Microsoft.Azure.Commands.Management.Storage
                                 defaultEncryptionScope: this.DefaultEncryptionScope,
                                 denyEncryptionScopeOverride: this.preventEncryptionScopeOverride,
                                 publicAccess: (PublicAccess?)this.publicAccess,
-                                metadata: MetadataDictionary));
+                                metadata: MetadataDictionary,
+                                immutableStorageWithVersioning: this.EnableImmutableStorageWithVersioning.IsPresent ? new ImmutableStorageWithVersioning(true) : null));
 
-                WriteObject(new PSContainer(contaienr));
+                container =
+                    this.StorageClient.BlobContainers.Get(
+                            this.ResourceGroupName,
+                            this.StorageAccountName,
+                            this.Name);
+
+                WriteObject(new PSContainer(container));
             }
         }
     }
