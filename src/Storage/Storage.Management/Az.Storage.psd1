@@ -182,7 +182,9 @@ CmdletsToExport = 'Get-AzStorageAccount', 'Get-AzStorageAccountKey',
                'Update-AzStorageEncryptionScope', 'Get-AzStorageEncryptionScope', 
                'Copy-AzStorageBlob', 
                'Set-AzStorageBlobInventoryPolicy', 'New-AzStorageBlobInventoryPolicyRule', 
-               'Get-AzStorageBlobInventoryPolicy', 'Remove-AzStorageBlobInventoryPolicy' 
+               'Get-AzStorageBlobInventoryPolicy', 'Remove-AzStorageBlobInventoryPolicy',
+			   'Set-AzStorageBlobImmutabilityPolicy', 'Remove-AzStorageBlobImmutabilityPolicy',
+			   'Set-AzStorageBlobLegalHold', 'Invoke-AzRmStorageContainerImmutableStorageWithVersioningMigration'
 
 # Variables to export from this module
 # VariablesToExport = @()

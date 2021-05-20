@@ -161,6 +161,9 @@ Gets the stored access policy or policies for an Azure storage table.
 ### [Get-AzStorageUsage](Get-AzStorageUsage.md)
 Gets the Storage resource usage of the current subscription.
 
+### [Invoke-AzRmStorageContainerImmutableStorageWithVersioningMigration](Invoke-AzRmStorageContainerImmutableStorageWithVersioningMigration.md)
+{{Fill in the Synopsis}}
+
 ### [Invoke-AzStorageAccountFailover](Invoke-AzStorageAccountFailover.md)
 Invokes failover of a Storage account.
 
@@ -287,6 +290,9 @@ Remove IpRules or VirtualNetworkRules from the NetWorkRule property of a Storage
 ### [Remove-AzStorageBlob](Remove-AzStorageBlob.md)
 Removes the specified storage blob.
 
+### [Remove-AzStorageBlobImmutabilityPolicy](Remove-AzStorageBlobImmutabilityPolicy.md)
+{{Fill in the Synopsis}}
+
 ### [Remove-AzStorageBlobInventoryPolicy](Remove-AzStorageBlobInventoryPolicy.md)
 Removes blob inventory policy from a Storage account.
 
@@ -356,8 +362,14 @@ Creates or modifies the management policy of an Azure Storage account.
 ### [Set-AzStorageBlobContent](Set-AzStorageBlobContent.md)
 Uploads a local file to an Azure Storage blob.
 
+### [Set-AzStorageBlobImmutabilityPolicy](Set-AzStorageBlobImmutabilityPolicy.md)
+{{Fill in the Synopsis}}
+
 ### [Set-AzStorageBlobInventoryPolicy](Set-AzStorageBlobInventoryPolicy.md)
 Creates or updates blob inventory policy in a Storage account.
+
+### [Set-AzStorageBlobLegalHold](Set-AzStorageBlobLegalHold.md)
+{{Fill in the Synopsis}}
 
 ### [Set-AzStorageContainerAcl](Set-AzStorageContainerAcl.md)
 Sets the public access permission to a storage container.

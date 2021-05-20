@@ -47,6 +47,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.HasImmutabilityPolicy = container.HasImmutabilityPolicy;
             this.DefaultEncryptionScope = container.DefaultEncryptionScope;
             this.DenyEncryptionScopeOverride = container.DenyEncryptionScopeOverride;
+            this.ImmutableStorageWithVersioning = container.ImmutableStorageWithVersioning is null ? null : new PSImmutableStorageWithVersioning(container.ImmutableStorageWithVersioning);
         }
 
         public PSContainer(BlobContainer container)
@@ -69,6 +70,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.HasImmutabilityPolicy = container.HasImmutabilityPolicy;
             this.DefaultEncryptionScope = container.DefaultEncryptionScope;
             this.DenyEncryptionScopeOverride = container.DenyEncryptionScopeOverride;
+            this.ImmutableStorageWithVersioning = container.ImmutableStorageWithVersioning is null? null : new PSImmutableStorageWithVersioning(container.ImmutableStorageWithVersioning);
         }
 
         [Ps1Xml(Label = "ResourceGroupName", Target = ViewControl.List, Position = 0)]
@@ -113,6 +115,8 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public string DefaultEncryptionScope { get; set; }
         
         public bool? DenyEncryptionScopeOverride { get; set; }
+
+        public PSImmutableStorageWithVersioning ImmutableStorageWithVersioning { get; set; }
 
 
         public static string ParseResourceGroupFromId(string idFromServer)
@@ -287,12 +291,26 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.TenantId = updateHistory.TenantId;
             this.Upn = updateHistory.Upn;
         }
-        
+
         public string Update { get; set; }
         public int? ImmutabilityPeriodSinceCreationInDays { get; set; }
         public DateTime? Timestamp { get; set; }
         public string ObjectIdentifier { get; set; }
         public string TenantId { get; set; }
         public string Upn { get; set; }
+    }
+
+    public class PSImmutableStorageWithVersioning
+    {
+        public PSImmutableStorageWithVersioning(ImmutableStorageWithVersioning inputValue)
+        {
+            this.Enabled = inputValue.Enabled;
+            this.TimeStamp = inputValue.TimeStamp;
+            this.MigrationState = inputValue.MigrationState;
+        }
+
+        public bool? Enabled { get; set; }
+        public DateTime? TimeStamp { get; }
+        public string MigrationState { get; }
     }
 }

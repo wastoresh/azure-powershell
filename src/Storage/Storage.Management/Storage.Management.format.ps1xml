@@ -163,6 +163,10 @@
             <Label>HasImmutabilityPolicy</Label>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>ImmutableStorageWithVersioning</Label>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -181,6 +185,9 @@
               </TableColumnItem>
               <TableColumnItem>
                 <ScriptBlock>$_.HasImmutabilityPolicy</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.ImmutableStorageWithVersioning.Enabled</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

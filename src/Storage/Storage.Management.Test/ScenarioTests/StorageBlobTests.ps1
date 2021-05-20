@@ -756,4 +756,84 @@ function Test-StorageBlobChangeFeed
     }
 }
 
+<#
+.SYNOPSIS
+Test StorageAccount ObjectLevelWorm
+.DESCRIPTION
+SmokeTest
+#>
+function Test-StorageBlobContainerVLW
+{
+    # Setup
+    $rgname = Get-StorageManagementTestResourceName;
+
+    try
+    {
+        # Test
+        $stoname = 'sto' + $rgname;
+        $stotype = 'Standard_GRS';
+        $loc = Get-ProviderLocation_Canary ResourceManagement;
+        $kind = 'StorageV2'
+		$containerName = "container"+ $rgname
+		$containerName2 = "container2"+ $rgname
+
+        Write-Verbose "RGName: $rgname | Loc: $loc"
+        New-AzResourceGroup -Name $rgname -Location $loc;
+
+        New-AzStorageAccount -ResourceGroupName $rgname -Name $stoname -Location $loc -Type $stotype -Kind $kind 
+        $stos = Get-AzStorageAccount -ResourceGroupName $rgname;
+
+		# enabled versioning
+		Update-AzStorageBlobServiceProperty -ResourceGroupName $rgname -StorageAccountName $stoname -IsVersioningEnabled $true		
+		$property = Get-AzStorageBlobServiceProperty -ResourceGroupName $rgname -StorageAccountName $stoname
+		#Assert-AreEqual $true $property.IsVersioningEnabled 
+
+		# create container with ImmutableStorageWithVersioning
+		New-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $stoname -Name $containerName -EnableImmutableStorageWithVersioning
+		$container = Get-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $stoname -Name $containerName
+		#Assert-AreEqual $rgname $container.ResourceGroupName
+		#Assert-AreEqual $stoname $container.StorageAccountName
+		#Assert-AreEqual $containerName $container.Name
+		#Assert-AreEqual $false $container.HasLegalHold
+		#Assert-AreEqual $false $container.HasImmutabilityPolicy
+		#Assert-AreEqual $true $container.ImmutableStorageWithVersioning.Enabled
+		
+		# migrate container to enable VLW
+		New-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $stoname -Name $containerName2
+		$container = Get-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $stoname -Name $containerName2
+		#Assert-AreEqual $rgname $container.ResourceGroupName
+		#Assert-AreEqual $stoname $container.StorageAccountName
+		#Assert-AreEqual $containerName $container.Name
+		#Assert-AreEqual $false $container.HasLegalHold
+		#Assert-AreEqual $false $container.HasImmutabilityPolicy
+		#Assert-AreEqual $false $container.ImmutableStorageWithVersioning.Enabled
+
+		$immutabilityPeriod =1
+        Set-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $rgname -StorageAccountName $stoname  -ContainerName $containerName2 -ImmutabilityPeriod $immutabilityPeriod
+		$policy = Get-AzRmStorageContainerImmutabilityPolicy -ResourceGroupName $rgname -StorageAccountName $stoname  -ContainerName $containerName2
+		#Assert-AreEqual $immutabilityPeriod $policy.ImmutabilityPeriodSinceCreationInDays
+		#Assert-AreEqual Unlocked $policy.State
+		
+		$t = Invoke-AzRmStorageContainerObjectLevelWormMigration -ResourceGroupName $rgname -StorageAccountName $stoname -Name $containerName2 -asjob
+		$t | Wait-Job
+		$container = Get-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $stoname -Name $containerName2
+		#Assert-AreEqual $true $container.ImmutableStorageWithVersioning.Enabled
+		
+		# remove the containers
+		Remove-AzRmStorageContainer -Force -StorageAccount $stos -Name $containerName
+		Remove-AzRmStorageContainer -Force -StorageAccount $stos -Name $containerName2
+		$containers = Get-AzRmStorageContainer -StorageAccount $stos
+		Assert-AreEqual 0 $containers.Count
+
+        Remove-AzStorageAccount -Force -ResourceGroupName $rgname -Name $stoname;
+    }
+    finally
+    {
+        # Cleanup
+		Remove-AzRmStorageContainer -Force -StorageAccount $stos -Name $containerName
+		Remove-AzRmStorageContainer -Force -StorageAccount $stos -Name $containerName2
+        Clean-ResourceGroup $rgname
+    }
+}
+
 
