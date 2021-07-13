@@ -31,6 +31,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
     using global::Azure.Storage.Blobs;
     using global::Azure.Storage;
     using global::Azure.Storage.Files.Shares.Models;
+    using global::Azure.Data.Tables;
 
     internal static class Util
     {
@@ -499,6 +500,29 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                 blobServiceClient = new BlobServiceClient(connectionString, options);
             }
             return blobServiceClient;
+        }
+
+
+
+        public static TableServiceClient GetTrack2TableServiceClient(AzureStorageContext context, TableClientOptions options = null)
+        {
+            TableServiceClient serviceClient;
+            if (context.StorageAccount.Credentials.IsToken) //Oauth
+            {
+                serviceClient = new TableServiceClient(context.StorageAccount.TableEndpoint, context.Track2OauthToken, options);
+            }
+            else  //sas , key or Anonymous, use connection string
+            {
+                string connectionString = context.ConnectionString;
+
+                // remove the "?" at the begin of SAS if any
+                if (context.StorageAccount.Credentials.IsSAS)
+                {
+                    connectionString = connectionString.Replace("SharedAccessSignature=?", "SharedAccessSignature=");
+                }
+                serviceClient = new TableServiceClient(connectionString, options);
+            }
+            return serviceClient;
         }
 
         /// <summary>

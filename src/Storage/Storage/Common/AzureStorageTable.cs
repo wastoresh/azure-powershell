@@ -17,6 +17,8 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
     using Microsoft.Azure.Cosmos.Table;
     using System;
     using Microsoft.WindowsAzure.Commands.Common.Attributes;
+    using global::Azure.Data.Tables;
+    using Microsoft.WindowsAzure.Commands.Storage;
 
     /// <summary>
     /// Azure storage table object
@@ -30,6 +32,9 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         [Ps1Xml(Label = "Name", Target = ViewControl.Table, ScriptBlock = "$_.Name", Position = 0)]
         public CloudTable CloudTable { get; private set; }
 
+
+        public TableClient TableClient { get; private set; }
+
         /// <summary>
         /// Table uri
         /// </summary>
@@ -40,11 +45,23 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// Azure storage table constructor
         /// </summary>
         /// <param name="table">Cloud table object</param>
-        public AzureStorageTable(CloudTable table)
+        //public AzureStorageTable(CloudTable table)
+        //{
+        //    Name = table.Name;
+        //    CloudTable = table;
+        //    Uri = table.Uri;
+        //}
+
+        public AzureStorageTable(TableClient table, AzureStorageContext context)
         {
             Name = table.Name;
-            CloudTable = table;
-            Uri = table.Uri;
+            TableClient = table;
+            if (!context.StorageAccount.Credentials.IsToken) // only output Track1 object when not oauth, since Ttrack1 SDK don't support Oauth
+            {
+                CloudTable = context.TableStorageAccount.CreateCloudTableClient().GetTableReference(table.Name);
+            }
+            // TODO: Track2 SDK missing Uri properties, need update it when Track2 SDK support Uri.
+            //Uri = table.Uri;
         }
     }
 }

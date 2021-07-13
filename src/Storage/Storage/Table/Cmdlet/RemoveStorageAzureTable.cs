@@ -20,6 +20,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
     using System;
     using System.Management.Automation;
     using System.Security.Permissions;
+    using global::Azure.Data.Tables;
 
     /// <summary>
     /// remove an azure table
@@ -87,23 +88,44 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
                 throw new ArgumentException(String.Format(Resources.InvalidTableName, name));
             }
 
-            TableRequestOptions requestOptions = RequestOptions;
-            CloudTable table = Channel.GetTableReference(name);
+            TableServiceClient serviceClient = Util.GetTrack2TableServiceClient(Channel.StorageContext, ClientOptions);
+            TableClient table = serviceClient.GetTableClient(name);
 
-            if (!Channel.DoesTableExist(table, requestOptions, TableOperationContext))
-            {
-                throw new ResourceNotFoundException(String.Format(Resources.TableNotFound, name));
-            }
+            // TODO: check table exist
+            //if (!Channel.DoesTableExist(table, requestOptions, TableOperationContext))
+            //{
+            //    throw new ResourceNotFoundException(String.Format(Resources.TableNotFound, name));
+            //}
 
-            if (force || TableIsEmpty(table) || ShouldContinue(string.Format("Remove table and all content in it: {0}", name), ""))
+            //TODO: check table empty
+            //if (force || TableIsEmpty(table) || ShouldContinue(string.Format("Remove table and all content in it: {0}", name), ""))
+            if (force || ShouldContinue(string.Format("Remove table and all content in it: {0}", name), ""))
             {
-                Channel.Delete(table, requestOptions, TableOperationContext);
+                table.Delete(this.CmdletCancellationToken);
                 return true;
             }
             else
             {
                 return false;
             }
+
+            //TableRequestOptions requestOptions = RequestOptions;
+            //CloudTable table = Channel.GetTableReference(name);
+
+            //if (!Channel.DoesTableExist(table, requestOptions, TableOperationContext))
+            //{
+            //    throw new ResourceNotFoundException(String.Format(Resources.TableNotFound, name));
+            //}
+
+            //if (force || TableIsEmpty(table) || ShouldContinue(string.Format("Remove table and all content in it: {0}", name), ""))
+            //{
+            //    Channel.Delete(table, requestOptions, TableOperationContext);
+            //    return true;
+            //}
+            //else
+            //{
+            //    return false;
+            //}
         }
 
         /// <summary>

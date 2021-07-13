@@ -55,7 +55,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         public StorageTableManagement(AzureStorageContext context)
         {
             internalStorageContext = context;
-            tableClient = internalStorageContext.TableStorageAccount.CreateCloudTableClient();
+
+            if (!internalStorageContext.StorageAccount.Credentials.IsToken)
+            {
+                tableClient = internalStorageContext.TableStorageAccount.CreateCloudTableClient();
+            }
         }
 
         /// <summary>

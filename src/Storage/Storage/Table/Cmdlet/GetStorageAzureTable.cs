@@ -23,6 +23,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
     using System.Management.Automation;
     using System.Security.Permissions;
     using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
+    using global::Azure.Data.Tables;
+    using global::Azure;
+    using global::Azure.Data.Tables.Models;
 
     /// <summary>
     /// list azure tables
@@ -76,14 +79,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
         /// </summary>
         /// <param name="name">table name</param>
         /// <returns>An enumerable collection of CloudTable object</returns>
-        internal IEnumerable<CloudTable> ListTablesByName(string name)
+        internal IEnumerable<TableClient> ListTablesByName(string name)
         {
-            TableRequestOptions requestOptions = RequestOptions;
             String prefix = String.Empty;
 
+            TableServiceClient serviceClient = Util.GetTrack2TableServiceClient(Channel.StorageContext, ClientOptions);
             if (String.IsNullOrEmpty(name) || WildcardPattern.ContainsWildcardCharacters(name))
             {
-                IEnumerable<CloudTable> tables = Channel.ListTables(prefix, requestOptions, TableOperationContext);
+                Pageable<TableItem> tables = serviceClient.Query(prefix, null, this.CmdletCancellationToken);
                 WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.Compiled;
                 WildcardPattern wildcard = null;
 
@@ -92,11 +95,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
                     wildcard = new WildcardPattern(name, options);
                 }
 
-                foreach (CloudTable table in tables)
+                foreach (TableItem table in tables)
                 {
                     if (wildcard == null || wildcard.IsMatch(table.Name))
                     {
-                        yield return table;
+                        yield return serviceClient.GetTableClient(table.Name); ;
                     }
                 }
             }
@@ -107,17 +110,60 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
                     throw new ArgumentException(String.Format(Resources.InvalidTableName, name));
                 }
 
-                CloudTable table = Channel.GetTableReference(name);
+                TableClient table = serviceClient.GetTableClient(name);
 
-                if (Channel.DoesTableExist(table, requestOptions, TableOperationContext))
-                {
+                //if (table.Exist)
+                //{
+                // TODO  need check table exist
                     yield return table;
-                }
-                else
-                {
-                    throw new ResourceNotFoundException(String.Format(Resources.TableNotFound, name));
-                }
+                //}
+                //else
+                //{
+                //    throw new ResourceNotFoundException(String.Format(Resources.TableNotFound, name));
+                //}
             }
+
+            ///////////////////////////////////////////////////////
+            //TableRequestOptions requestOptions = RequestOptions;
+            //String prefix = String.Empty;
+
+            //if (String.IsNullOrEmpty(name) || WildcardPattern.ContainsWildcardCharacters(name))
+            //{
+            //    IEnumerable<CloudTable> tables = Channel.ListTables(prefix, requestOptions, TableOperationContext);
+            //    WildcardOptions options = WildcardOptions.IgnoreCase | WildcardOptions.Compiled;
+            //    WildcardPattern wildcard = null;
+
+            //    if (!string.IsNullOrEmpty(name))
+            //    {
+            //        wildcard = new WildcardPattern(name, options);
+            //    }
+
+            //    foreach (CloudTable table in tables)
+            //    {
+            //        if (wildcard == null || wildcard.IsMatch(table.Name))
+            //        {
+            //            yield return table;
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    if (!NameUtil.IsValidTableName(name))
+            //    {
+            //        throw new ArgumentException(String.Format(Resources.InvalidTableName, name));
+            //    }
+
+            //    CloudTable table = Channel.GetTableReference(name);
+
+            //    if (Channel.DoesTableExist(table, requestOptions, TableOperationContext))
+            //    {
+            //        yield return table;
+            //    }
+            //    else
+            //    {
+            //        throw new ResourceNotFoundException(String.Format(Resources.TableNotFound, name));
+            //    }
+            //}
         }
 
         /// <summary>
@@ -125,32 +171,44 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
         /// </summary>
         /// <param name="prefix">table prefix</param>
         /// <returns>An enumerable collection of CloudTable object</returns>
-        internal IEnumerable<CloudTable> ListTablesByPrefix(string prefix)
+        internal IEnumerable<TableClient> ListTablesByPrefix(string prefix)
         {
-            TableRequestOptions reqesutOptions = RequestOptions;
-
             if (!NameUtil.IsValidTablePrefix(prefix))
             {
                 throw new ArgumentException(String.Format(Resources.InvalidTableName, prefix));
             }
+            TableServiceClient serviceClient = Util.GetTrack2TableServiceClient(Channel.StorageContext, ClientOptions);
+            Pageable<TableItem> tables = serviceClient.Query(string.Format("(TableName ge '{0}') and (TableName lt '{0}", prefix) + "{')", null, this.CmdletCancellationToken);
 
-            return Channel.ListTables(prefix, reqesutOptions, TableOperationContext);
+            foreach (TableItem table in tables)
+            {
+                yield return serviceClient.GetTableClient(table.Name);
+            }
+            /////////////////////////////////
+            //TableRequestOptions reqesutOptions = RequestOptions;
+
+            //if (!NameUtil.IsValidTablePrefix(prefix))
+            //{
+            //    throw new ArgumentException(String.Format(Resources.InvalidTableName, prefix));
+            //}
+
+            //return Channel.ListTables(prefix, reqesutOptions, TableOperationContext);
         }
 
         /// <summary>
         /// write cloud table with storage context
         /// </summary>
         /// <param name="tableList">An enumerable collection of CloudTable object</param>
-        internal void WriteTablesWithStorageContext(IEnumerable<CloudTable> tableList)
+        internal void WriteTablesWithStorageContext(IEnumerable<TableClient> tableList)
         {
             if (null == tableList)
             {
                 return;
             }
 
-            foreach (CloudTable table in tableList)
+            foreach (TableClient table in tableList)
             {
-                AzureStorageTable azureTable = new AzureStorageTable(table);
+                AzureStorageTable azureTable = new AzureStorageTable(table, Channel.StorageContext);
                 WriteObjectWithStorageContext(azureTable);
             }
         }
@@ -161,7 +219,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            IEnumerable<CloudTable> tableList = null;
+            IEnumerable<TableClient> tableList = null;
 
             if (PrefixParameterSet == ParameterSetName)
             {

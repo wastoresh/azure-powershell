@@ -22,6 +22,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
     using System.Management.Automation;
     using System.Security.Permissions;
     using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
+    using global::Azure.Data.Tables;
 
     /// <summary>
     /// create an new azure table
@@ -64,16 +65,29 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table.Cmdlet
                 throw new ArgumentException(String.Format(Resources.InvalidTableName, name));
             }
 
-            TableRequestOptions requestOptions = RequestOptions;
-            CloudTable table = Channel.GetTableReference(name);
-            bool created = Channel.CreateTableIfNotExists(table, requestOptions, TableOperationContext);
+            TableServiceClient serviceClient = Util.GetTrack2TableServiceClient(Channel.StorageContext, ClientOptions);
+            TableClient table = serviceClient.GetTableClient(name);
+            var tableitem = table.CreateIfNotExists(this.CmdletCancellationToken).Value;
 
-            if (!created)
-            {
-                throw new ResourceAlreadyExistException(String.Format(Resources.TableAlreadyExists, name));
-            }
+            //if (!created)
+            //{
+            //    throw new ResourceAlreadyExistException(String.Format(Resources.TableAlreadyExists, name));
+            //}
 
-            return new AzureStorageTable(table);
+            return new AzureStorageTable(table, Channel.StorageContext);
+
+            /////
+
+            //TableRequestOptions requestOptions = RequestOptions;
+            //CloudTable table = Channel.GetTableReference(name);
+            //bool created = Channel.CreateTableIfNotExists(table, requestOptions, TableOperationContext);
+
+            //if (!created)
+            //{
+            //    throw new ResourceAlreadyExistException(String.Format(Resources.TableAlreadyExists, name));
+            //}
+
+            //return new AzureStorageTable(table);
         }
 
         /// <summary>

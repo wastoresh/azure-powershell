@@ -19,6 +19,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table
     using Microsoft.Azure.Cosmos.Table;
     using System;
     using System.Collections.Generic;
+    using global::Azure.Data.Tables;
+    using Microsoft.WindowsAzure.Commands.Common;
+    using global::Azure.Core;
+
     /// <summary>
     /// base class for table cmdlet
     /// </summary>
@@ -80,5 +84,24 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Table
                 return false;
             }
         }
+
+
+        public TableClientOptions ClientOptions
+        {
+            get
+            {
+                if (clientOptions == null)
+                {
+                    clientOptions = new TableClientOptions();
+                    clientOptions.AddPolicy(new UserAgentPolicy(ApiConstants.UserAgentHeaderValue), HttpPipelinePosition.PerCall);
+                    return clientOptions;
+                }
+                else
+                {
+                    return clientOptions;
+                }
+            }
+        }
+        private TableClientOptions clientOptions = null;
     }
 }
