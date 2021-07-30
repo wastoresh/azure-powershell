@@ -53,41 +53,55 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             progressRecord = GetProgressRecord("Set", taskId);
             continuationToken = this.ContinuationToken;
 
-            bool foundAFolder = false;
-
-            DataLakeFileClient fileClient = null;
-            DataLakeDirectoryClient dirClient = null;
-
             DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
-            foundAFolder = GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient);
+            DataLakePathClient pathClient = new DataLakePathClient(fileSystem, string.IsNullOrEmpty(this.Path) ? "/" : this.Path);
 
-
-            if (foundAFolder)
+            if (ShouldProcess(GetDataLakeItemUriWithoutSas(pathClient), "Set Acl recursively on DatalakeGen2 Item: "))
             {
-                if (ShouldProcess(dirClient.Uri.ToString(), "Set Acl recursively on Directory: "))
-                {
-                    await dirClient.SetAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
-                        continuationToken,
-                        GetAccessControlChangeOptions(taskId),
-                        CmdletCancellationToken).ConfigureAwait(false);
+                await pathClient.SetAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
+                            continuationToken,
+                            GetAccessControlChangeOptions(taskId),
+                            CmdletCancellationToken).ConfigureAwait(false);
 
-                    SetProgressComplete();
-                    WriteResult(taskId);
-                }
+                SetProgressComplete();
+                WriteResult(taskId);
             }
-            else
-            {
-                if (ShouldProcess(fileClient.Uri.ToString(), "Set Acl recursively on File: "))
-                {
-                    await fileClient.SetAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
-                        continuationToken,
-                        GetAccessControlChangeOptions(taskId),
-                        CmdletCancellationToken).ConfigureAwait(false);
 
-                    SetProgressComplete();
-                    WriteResult(taskId);
-                }
-            }
+            ////bool foundAFolder = false;
+
+            ////DataLakeFileClient fileClient = null;
+            ////DataLakeDirectoryClient dirClient = null;
+
+            ////DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
+            ////foundAFolder = GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient);
+
+
+            ////if (foundAFolder)
+            ////{
+            ////    if (ShouldProcess(dirClient.Uri.ToString(), "Set Acl recursively on Directory: "))
+            ////    {
+            ////        await dirClient.SetAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
+            ////            continuationToken,
+            ////            GetAccessControlChangeOptions(taskId),
+            ////            CmdletCancellationToken).ConfigureAwait(false);
+
+            ////        SetProgressComplete();
+            ////        WriteResult(taskId);
+            ////    }
+            ////}
+            ////else
+            ////{
+            ////    if (ShouldProcess(fileClient.Uri.ToString(), "Set Acl recursively on File: "))
+            ////    {
+            ////        await fileClient.SetAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseAccessControls(this.Acl),
+            ////            continuationToken,
+            ////            GetAccessControlChangeOptions(taskId),
+            ////            CmdletCancellationToken).ConfigureAwait(false);
+
+            ////        SetProgressComplete();
+            ////        WriteResult(taskId);
+            ////    }
+            ////}
         }
     }
 }

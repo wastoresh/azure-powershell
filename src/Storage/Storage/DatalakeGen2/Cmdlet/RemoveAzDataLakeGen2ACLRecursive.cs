@@ -52,43 +52,54 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             progressRecord = GetProgressRecord("Remove", taskId);
             continuationToken = this.ContinuationToken;
 
-            bool foundAFolder = false;
+            //bool foundAFolder = false;
 
-            DataLakeFileClient fileClient = null;
-            DataLakeDirectoryClient dirClient = null;
+            //DataLakeFileClient fileClient = null;
+            //DataLakeDirectoryClient dirClient = null;
 
             DataLakeFileSystemClient fileSystem = GetFileSystemClientByName(localChannel, this.FileSystem);
-            foundAFolder = GetExistDataLakeGen2Item(fileSystem, this.Path, out fileClient, out dirClient);
+            DataLakePathClient pathClient = new DataLakePathClient(fileSystem, string.IsNullOrEmpty(this.Path)? "/" : this.Path);
 
-
-            if (foundAFolder)
+            if (ShouldProcess(GetDataLakeItemUriWithoutSas(pathClient), "Remove Acl recursively on DatalakeGen2 Item: "))
             {
-                if (ShouldProcess(dirClient.Uri.ToString(), "Remove Acl recursively on Directory: "))
-                {
-                    WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
-                    await dirClient.RemoveAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
-                            continuationToken,
-                            GetAccessControlChangeOptions(taskId),
-                            CmdletCancellationToken).ConfigureAwait(false);
-
-                    SetProgressComplete();
-                    WriteResult(taskId);
-                }
-            }
-            else
-            {
-                if (ShouldProcess(fileClient.Uri.ToString(), "Remove Acl recursively on File: "))
-                {
-                    WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
-                    await fileClient.RemoveAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
+                WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
+                await pathClient.RemoveAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
                         continuationToken,
                         GetAccessControlChangeOptions(taskId),
                         CmdletCancellationToken).ConfigureAwait(false);
 
-                    SetProgressComplete();
-                    WriteResult(taskId);
-                }
+                SetProgressComplete();
+                WriteResult(taskId);
             }
+
+            //if (foundAFolder)
+            //{
+            //    if (ShouldProcess(dirClient.Uri.ToString(), "Remove Acl recursively on Directory: "))
+            //    {
+            //        WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
+            //        await dirClient.RemoveAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
+            //                continuationToken,
+            //                GetAccessControlChangeOptions(taskId),
+            //                CmdletCancellationToken).ConfigureAwait(false);
+
+            //        SetProgressComplete();
+            //        WriteResult(taskId);
+            //    }
+            //}
+            //else
+            //{
+            //    if (ShouldProcess(fileClient.Uri.ToString(), "Remove Acl recursively on File: "))
+            //    {
+            //        WriteWarning("To find the ACL Entry to remove, will only compare AccessControlType, DefaultScope and EntityId, will omit Permission.");
+            //        await fileClient.RemoveAccessControlRecursiveAsync(PSPathAccessControlEntry.ParseRemoveAccessControls(this.Acl),
+            //            continuationToken,
+            //            GetAccessControlChangeOptions(taskId),
+            //            CmdletCancellationToken).ConfigureAwait(false);
+
+            //        SetProgressComplete();
+            //        WriteResult(taskId);
+            //    }
+            //}
         }
     }
 }

@@ -18,6 +18,12 @@
         - Additional information about change #1
 -->
 ## Upcoming Release
+* Removed an unnecessary read request in set/update/remove Acl recursively on Datalake Gen2 item 
+    -  `Set-AzDataLakeGen2AclRecursive` 
+    -  `Update-AzDataLakeGen2AclRecursive` 
+    -  `Remove-AzDataLakeGen2AclRecursive`
+
+
 * Fixed remove datalakegen2 item fail with readonly SAS token
     -  `Remove-AzDataLakeGen2Item` 
 * Revised destination existing check in move datalakegen2 item
