@@ -351,11 +351,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
                 options.SourceConditions = this.BlobRequestConditions;
 
-                BlockBlobClient srcBlockblob = new BlockBlobClient(srcUri, ClientOptions);
-                Track2Models.BlobProperties srcProperties = srcBlockblob.GetProperties(cancellationToken: this.CmdletCancellationToken).Value;
+                BlobClient srcBlob = new BlobClient(srcUri, ClientOptions);
+                Track2Models.BlobProperties srcProperties = srcBlob.GetProperties(cancellationToken: this.CmdletCancellationToken).Value;
 
                 //Prepare progress handler
-                string activity = String.Format("Copy Blob {0} to {1}", srcBlockblob.Name, destBlob.Name);
+                string activity = String.Format("Copy Blob {0} to {1}", srcBlob.Name, destBlob.Name);
                 string status = "Prepare to Copy Blob";
                 ProgressRecord pr = new ProgressRecord(OutputStream.GetProgressId(taskId), activity, status);
                 IProgress<long> progressHandler = new Progress<long>((finishedBytes) =>
@@ -370,55 +370,77 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     }
                 });
 
-                switch (destBlobType)
+                if (srcProperties.ContentLength <= size4MB * 64  // CopyBlobFromUri has size limitation as 256MB, and not suppport EncryptionScope
+                    && string.IsNullOrEmpty(this.EncryptionScope))
                 {
-                    case Track2Models.BlobType.Block:
-
-                        BlockBlobClient destBlockBlob = (BlockBlobClient)Util.GetTrack2BlobClientWithType(destBlob, Channel.StorageContext, Track2Models.BlobType.Block, ClientOptions);
-
-                        Track2Models.CommitBlockListOptions commitBlockListOptions = new Track2Models.CommitBlockListOptions();
-                        commitBlockListOptions.HttpHeaders = new Track2Models.BlobHttpHeaders();
-                        commitBlockListOptions.HttpHeaders.ContentType = srcProperties.ContentType;
-                        commitBlockListOptions.HttpHeaders.ContentHash = srcProperties.ContentHash;
-                        commitBlockListOptions.HttpHeaders.ContentEncoding = srcProperties.ContentEncoding;
-                        commitBlockListOptions.HttpHeaders.ContentLanguage = srcProperties.ContentLanguage;
-                        commitBlockListOptions.HttpHeaders.ContentDisposition = srcProperties.ContentDisposition;
-                        commitBlockListOptions.Metadata = srcProperties.Metadata;
-                        try
+                    try
+                    {
+                        options.Tags = srcBlob.GetTags(cancellationToken: this.CmdletCancellationToken).Value.Tags;
+                    }
+                    catch (global::Azure.RequestFailedException e) when (e.Status == 403 || e.Status == 404 || e.Status == 401)
+                    {
+                        if (!this.Force && !OutputStream.ConfirmAsync("Can't get source blob Tags, so source blob tags won't be copied to dest blob. Do you want to continue the blob copy?").Result)
                         {
-                            commitBlockListOptions.Tags = srcBlockblob.GetTags(cancellationToken: this.CmdletCancellationToken).Value.Tags;
+                            return;
                         }
-                        catch (global::Azure.RequestFailedException e) when (e.Status == 403 || e.Status == 404 || e.Status == 401)
-                        {
-                            if (!this.Force && !OutputStream.ConfirmAsync("Can't get source blob Tags, so source blob tags won't be copied to dest blob. Do you want to continue the blob copy?").Result)
-                            {
-                                return;
-                            }
-                        }
+                    }
 
-                        long blockLength = GetBlockLength(srcProperties.ContentLength);
-                        string[] blockIDs = GetBlockIDs(srcProperties.ContentLength, blockLength, destBlockBlob.Name);
-                        long copyoffset = 0;
-                        progressHandler.Report(copyoffset);
-                        foreach (string id in blockIDs)
-                        {
-                            long blocksize = blockLength;
-                            if (copyoffset + blocksize > srcProperties.ContentLength)
+                    destBlob.SyncCopyFromUri(srcUri, options, this.CmdletCancellationToken);
+                    progressHandler.Report(srcProperties.ContentLength);
+                }
+                else
+                {
+                    switch (destBlobType)
+                    {
+                        case Track2Models.BlobType.Block:
+
+                            BlockBlobClient destBlockBlob = (BlockBlobClient)Util.GetTrack2BlobClientWithType(destBlob, Channel.StorageContext, Track2Models.BlobType.Block, ClientOptions);
+
+                            Track2Models.CommitBlockListOptions commitBlockListOptions = new Track2Models.CommitBlockListOptions();
+                            commitBlockListOptions.HttpHeaders = new Track2Models.BlobHttpHeaders();
+                            commitBlockListOptions.HttpHeaders.ContentType = srcProperties.ContentType;
+                            commitBlockListOptions.HttpHeaders.ContentHash = srcProperties.ContentHash;
+                            commitBlockListOptions.HttpHeaders.ContentEncoding = srcProperties.ContentEncoding;
+                            commitBlockListOptions.HttpHeaders.ContentLanguage = srcProperties.ContentLanguage;
+                            commitBlockListOptions.HttpHeaders.ContentDisposition = srcProperties.ContentDisposition;
+                            commitBlockListOptions.Metadata = srcProperties.Metadata;
+                            commitBlockListOptions.AccessTier = Util.ConvertAccessTier_Track1ToTrack2(standardBlobTier);
+                            try
                             {
-                                blocksize = srcProperties.ContentLength - copyoffset;
+                                commitBlockListOptions.Tags = srcBlob.GetTags(cancellationToken: this.CmdletCancellationToken).Value.Tags;
                             }
-                            destBlockBlob.StageBlockFromUri(srcUri, id, new global::Azure.HttpRange(copyoffset, blocksize), null, null, null, cancellationToken: this.CmdletCancellationToken);
-                            copyoffset += blocksize;
+                            catch (global::Azure.RequestFailedException e) when (e.Status == 403 || e.Status == 404 || e.Status == 401)
+                            {
+                                if (!this.Force && !OutputStream.ConfirmAsync("Can't get source blob Tags, so source blob tags won't be copied to dest blob. Do you want to continue the blob copy?").Result)
+                                {
+                                    return;
+                                }
+                            }
+
+                            long blockLength = GetBlockLength(srcProperties.ContentLength);
+                            string[] blockIDs = GetBlockIDs(srcProperties.ContentLength, blockLength, destBlockBlob.Name);
+                            long copyoffset = 0;
                             progressHandler.Report(copyoffset);
+                            foreach (string id in blockIDs)
+                            {
+                                long blocksize = blockLength;
+                                if (copyoffset + blocksize > srcProperties.ContentLength)
+                                {
+                                    blocksize = srcProperties.ContentLength - copyoffset;
+                                }
+                                destBlockBlob.StageBlockFromUri(srcUri, id, new global::Azure.HttpRange(copyoffset, blocksize), null, null, null, cancellationToken: this.CmdletCancellationToken);
+                                copyoffset += blocksize;
+                                progressHandler.Report(copyoffset);
 
-                        }
-                        destBlockBlob.CommitBlockList(blockIDs, commitBlockListOptions, this.CmdletCancellationToken);
+                            }
+                            destBlockBlob.CommitBlockList(blockIDs, commitBlockListOptions, this.CmdletCancellationToken);
 
-                        break;
-                    case Track2Models.BlobType.Page:
-                    case Track2Models.BlobType.Append:
-                    default:
-                        throw new ArgumentException(string.Format("The cmdlet currently only support souce blob and destination blob are both block blob. The dest blob type is {0}.", destBlobType));
+                            break;
+                        case Track2Models.BlobType.Page:
+                        case Track2Models.BlobType.Append:
+                        default:
+                            throw new ArgumentException(string.Format("The cmdlet currently only support souce blob and destination blob are both block blob. The dest blob type is {0}.", destBlobType));
+                    }
                 }
 
                 OutputStream.WriteObject(taskId, new AzureStorageBlob(destBlob, destChannel.StorageContext, null, options: ClientOptions));
