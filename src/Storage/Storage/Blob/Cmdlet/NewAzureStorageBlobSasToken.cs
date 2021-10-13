@@ -120,6 +120,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         [ValidateNotNull]
         public DateTime? StartTime { get; set; }
 
+        [Parameter(Mandatory = false, HelpMessage = "Start Time")]
+        [ValidateNotNull]
+        public string Rscd { get; set; }
+
         [Parameter(Mandatory = false, HelpMessage = "Expiry Time")]
         [ValidateNotNull]
         public DateTime? ExpiryTime { get; set; }
@@ -241,7 +245,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                 }
 
                 //Create SAS builder
-                BlobSasBuilder sasBuilder = SasTokenHelper.SetBlobSasBuilder_FromBlob(blobClient, identifier, this.Permission, this.StartTime, this.ExpiryTime, this.IPAddressOrRange, this.Protocol);                
+                BlobSasBuilder sasBuilder = SasTokenHelper.SetBlobSasBuilder_FromBlob(blobClient, identifier, this.Permission, this.StartTime, this.ExpiryTime, this.IPAddressOrRange, this.Protocol);
+                sasBuilder.ContentDisposition = this.Rscd;
 
                 //Create SAS and ourput
                 string sasToken = SasTokenHelper.GetBlobSharedAccessSignature(Channel.StorageContext, sasBuilder, generateUserDelegationSas, ClientOptions, CmdletCancellationToken);

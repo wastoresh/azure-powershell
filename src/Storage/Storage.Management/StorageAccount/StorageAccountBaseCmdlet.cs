@@ -12,10 +12,14 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Azure.Core;
+using Azure.ResourceManager;
+using Azure.ResourceManager.Resources;
 using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
+using Microsoft.WindowsAzure.Commands.Storage.Common;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections.Generic;
@@ -112,6 +116,25 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
             set { storageClientWrapper = new StorageManagementClientWrapper(value); }
         }
+
+        public Subscription DefaultSubscription
+        {
+            get
+            {
+                if (defaultSubscription == null)
+                {
+                    
+                        ArmClient  armClient= new ArmClient(
+                         DefaultProfile.DefaultContext.Subscription.Id,
+                        new AzureARMSessionCredential(DefaultProfile.DefaultContext));
+                    defaultSubscription = armClient.GetDefaultSubscription();
+                }
+                return defaultSubscription;
+            }
+
+            set { defaultSubscription = value; }
+        }
+        private Subscription defaultSubscription = null;
 
         public string SubscriptionId
         {

@@ -12,6 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Azure;
+using Azure.ResourceManager.Storage;
 using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
 using Microsoft.Azure.Management.Storage;
@@ -88,45 +90,60 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
             if (string.IsNullOrEmpty(this.ResourceGroupName))
             {
-                IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = this.StorageClient.StorageAccounts.List();
-                WriteStorageAccountList(storageAccounts);
+                //IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = this.StorageClient.StorageAccounts.List();
+                //WriteStorageAccountList(storageAccounts);
 
-                while (storageAccounts.NextPageLink != null)
+                //while (storageAccounts.NextPageLink != null)
+                //{
+                //    storageAccounts = this.StorageClient.StorageAccounts.ListNext(storageAccounts.NextPageLink);
+                //    WriteStorageAccountList(storageAccounts);
+                //}
+
+                Pageable<global::Azure.ResourceManager.Storage.StorageAccount> accounts = DefaultSubscription.GetStorageAccounts();
+                foreach (global::Azure.ResourceManager.Storage.StorageAccount account in accounts)
                 {
-                    storageAccounts = this.StorageClient.StorageAccounts.ListNext(storageAccounts.NextPageLink);
-                    WriteStorageAccountList(storageAccounts);
+                    WriteObject(account.Data);
                 }
+
             }
             else if (string.IsNullOrEmpty(this.Name))
             {
-                IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = this.StorageClient.StorageAccounts.ListByResourceGroup(this.ResourceGroupName);
-                WriteStorageAccountList(storageAccounts);
+                //IPage<Microsoft.Azure.Management.Storage.Models.StorageAccount> storageAccounts = this.StorageClient.StorageAccounts.ListByResourceGroup(this.ResourceGroupName);
+                //WriteStorageAccountList(storageAccounts);
 
-                while (storageAccounts.NextPageLink != null)
+                //while (storageAccounts.NextPageLink != null)
+                //{
+                //    storageAccounts = this.StorageClient.StorageAccounts.ListByResourceGroupNext(storageAccounts.NextPageLink);
+                //    WriteStorageAccountList(storageAccounts);
+                //}
+
+                StorageAccountCollection storageAccountContainer = DefaultSubscription.GetResourceGroups().Get(this.ResourceGroupName).Value.GetStorageAccounts();
+                Pageable<global::Azure.ResourceManager.Storage.StorageAccount> accounts = storageAccountContainer.GetAll();
+                foreach (global::Azure.ResourceManager.Storage.StorageAccount account in accounts)
                 {
-                    storageAccounts = this.StorageClient.StorageAccounts.ListByResourceGroupNext(storageAccounts.NextPageLink);
-                    WriteStorageAccountList(storageAccounts);
+                    WriteObject(account.Data);
                 }
             }
             else
             {
-                // ParameterSet ensure can only set one of the following 2 parameters
-                StorageAccountExpand? expandproperties = null;
-                if (this.IncludeGeoReplicationStats)
-                {
-                    expandproperties = StorageAccountExpand.GeoReplicationStats;
-                }
-                if (this.IncludeBlobRestoreStatus)
-                {
-                    expandproperties = StorageAccountExpand.BlobRestoreStatus;
-                }
+                StorageAccountCollection storageAccountContainer = DefaultSubscription.GetResourceGroups().Get(this.ResourceGroupName).Value.GetStorageAccounts();
+                WriteObject(storageAccountContainer.Get(this.Name).Value.Data);
+                //// ParameterSet ensure can only set one of the following 2 parameters
+                //StorageAccountExpand? expandproperties = null;
+                //if (this.IncludeGeoReplicationStats)
+                //{
+                //    expandproperties = StorageAccountExpand.GeoReplicationStats;
+                //}
+                //if (this.IncludeBlobRestoreStatus)
+                //{
+                //    expandproperties = StorageAccountExpand.BlobRestoreStatus;
+                //}
+                //var storageAccount = this.StorageClient.StorageAccounts.GetProperties(
+                //    this.ResourceGroupName,
+                //    this.Name,
+                //    expandproperties);
 
-                var storageAccount = this.StorageClient.StorageAccounts.GetProperties(
-                    this.ResourceGroupName,
-                    this.Name,
-                    expandproperties);
-
-                WriteStorageAccount(storageAccount);
+                //WriteStorageAccount(storageAccount);
             }
         }
     }
