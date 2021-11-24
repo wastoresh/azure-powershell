@@ -41,6 +41,17 @@ namespace Microsoft.Azure.Commands.Management.Storage
         /// Account object parameter set 
         /// </summary>
         private const string AccountObjectParameterSet = "AccountObject";
+
+        /// <summary>
+        /// FailOverType Unplanned 
+        /// </summary>
+        private const string FailOverTypeUnplanned = "Unplanned";
+
+        /// <summary>
+        /// FailOverType Unplanned 
+        /// </summary>
+        private const string FailOverTypePlanned = "Planned";
+
         [Parameter(
             Position = 0,
             Mandatory = true,
@@ -72,41 +83,72 @@ namespace Microsoft.Azure.Commands.Management.Storage
             get { return force; }
             set { force = value; }
         }
-        private bool force = false;      
+        private bool force = false;
 
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
+
+        [Parameter(Mandatory = false, HelpMessage = "Specify the failover type. Possible values are: Unplanned, Planned. If not specified, the default failover type is Unplanned.")]
+        [PSArgumentCompleter(FailOverTypeUnplanned, FailOverTypePlanned)]
+        public string FailoverType { get; set; }
 
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
 
+            if (ParameterSetName == AccountObjectParameterSet)
+            {
+                this.ResourceGroupName = InputObject.ResourceGroupName;
+                this.Name = InputObject.StorageAccountName;
+            }
+
             if (ShouldProcess(this.Name, "Invoke Failover of Storage Account"))
             {
-                StringBuilder shouldContinuePrompt = new StringBuilder();
-                shouldContinuePrompt.AppendLine("Failover the storage account, the secondary cluster will become primary after failover. Please understand the following impact to your storage account before you initiate the failover:");
-                shouldContinuePrompt.AppendLine("  1. Please check the Last Sync Time using Get-"+ ResourceManager.Common.AzureRMConstants.AzureRMPrefix + "StorageAccount cmdlet with -IncludeGeoReplicationStats parameter, and check GeoReplicationStats property of your account. This is the data you may lose if you initiate the failover.");
-                shouldContinuePrompt.AppendLine("  2. After the failover, your storage account type will be converted to locally redundant storage (LRS). You can convert your account to use geo-redundant storage (GRS).");
-                shouldContinuePrompt.AppendLine("  3. Once you re-enable GRS for your storage account, Microsoft will replicate data to your new secondary region. Replication time is dependent on the amount of data to replicate. Please note that there are bandwidth charges for the bootstrap. Please refer to doc: https://azure.microsoft.com/en-us/pricing/details/bandwidth/");
-
-
-                if (this.force || ShouldContinue(shouldContinuePrompt.ToString(), ""))
+                Microsoft.Azure.Management.Storage.Models.FailoverType? type = null;
+                if (!string.IsNullOrEmpty(this.FailoverType))
                 {
-                    if (ParameterSetName == AccountObjectParameterSet)
+                    if (this.FailoverType.ToLower() == FailOverTypePlanned.ToLower())
                     {
-                        this.ResourceGroupName = InputObject.ResourceGroupName;
-                        this.Name = InputObject.StorageAccountName;
+                        type = Microsoft.Azure.Management.Storage.Models.FailoverType.Soft;
                     }
+                    else if (this.FailoverType.ToLower() != FailOverTypeUnplanned.ToLower())
+                    {
+                        throw new ArgumentException(string.Format("The Failover Type {0} is invalid.", this.FailoverType), "FailoverType");
+                    }
+                }
 
-                    this.StorageClient.StorageAccounts.Failover(
-                        this.ResourceGroupName,
-                        this.Name);
+                if (type == null) // unplanned
+                {
+                    StringBuilder shouldContinuePrompt = new StringBuilder();
+                    shouldContinuePrompt.AppendLine("Failover the storage account, the secondary cluster will become primary after failover. Please understand the following impact to your storage account before you initiate the failover:");
+                    shouldContinuePrompt.AppendLine("  1. Please check the Last Sync Time using Get-" + ResourceManager.Common.AzureRMConstants.AzureRMPrefix + "StorageAccount cmdlet with -IncludeGeoReplicationStats parameter, and check GeoReplicationStats property of your account. This is the data you may lose if you initiate the failover.");
+                    shouldContinuePrompt.AppendLine("  2. After the failover, your storage account type will be converted to locally redundant storage (LRS). You can convert your account to use geo-redundant storage (GRS).");
+                    shouldContinuePrompt.AppendLine("  3. Once you re-enable GRS for your storage account, Microsoft will replicate data to your new secondary region. Replication time is dependent on the amount of data to replicate. Please note that there are bandwidth charges for the bootstrap. Please refer to doc: https://azure.microsoft.com/en-us/pricing/details/bandwidth/");
 
-                    var storageAccount = this.StorageClient.StorageAccounts.GetProperties(this.ResourceGroupName, this.Name);
+                    if (this.force || ShouldContinue(shouldContinuePrompt.ToString(), ""))
+                    {
+                        ExecuteFailover(type);
+                    }
+                }
+                else // planned
+                {
+                    ExecuteFailover(type);
 
-                    WriteStorageAccount(storageAccount);
                 }
             }
+        }
+
+        // Execute Failover with specific failover type
+        private void ExecuteFailover(Microsoft.Azure.Management.Storage.Models.FailoverType? type = null)
+        {
+            this.StorageClient.StorageAccounts.Failover(
+            this.ResourceGroupName,
+            this.Name,
+            failoverType: type);
+
+            var storageAccount = this.StorageClient.StorageAccounts.GetProperties(this.ResourceGroupName, this.Name);
+
+            WriteStorageAccount(storageAccount);
         }
     }
 }
