@@ -14,10 +14,14 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
+    using global::Azure;
+    using global::Azure.Storage.Files.Shares;
+    using global::Azure.Storage.Files.Shares.Models;
     using Microsoft.Azure.Storage;
     using Microsoft.Azure.Storage.File;
     using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
     using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
+    using System.Collections.Generic;
     using System.Globalization;
     using System.Management.Automation;
     using System.Net;
@@ -82,65 +86,127 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                     throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
             }
 
+            ShareDirectoryClient baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(baseDirectory, Channel.StorageContext, ClientOptions);
+
             if (string.IsNullOrEmpty(this.Path))
             {
-                this.RunTask(async (taskId) =>
+                // TODO: open the options in listFileOptions in parameters
+                ShareDirectoryGetFilesAndDirectoriesOptions listFileOptions = new ShareDirectoryGetFilesAndDirectoriesOptions();
+                listFileOptions.Traits = ShareFileTraits.All;
+                listFileOptions.IncludeExtendedInfo = true;
+                Pageable<ShareFileItem> fileItems = baseDirClient.GetFilesAndDirectories(listFileOptions, this.CmdletCancellationToken);
+                //string continuationToken = null;
+                IEnumerable<Page<ShareFileItem>> fileitempages = fileItems.AsPages();
+                foreach (var page in fileitempages)
                 {
-                    await this.Channel.EnumerateFilesAndDirectoriesAsync(
-                        baseDirectory,
-                        item => this.WriteListFileItemObject(taskId, this.Channel, item),
-                        this.RequestOptions,
-                        this.OperationContext,
-                        this.CmdletCancellationToken).ConfigureAwait(false);
-                });
+                    foreach (var file in page.Values)
+                    {
+                        if (!file.IsDirectory) // is file
+                        {
+                            ShareFileClient shareFileClient = baseDirClient.GetFileClient(file.Name);
+                            WriteObject(new AzureStorageFile(shareFileClient, Channel.StorageContext, file)); // TODO
+                        }
+                        else // Dir
+                        {
+                            ShareDirectoryClient shareDirClient = baseDirClient.GetSubdirectoryClient(file.Name);
+                            WriteObject(new AzureStorageFileDirectory(shareDirClient, Channel.StorageContext, file)); // TODO
+                        }
+
+                    }
+                }
             }
             else
             {
-                this.RunTask(async (taskId) =>
+                bool foundAFolder = true;
+                //string[] subfolders = NamingUtil.ValidatePath(this.Path);
+
+                //TODO: need validate sub folder path, like "dir1/dir2/dir3"
+                ShareDirectoryClient targetDir = baseDirClient.GetSubdirectoryClient(this.Path);
+
+                try
                 {
-                    bool foundAFolder = true;
-                    string[] subfolders = NamingUtil.ValidatePath(this.Path);
-                    CloudFileDirectory targetDir = baseDirectory.GetDirectoryReferenceByPath(subfolders);
+                    ShareDirectoryProperties dirProperties = targetDir.GetProperties(this.CmdletCancellationToken).Value;
+                }
+                catch (global::Azure.RequestFailedException e) when (e.Status == 404)
+                {
+                    foundAFolder = false;
+                }
 
-                    try
-                    {
-                        await this.Channel.FetchDirectoryAttributesAsync(
-                            targetDir,
-                            null,
-                            this.RequestOptions,
-                            this.OperationContext,
-                            this.CmdletCancellationToken).ConfigureAwait(false);
-                    }
-                    catch (StorageException se)
-                    {
-                        if (null == se.RequestInformation
-                            || (int)HttpStatusCode.NotFound != se.RequestInformation.HttpStatusCode)
-                        {
-                            throw;
-                        }
+                if (foundAFolder)
+                {
+                    WriteObject(new AzureStorageFileDirectory(targetDir, Channel.StorageContext, dirProperties)); // TODO
+                    return;
+                }
 
-                        foundAFolder = false;
-                    }
+                //string[] filePath = NamingUtil.ValidatePath(this.Path, true);
+                //TODO: need validate sub folder path, like "dir1/dir2/dir3/file"
+                ShareFileClient targetFile = baseDirClient.GetFileClient(this.Path);
 
-                    if (foundAFolder)
-                    {
-                        WriteCloudFileDirectoryeObject(taskId, this.Channel, targetDir);
-                        return;
-                    }
+                ShareFileProperties fileProperties = targetFile.GetProperties(this.CmdletCancellationToken).Value;
 
-                    string[] filePath = NamingUtil.ValidatePath(this.Path, true);
-                    CloudFile targetFile = baseDirectory.GetFileReferenceByPath(filePath);
-
-                    await this.Channel.FetchFileAttributesAsync(
-                        targetFile,
-                        null,
-                        this.RequestOptions,
-                        this.OperationContext,
-                        this.CmdletCancellationToken).ConfigureAwait(false);
-
-                    WriteCloudFileObject(taskId, this.Channel, targetFile);
-                });
+                WriteObject(new AzureStorageFile(targetFile, Channel.StorageContext, fileProperties)); // TODO
             }
+
+
+            //if (string.IsNullOrEmpty(this.Path))
+            //{
+            //    this.RunTask(async (taskId) =>
+            //    {
+            //        await this.Channel.EnumerateFilesAndDirectoriesAsync(
+            //            baseDirectory,
+            //            item => this.WriteListFileItemObject(taskId, this.Channel, item),
+            //            this.RequestOptions,
+            //            this.OperationContext,
+            //            this.CmdletCancellationToken).ConfigureAwait(false);
+            //    });
+            //}
+            //else
+            //{
+            //    this.RunTask(async (taskId) =>
+            //    {
+            //        bool foundAFolder = true;
+            //        string[] subfolders = NamingUtil.ValidatePath(this.Path);
+            //        CloudFileDirectory targetDir = baseDirectory.GetDirectoryReferenceByPath(subfolders);
+
+            //        try
+            //        {
+            //            await this.Channel.FetchDirectoryAttributesAsync(
+            //                targetDir,
+            //                null,
+            //                this.RequestOptions,
+            //                this.OperationContext,
+            //                this.CmdletCancellationToken).ConfigureAwait(false);
+            //        }
+            //        catch (StorageException se)
+            //        {
+            //            if (null == se.RequestInformation
+            //                || (int)HttpStatusCode.NotFound != se.RequestInformation.HttpStatusCode)
+            //            {
+            //                throw;
+            //            }
+
+            //            foundAFolder = false;
+            //        }
+
+            //        if (foundAFolder)
+            //        {
+            //            WriteCloudFileDirectoryeObject(taskId, this.Channel, targetDir);
+            //            return;
+            //        }
+
+            //        string[] filePath = NamingUtil.ValidatePath(this.Path, true);
+            //        CloudFile targetFile = baseDirectory.GetFileReferenceByPath(filePath);
+
+            //        await this.Channel.FetchFileAttributesAsync(
+            //            targetFile,
+            //            null,
+            //            this.RequestOptions,
+            //            this.OperationContext,
+            //            this.CmdletCancellationToken).ConfigureAwait(false);
+
+            //        WriteCloudFileObject(taskId, this.Channel, targetFile);
+            //    });
+            //}
         }
     }
 }

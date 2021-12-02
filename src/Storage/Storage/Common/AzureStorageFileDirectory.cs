@@ -87,7 +87,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         }
 
         // Convert Track1 File Dir object to Track 2 file Dir Client
-        protected static ShareDirectoryClient GetTrack2FileDirClient(CloudFileDirectory cloudFileDir, AzureStorageContext context)
+        protected static ShareDirectoryClient GetTrack2FileDirClient(CloudFileDirectory cloudFileDir, AzureStorageContext context, ShareClientOptions clientOptions = null)
         {
             ShareDirectoryClient fileDirClient;
             if (cloudFileDir.ServiceClient.Credentials.IsSAS) //SAS
@@ -103,16 +103,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                 {
                     fullUri = fullUri + "?" + sas;
                 }
-                fileDirClient = new ShareDirectoryClient(new Uri(fullUri));
+                fileDirClient = new ShareDirectoryClient(new Uri(fullUri), clientOptions);
             }
             else if (cloudFileDir.ServiceClient.Credentials.IsSharedKey) //Shared Key
             {
                 fileDirClient = new ShareDirectoryClient(cloudFileDir.SnapshotQualifiedUri,
-                    new StorageSharedKeyCredential(context.StorageAccountName, cloudFileDir.ServiceClient.Credentials.ExportBase64EncodedKey()));
+                    new StorageSharedKeyCredential(context.StorageAccountName, cloudFileDir.ServiceClient.Credentials.ExportBase64EncodedKey()), clientOptions);
             }
             else //Anonymous
             {
-                fileDirClient = new ShareDirectoryClient(cloudFileDir.SnapshotQualifiedUri);
+                fileDirClient = new ShareDirectoryClient(cloudFileDir.SnapshotQualifiedUri, clientOptions);
             }
 
             return fileDirClient;

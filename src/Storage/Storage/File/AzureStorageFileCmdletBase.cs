@@ -23,6 +23,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
     using System.Collections.Generic;
     using System.Management.Automation;
     using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
+    using global::Azure.Storage.Files.Shares;
+    using Microsoft.WindowsAzure.Commands.Common;
+    using global::Azure.Core;
 
     public abstract class AzureStorageFileCmdletBase : StorageCloudCmdletBase<IStorageFileManagement>
     {
@@ -131,6 +134,24 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             {
                 WriteCloudFileDirectoryeObject(taskId, channel, item as CloudFileDirectory);
             }
-        }    
+        }
+
+        public ShareClientOptions ClientOptions
+        {
+            get
+            {
+                if (clientOptions == null)
+                {
+                    clientOptions = new ShareClientOptions();
+                    clientOptions.AddPolicy(new UserAgentPolicy(ApiConstants.UserAgentHeaderValue), HttpPipelinePosition.PerCall);
+                    return clientOptions;
+                }
+                else
+                {
+                    return clientOptions;
+                }
+            }
+        }
+        private ShareClientOptions clientOptions = null;
     }
 }
