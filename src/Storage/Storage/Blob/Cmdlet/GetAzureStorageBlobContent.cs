@@ -301,7 +301,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
 
             //skip download the snapshot except the CloudBlob pipeline
-            DateTimeOffset? snapshotTime = Util.GetSnapshotTimeFromBlobUri(blob.Uri);
+            DateTimeOffset? snapshotTime = Util.GetSnapshotTimeFromUri(blob.Uri);
             if (snapshotTime != null && ParameterSetName != BlobParameterSet)
             {
                 WriteWarning(String.Format(Resources.SkipDownloadSnapshot, blob.Name, snapshotTime));

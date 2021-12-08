@@ -23,6 +23,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
     using System.Management.Automation;
     using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
     using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
+    using Microsoft.WindowsAzure.Commands.Storage.Common;
+    using global::Azure.Storage.Files.Shares.Models;
+    using global::Azure.Storage.Files.Shares;
+    using global::Azure;
 
     [Cmdlet("Get", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageShare", DefaultParameterSetName = Constants.MatchingPrefixParameterSetName)]
     [OutputType(typeof(AzureStorageFileShare))]
@@ -64,34 +68,70 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 
         public override void ExecuteCmdlet()
         {
-            this.RunTask(async taskId =>
+
+            switch (this.ParameterSetName)
             {
-                switch (this.ParameterSetName)
-                {
-                    case Constants.SpecificParameterSetName:
-                        NamingUtil.ValidateShareName(this.Name, false);
-                        var share = this.Channel.GetShareReference(this.Name, this.SnapshotTime);
-                        await this.Channel.FetchShareAttributesAsync(share, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
-                        WriteCloudShareObject(taskId, this.Channel, share);
+                case Constants.SpecificParameterSetName:
+                    NamingUtil.ValidateShareName(this.Name, false);
 
-                        break;
+                    // TODO: handle snapshot
+                    ShareClient share = Util.GetTrack2ShareReference(this.Name, 
+                        Channel.StorageContext, 
+                        this.SnapshotTime is null ? null : this.SnapshotTime.Value.ToUniversalTime().ToString("u"),
+                        ClientOptions);
+                    ShareProperties shareProperties = share.GetProperties(cancellationToken: this.CmdletCancellationToken).Value;
+                    WriteObject(new AzureStorageFileShare(share, (AzureStorageContext)this.Context, shareProperties, ClientOptions));
 
-                    case Constants.MatchingPrefixParameterSetName:
-                        NamingUtil.ValidateShareName(this.Prefix, true);
-                        await this.Channel.EnumerateSharesAsync(
-                            this.Prefix,
-                            ShareListingDetails.All,
-                            item => WriteCloudShareObject(taskId, this.Channel, item),
-                            this.RequestOptions,
-                            this.OperationContext,
-                            this.CmdletCancellationToken).ConfigureAwait(false);
+                    break;
 
-                        break;
+                case Constants.MatchingPrefixParameterSetName:
+                    NamingUtil.ValidateShareName(this.Prefix, true);
 
-                    default:
-                        throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
-                }
-            });
+                    ShareServiceClient shareService = Util.GetTrack2FileServiceClient(Channel.StorageContext, ClientOptions);
+                    //TODO: ShareStates, add -IncludeDeleted
+                    Pageable<ShareItem> shareitems = shareService.GetShares(ShareTraits.All, ShareStates.Snapshots, this.Prefix, this.CmdletCancellationToken);
+
+                    foreach (ShareItem shareitem in shareitems)
+                    {
+                        ShareClient shareClient = shareService.GetShareClient(shareitem.Name);
+                        WriteObject(new AzureStorageFileShare(shareClient, (AzureStorageContext)this.Context, shareitem, ClientOptions));
+                    }
+
+                    break;
+
+                default:
+                    throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
+            }
+
+            //this.RunTask(async taskId =>
+            //{
+
+            //switch (this.ParameterSetName)
+            //{
+            //    case Constants.SpecificParameterSetName:
+            //        NamingUtil.ValidateShareName(this.Name, false);
+            //        var share = this.Channel.GetShareReference(this.Name, this.SnapshotTime);
+            //        await this.Channel.FetchShareAttributesAsync(share, null, this.RequestOptions, this.OperationContext, this.CmdletCancellationToken).ConfigureAwait(false);
+            //        WriteCloudShareObject(taskId, this.Channel, share);
+
+            //        break;
+
+            //    case Constants.MatchingPrefixParameterSetName:
+            //        NamingUtil.ValidateShareName(this.Prefix, true);
+            //        await this.Channel.EnumerateSharesAsync(
+            //            this.Prefix,
+            //            ShareListingDetails.All,
+            //            item => WriteCloudShareObject(taskId, this.Channel, item),
+            //            this.RequestOptions,
+            //            this.OperationContext,
+            //            this.CmdletCancellationToken).ConfigureAwait(false);
+
+            //        break;
+
+            //    default:
+            //        throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
+            //}
+            //});
         }
     }
 }

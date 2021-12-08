@@ -49,13 +49,16 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             if (this.Channel == null || !this.ShareChannel)
             {
                 this.Channel = new StorageFileManagement(
-                    this.ParameterSetName == Constants.ShareNameParameterSetName ||
-                    this.ParameterSetName.StartsWith("ShareName") ||
-                    this.ParameterSetName == Constants.MatchingPrefixParameterSetName ||
-                    this.ParameterSetName == Constants.SpecificParameterSetName ?
-                        this.GetCmdletStorageContext() :
-                        AzureStorageContext.EmptyContextInstance
+                        this.GetCmdletStorageContext()
                 );
+                //this.Channel = new StorageFileManagement(
+                //    this.ParameterSetName == Constants.ShareNameParameterSetName ||
+                //    this.ParameterSetName.StartsWith("ShareName") ||
+                //    this.ParameterSetName == Constants.MatchingPrefixParameterSetName ||
+                //    this.ParameterSetName == Constants.SpecificParameterSetName ?
+                //        this.GetCmdletStorageContext() :
+                //        AzureStorageContext.EmptyContextInstance
+                //);
             }
 
             return this.Channel;

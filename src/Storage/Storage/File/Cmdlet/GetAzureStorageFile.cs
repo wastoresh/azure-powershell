@@ -17,14 +17,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
     using global::Azure;
     using global::Azure.Storage.Files.Shares;
     using global::Azure.Storage.Files.Shares.Models;
-    using Microsoft.Azure.Storage;
     using Microsoft.Azure.Storage.File;
-    using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
     using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Management.Automation;
-    using System.Net;
 
     [Cmdlet("Get", Azure.Commands.ResourceManager.Common.AzureRMConstants.AzurePrefix + "StorageFile", DefaultParameterSetName = Constants.ShareNameParameterSetName)]
     [OutputType(typeof(AzureStorageFile))]
@@ -86,16 +83,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                     throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
             }
 
-            ShareDirectoryClient baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(baseDirectory, Channel.StorageContext, ClientOptions);
+            ShareDirectoryClient baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(baseDirectory, ClientOptions);
 
             if (string.IsNullOrEmpty(this.Path))
             {
-                // TODO: open the options in listFileOptions in parameters
                 ShareDirectoryGetFilesAndDirectoriesOptions listFileOptions = new ShareDirectoryGetFilesAndDirectoriesOptions();
                 listFileOptions.Traits = ShareFileTraits.All;
                 listFileOptions.IncludeExtendedInfo = true;
                 Pageable<ShareFileItem> fileItems = baseDirClient.GetFilesAndDirectories(listFileOptions, this.CmdletCancellationToken);
-                //string continuationToken = null;
                 IEnumerable<Page<ShareFileItem>> fileitempages = fileItems.AsPages();
                 foreach (var page in fileitempages)
                 {
@@ -104,12 +99,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         if (!file.IsDirectory) // is file
                         {
                             ShareFileClient shareFileClient = baseDirClient.GetFileClient(file.Name);
-                            WriteObject(new AzureStorageFile(shareFileClient, Channel.StorageContext, file)); // TODO
+                            WriteObject(new AzureStorageFile(shareFileClient, (AzureStorageContext)this.Context, file, ClientOptions)); 
                         }
                         else // Dir
                         {
                             ShareDirectoryClient shareDirClient = baseDirClient.GetSubdirectoryClient(file.Name);
-                            WriteObject(new AzureStorageFileDirectory(shareDirClient, Channel.StorageContext, file)); // TODO
+                            WriteObject(new AzureStorageFileDirectory(shareDirClient, (AzureStorageContext)this.Context, file)); 
                         }
 
                     }
@@ -118,14 +113,12 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
             else
             {
                 bool foundAFolder = true;
-                //string[] subfolders = NamingUtil.ValidatePath(this.Path);
-
-                //TODO: need validate sub folder path, like "dir1/dir2/dir3"
                 ShareDirectoryClient targetDir = baseDirClient.GetSubdirectoryClient(this.Path);
+                ShareDirectoryProperties dirProperties = null;
 
                 try
                 {
-                    ShareDirectoryProperties dirProperties = targetDir.GetProperties(this.CmdletCancellationToken).Value;
+                    dirProperties = targetDir.GetProperties(this.CmdletCancellationToken).Value;
                 }
                 catch (global::Azure.RequestFailedException e) when (e.Status == 404)
                 {
@@ -134,17 +127,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 
                 if (foundAFolder)
                 {
-                    WriteObject(new AzureStorageFileDirectory(targetDir, Channel.StorageContext, dirProperties)); // TODO
+                    WriteObject(new AzureStorageFileDirectory(targetDir, (AzureStorageContext)this.Context, dirProperties)); 
                     return;
                 }
 
-                //string[] filePath = NamingUtil.ValidatePath(this.Path, true);
-                //TODO: need validate sub folder path, like "dir1/dir2/dir3/file"
                 ShareFileClient targetFile = baseDirClient.GetFileClient(this.Path);
-
                 ShareFileProperties fileProperties = targetFile.GetProperties(this.CmdletCancellationToken).Value;
 
-                WriteObject(new AzureStorageFile(targetFile, Channel.StorageContext, fileProperties)); // TODO
+                WriteObject(new AzureStorageFile(targetFile, (AzureStorageContext)this.Context, fileProperties, ClientOptions)); 
             }
 
 
