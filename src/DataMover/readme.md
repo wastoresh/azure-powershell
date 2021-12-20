@@ -105,4 +105,12 @@ directive:
   - where:
       verb: Set
     remove: true
+  - where:
+      model-name: DataMover
+    set:
+      format-table:
+        properties:
+          - Name
+          - Location
+          - Description
 ```
