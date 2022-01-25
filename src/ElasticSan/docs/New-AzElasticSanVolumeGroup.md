@@ -15,29 +15,31 @@ Create or Update a Volume Group.
 ### CreateExpanded (Default)
 ```
 New-AzElasticSanVolumeGroup -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
- -Subnet <String> [-SubscriptionId <String>] [-NetworkAclsDefaultAction <NetworkRuleAction>]
- [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-SubscriptionId <String>] [-Encryption <EncryptionType>] [-Location <String>]
+ [-NetworkAclsDefaultAction <NetworkRuleAction>] [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]
+ [-ProtocolType <StorageTargetType>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
  [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### Create
 ```
 New-AzElasticSanVolumeGroup -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
- -VolumeGroupCreate <IVolumeGroupCreate> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob]
- [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+ -Parameter <IVolumeGroup> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### CreateViaIdentity
 ```
-New-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> -VolumeGroupCreate <IVolumeGroupCreate>
+New-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> -Parameter <IVolumeGroup>
  [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### CreateViaIdentityExpanded
 ```
-New-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> -Subnet <String>
- [-NetworkAclsDefaultAction <NetworkRuleAction>] [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]
- [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+New-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> [-Encryption <EncryptionType>]
+ [-Location <String>] [-NetworkAclsDefaultAction <NetworkRuleAction>]
+ [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>] [-ProtocolType <StorageTargetType>]
+ [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -110,6 +112,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Encryption
+Type of encryption
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Support.EncryptionType
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -InputObject
 Identity Parameter
 To construct, see NOTES section for INPUTOBJECT properties and create a hash table.
@@ -123,6 +140,21 @@ Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Location
+The geo-location where the resource lives.
+
+```yaml
+Type: System.String
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -188,6 +220,37 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Parameter
+Response for Volume Group request.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeGroup
+Parameter Sets: Create, CreateViaIdentity
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -ProtocolType
+Type of storage target
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Support.StorageTargetType
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -ResourceGroupName
 The name of the resource group.
 The name is case insensitive.
@@ -195,21 +258,6 @@ The name is case insensitive.
 ```yaml
 Type: System.String
 Parameter Sets: Create, CreateExpanded
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Subnet
-Volume Group subnet id.
-
-```yaml
-Type: System.String
-Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
 Aliases:
 
 Required: True
@@ -234,19 +282,18 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -VolumeGroupCreate
-Payload for VolumeGroup create or update requests.
-To construct, see NOTES section for VOLUMEGROUPCREATE properties and create a hash table.
+### -Tag
+Azure resource tags.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeGroupCreate
-Parameter Sets: Create, CreateViaIdentity
+Type: System.Collections.Hashtable
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -286,7 +333,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeGroupCreate
+### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeGroup
 
 ### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
 
@@ -307,7 +354,7 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.
@@ -318,8 +365,10 @@ NETWORKACLSVIRTUALNETWORKRULE <IVirtualNetworkRule[]>: The list of virtual netwo
   - `[State <String>]`: Gets the state of virtual network rule.
   - `[Subnet <String[]>]`: The list of subnets.
 
-VOLUMEGROUPCREATE <IVolumeGroupCreate>: Payload for VolumeGroup create or update requests.
-  - `Subnet <String>`: Volume Group subnet id.
+PARAMETER <IVolumeGroup>: Response for Volume Group request.
+  - `[Location <String>]`: The geo-location where the resource lives.
+  - `[Tag <IResourceTags>]`: Azure resource tags.
+    - `[(Any) <String>]`: This indicates any property can be added to this object.
   - `[Encryption <EncryptionType?>]`: Type of encryption
   - `[NetworkAclsDefaultAction <NetworkRuleAction?>]`: The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated.
   - `[NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]`: The list of virtual network rules.

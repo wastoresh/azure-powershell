@@ -14,27 +14,27 @@ Update a Elastic San.
 
 ### UpdateExpanded (Default)
 ```
-Update-AzElasticSan -Name <String> -ResourceGroupName <String> -BaseSizeInGb <Int64> -ExtendedSizeInTb <Int64>
- [-SubscriptionId <String>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm]
- [-WhatIf] [<CommonParameters>]
+Update-AzElasticSan -Name <String> -ResourceGroupName <String> [-SubscriptionId <String>]
+ [-BaseSizeTb <Int64>] [-ExtendedSizeTb <Int64>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob]
+ [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### Update
 ```
-Update-AzElasticSan -Name <String> -ResourceGroupName <String> -ElasticSanUpdatePayload <IElasticSanUpdate>
+Update-AzElasticSan -Name <String> -ResourceGroupName <String> -Parameter <IElasticSanUpdate>
  [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf]
  [<CommonParameters>]
 ```
 
 ### UpdateViaIdentity
 ```
-Update-AzElasticSan -InputObject <IElasticSanIdentity> -ElasticSanUpdatePayload <IElasticSanUpdate>
+Update-AzElasticSan -InputObject <IElasticSanIdentity> -Parameter <IElasticSanUpdate>
  [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### UpdateViaIdentityExpanded
 ```
-Update-AzElasticSan -InputObject <IElasticSanIdentity> -BaseSizeInGb <Int64> -ExtendedSizeInTb <Int64>
+Update-AzElasticSan -InputObject <IElasticSanIdentity> [-BaseSizeTb <Int64>] [-ExtendedSizeTb <Int64>]
  [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
@@ -78,15 +78,15 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -BaseSizeInGb
-Base size of the Elastic San appliance in GB.
+### -BaseSizeTb
+Base size of the Elastic San appliance in TB.
 
 ```yaml
 Type: System.Int64
 Parameter Sets: UpdateExpanded, UpdateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -108,23 +108,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ElasticSanUpdatePayload
-Request payload for Update ElasticSan request.
-To construct, see NOTES section for ELASTICSANUPDATEPAYLOAD properties and create a hash table.
-
-```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IElasticSanUpdate
-Parameter Sets: Update, UpdateViaIdentity
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -ExtendedSizeInTb
+### -ExtendedSizeTb
 Extended size of the Elastic San appliance in TB.
 
 ```yaml
@@ -132,7 +116,7 @@ Type: System.Int64
 Parameter Sets: UpdateExpanded, UpdateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -185,6 +169,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Parameter
+Response for ElasticSan update request.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IElasticSanUpdate
+Parameter Sets: Update, UpdateViaIdentity
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -ResourceGroupName
 The name of the resource group.
 The name is case insensitive.
@@ -217,7 +217,7 @@ Accept wildcard characters: False
 ```
 
 ### -Tag
-Resource tags.
+Update tags
 
 ```yaml
 Type: System.Collections.Hashtable
@@ -284,20 +284,20 @@ COMPLEX PARAMETER PROPERTIES
 To create the parameters described below, construct a hash table containing the appropriate properties. For information on hash tables, run Get-Help about_Hash_Tables.
 
 
-ELASTICSANUPDATEPAYLOAD <IElasticSanUpdate>: Request payload for Update ElasticSan request.
-  - `BaseSizeInGb <Int64>`: Base size of the Elastic San appliance in GB.
-  - `ExtendedSizeInTb <Int64>`: Extended size of the Elastic San appliance in TB.
-  - `[Tag <IElasticSanUpdateTags>]`: Resource tags.
-    - `[(Any) <String>]`: This indicates any property can be added to this object.
-
 INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.
+
+PARAMETER <IElasticSanUpdate>: Response for ElasticSan update request.
+  - `[BaseSizeTb <Int64?>]`: Base size of the Elastic San appliance in TB.
+  - `[ExtendedSizeTb <Int64?>]`: Extended size of the Elastic San appliance in TB.
+  - `[Tag <IElasticSanUpdateTags>]`: Update tags
+    - `[(Any) <String>]`: This indicates any property can be added to this object.
 
 ## RELATED LINKS
 

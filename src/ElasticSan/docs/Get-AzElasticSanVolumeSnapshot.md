@@ -1,36 +1,43 @@
 ---
 external help file:
 Module Name: Az.ElasticSan
-online version: https://docs.microsoft.com/powershell/module/az.elasticsan/get-azelasticsansnapshot
+online version: https://docs.microsoft.com/powershell/module/az.elasticsan/get-azelasticsanvolumesnapshot
 schema: 2.0.0
 ---
 
-# Get-AzElasticSanSnapshot
+# Get-AzElasticSanVolumeSnapshot
 
 ## SYNOPSIS
-Get an Volume Snapshot.
+Create a Volume Snapshot.
 
 ## SYNTAX
 
-### List (Default)
+### ListExpanded (Default)
 ```
-Get-AzElasticSanSnapshot -ElasticSanName <String> -ResourceGroupName <String> -VolumeGroupName <String>
- [-SubscriptionId <String[]>] [-DefaultProfile <PSObject>] [<CommonParameters>]
+Get-AzElasticSanVolumeSnapshot -ElasticSanName <String> -ResourceGroupName <String> -VolumeGroupName <String>
+ [-SubscriptionId <String[]>] [-VolumeId <String>] [-DefaultProfile <PSObject>] [<CommonParameters>]
 ```
 
 ### Get
 ```
-Get-AzElasticSanSnapshot -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
+Get-AzElasticSanVolumeSnapshot -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
  -VolumeGroupName <String> [-SubscriptionId <String[]>] [-DefaultProfile <PSObject>] [<CommonParameters>]
 ```
 
 ### GetViaIdentity
 ```
-Get-AzElasticSanSnapshot -InputObject <IElasticSanIdentity> [-DefaultProfile <PSObject>] [<CommonParameters>]
+Get-AzElasticSanVolumeSnapshot -InputObject <IElasticSanIdentity> [-DefaultProfile <PSObject>]
+ [<CommonParameters>]
+```
+
+### List
+```
+Get-AzElasticSanVolumeSnapshot -ElasticSanName <String> -ResourceGroupName <String> -VolumeGroupName <String>
+ -FilterBy <IFilterByVolume> [-SubscriptionId <String[]>] [-DefaultProfile <PSObject>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Get an Volume Snapshot.
+Create a Volume Snapshot.
 
 ## EXAMPLES
 
@@ -74,13 +81,29 @@ The name of the ElasticSan.
 
 ```yaml
 Type: System.String
-Parameter Sets: Get, List
+Parameter Sets: Get, List, ListExpanded
 Aliases:
 
 Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -FilterBy
+Filter data by volume name.
+To construct, see NOTES section for FILTERBY properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IFilterByVolume
+Parameter Sets: List
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -101,7 +124,7 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-The name of the Volume Snapshot.
+The name of the snapshot within the given subscription, resource and volume group.
 
 ```yaml
 Type: System.String
@@ -121,7 +144,7 @@ The name is case insensitive.
 
 ```yaml
 Type: System.String
-Parameter Sets: Get, List
+Parameter Sets: Get, List, ListExpanded
 Aliases:
 
 Required: True
@@ -136,7 +159,7 @@ The ID of the target subscription.
 
 ```yaml
 Type: System.String[]
-Parameter Sets: Get, List
+Parameter Sets: Get, List, ListExpanded
 Aliases:
 
 Required: False
@@ -151,10 +174,25 @@ The name of the VolumeGroup.
 
 ```yaml
 Type: System.String
-Parameter Sets: Get, List
+Parameter Sets: Get, List, ListExpanded
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -VolumeId
+Volume Id to filter
+
+```yaml
+Type: System.String
+Parameter Sets: ListExpanded
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -165,6 +203,8 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
+
+### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IFilterByVolume
 
 ### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
 
@@ -181,11 +221,14 @@ COMPLEX PARAMETER PROPERTIES
 To create the parameters described below, construct a hash table containing the appropriate properties. For information on hash tables, run Get-Help about_Hash_Tables.
 
 
+FILTERBY <IFilterByVolume>: Filter data by volume name.
+  - `[VolumeId <String>]`: Volume Id to filter
+
 INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.

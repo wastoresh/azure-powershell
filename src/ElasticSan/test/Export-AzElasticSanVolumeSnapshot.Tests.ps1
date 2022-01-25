@@ -1,11 +1,11 @@
-if(($null -eq $TestName) -or ($TestName -contains 'Update-AzElasticSanSnapshot'))
+if(($null -eq $TestName) -or ($TestName -contains 'Export-AzElasticSanVolumeSnapshot'))
 {
   $loadEnvPath = Join-Path $PSScriptRoot 'loadEnv.ps1'
   if (-Not (Test-Path -Path $loadEnvPath)) {
       $loadEnvPath = Join-Path $PSScriptRoot '..\loadEnv.ps1'
   }
   . ($loadEnvPath)
-  $TestRecordingFile = Join-Path $PSScriptRoot 'Update-AzElasticSanSnapshot.Recording.json'
+  $TestRecordingFile = Join-Path $PSScriptRoot 'Export-AzElasticSanVolumeSnapshot.Recording.json'
   $currentPath = $PSScriptRoot
   while(-not $mockingPath) {
       $mockingPath = Get-ChildItem -Path $currentPath -Recurse -Include 'HttpPipelineMocking.ps1' -File
@@ -14,20 +14,20 @@ if(($null -eq $TestName) -or ($TestName -contains 'Update-AzElasticSanSnapshot')
   . ($mockingPath | Select-Object -First 1).FullName
 }
 
-Describe 'Update-AzElasticSanSnapshot' {
-    It 'UpdateExpanded' -skip {
+Describe 'Export-AzElasticSanVolumeSnapshot' {
+    It 'ExportExpanded' -skip {
         { throw [System.NotImplementedException] } | Should -Not -Throw
     }
 
-    It 'Update' -skip {
+    It 'Export' -skip {
         { throw [System.NotImplementedException] } | Should -Not -Throw
     }
 
-    It 'UpdateViaIdentityExpanded' -skip {
+    It 'ExportViaIdentityExpanded' -skip {
         { throw [System.NotImplementedException] } | Should -Not -Throw
     }
 
-    It 'UpdateViaIdentity' -skip {
+    It 'ExportViaIdentity' -skip {
         { throw [System.NotImplementedException] } | Should -Not -Throw
     }
 }

@@ -1,6 +1,6 @@
 ---
 Module Name: Az.ElasticSan
-Module Guid: 6f3f3d3e-fdfe-4f44-ab8e-3de888c3982a
+Module Guid: 59312ee6-fca5-496d-b524-376bb54a5c68
 Download Help Link: https://docs.microsoft.com/powershell/module/az.elasticsan
 Help Version: 1.0.0.0
 Locale: en-US
@@ -11,11 +11,14 @@ Locale: en-US
 Microsoft Azure PowerShell: ElasticSan cmdlets
 
 ## Az.ElasticSan Cmdlets
+### [Export-AzElasticSanVolumeSnapshot](Export-AzElasticSanVolumeSnapshot.md)
+Export a volume to a different Volume Group in same San account or different San account
+
 ### [Get-AzElasticSan](Get-AzElasticSan.md)
 Get a ElasticSan.
 
-### [Get-AzElasticSanSnapshot](Get-AzElasticSanSnapshot.md)
-Get an Volume Snapshot.
+### [Get-AzElasticSanSku](Get-AzElasticSanSku.md)
+List all the available Skus in the region and information related to them
 
 ### [Get-AzElasticSanVolume](Get-AzElasticSanVolume.md)
 Get an Volume.
@@ -23,11 +26,14 @@ Get an Volume.
 ### [Get-AzElasticSanVolumeGroup](Get-AzElasticSanVolumeGroup.md)
 Get an VolumeGroups.
 
+### [Get-AzElasticSanVolumeSnapshot](Get-AzElasticSanVolumeSnapshot.md)
+Create a Volume Snapshot.
+
 ### [New-AzElasticSan](New-AzElasticSan.md)
 Create or Update ElasticSan.
 
-### [New-AzElasticSanSnapshot](New-AzElasticSanSnapshot.md)
-Create a Volume Snapshot.
+### [New-AzElasticSanVirtualNetworkRuleObject](New-AzElasticSanVirtualNetworkRuleObject.md)
+Create an in-memory object for VirtualNetworkRule.
 
 ### [New-AzElasticSanVolume](New-AzElasticSanVolume.md)
 Create or Update a Volume.
@@ -35,11 +41,11 @@ Create or Update a Volume.
 ### [New-AzElasticSanVolumeGroup](New-AzElasticSanVolumeGroup.md)
 Create or Update a Volume Group.
 
+### [New-AzElasticSanVolumeSnapshot](New-AzElasticSanVolumeSnapshot.md)
+Create a Volume Snapshot.
+
 ### [Remove-AzElasticSan](Remove-AzElasticSan.md)
 Delete a Elastic San.
-
-### [Remove-AzElasticSanSnapshot](Remove-AzElasticSanSnapshot.md)
-Delete an Volume Snapshot.
 
 ### [Remove-AzElasticSanVolume](Remove-AzElasticSanVolume.md)
 Delete an Volume.
@@ -47,27 +53,18 @@ Delete an Volume.
 ### [Remove-AzElasticSanVolumeGroup](Remove-AzElasticSanVolumeGroup.md)
 Delete an VolumeGroup.
 
-### [Set-AzElasticSan](Set-AzElasticSan.md)
-Create or Update ElasticSan.
-
-### [Set-AzElasticSanSnapshot](Set-AzElasticSanSnapshot.md)
-Create a Volume Snapshot.
-
-### [Set-AzElasticSanVolume](Set-AzElasticSanVolume.md)
-Create or Update a Volume.
-
-### [Set-AzElasticSanVolumeGroup](Set-AzElasticSanVolumeGroup.md)
-Create or Update a Volume Group.
+### [Remove-AzElasticSanVolumeSnapshot](Remove-AzElasticSanVolumeSnapshot.md)
+Delete an Volume.
 
 ### [Update-AzElasticSan](Update-AzElasticSan.md)
 Update a Elastic San.
-
-### [Update-AzElasticSanSnapshot](Update-AzElasticSanSnapshot.md)
-Update a Volume Snapshot.
 
 ### [Update-AzElasticSanVolume](Update-AzElasticSanVolume.md)
 Update an Volume.
 
 ### [Update-AzElasticSanVolumeGroup](Update-AzElasticSanVolumeGroup.md)
 Update an VolumeGroup.
+
+### [Update-AzElasticSanVolumeSnapshot](Update-AzElasticSanVolumeSnapshot.md)
+Update a Volume Snapshot.
 

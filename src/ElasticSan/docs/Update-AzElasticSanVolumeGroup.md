@@ -17,28 +17,27 @@ Update an VolumeGroup.
 Update-AzElasticSanVolumeGroup -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
  [-SubscriptionId <String>] [-Encryption <EncryptionType>] [-NetworkAclsDefaultAction <NetworkRuleAction>]
  [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>] [-ProtocolType <StorageTargetType>]
- [-Subnet <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+ [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### Update
 ```
 Update-AzElasticSanVolumeGroup -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
- -VolumeGroupUpdatePayload <IVolumeGroupUpdate> [-SubscriptionId <String>] [-DefaultProfile <PSObject>]
- [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+ -Parameter <IVolumeGroupUpdate> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### UpdateViaIdentity
 ```
-Update-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity>
- -VolumeGroupUpdatePayload <IVolumeGroupUpdate> [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm]
- [-WhatIf] [<CommonParameters>]
+Update-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> -Parameter <IVolumeGroupUpdate>
+ [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### UpdateViaIdentityExpanded
 ```
 Update-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> [-Encryption <EncryptionType>]
  [-NetworkAclsDefaultAction <NetworkRuleAction>] [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]
- [-ProtocolType <StorageTargetType>] [-Subnet <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-ProtocolType <StorageTargetType>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
  [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
@@ -205,6 +204,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Parameter
+Volume Group request.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeGroupUpdate
+Parameter Sets: Update, UpdateViaIdentity
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -ProtocolType
 Type of storage target
 
@@ -236,21 +251,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Subnet
-Volume Group subnet id.
-
-```yaml
-Type: System.String
-Parameter Sets: UpdateExpanded, UpdateViaIdentityExpanded
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -SubscriptionId
 The ID of the target subscription.
 
@@ -266,19 +266,18 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -VolumeGroupUpdatePayload
-Payload for VolumeGroup update requests.
-To construct, see NOTES section for VOLUMEGROUPUPDATEPAYLOAD properties and create a hash table.
+### -Tag
+Resource tags.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeGroupUpdate
-Parameter Sets: Update, UpdateViaIdentity
+Type: System.Collections.Hashtable
+Parameter Sets: UpdateExpanded, UpdateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -339,7 +338,7 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.
@@ -350,7 +349,7 @@ NETWORKACLSVIRTUALNETWORKRULE <IVirtualNetworkRule[]>: The list of virtual netwo
   - `[State <String>]`: Gets the state of virtual network rule.
   - `[Subnet <String[]>]`: The list of subnets.
 
-VOLUMEGROUPUPDATEPAYLOAD <IVolumeGroupUpdate>: Payload for VolumeGroup update requests.
+PARAMETER <IVolumeGroupUpdate>: Volume Group request.
   - `[Encryption <EncryptionType?>]`: Type of encryption
   - `[NetworkAclsDefaultAction <NetworkRuleAction?>]`: The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated.
   - `[NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]`: The list of virtual network rules.
@@ -359,7 +358,8 @@ VOLUMEGROUPUPDATEPAYLOAD <IVolumeGroupUpdate>: Payload for VolumeGroup update re
     - `[State <String>]`: Gets the state of virtual network rule.
     - `[Subnet <String[]>]`: The list of subnets.
   - `[ProtocolType <StorageTargetType?>]`: Type of storage target
-  - `[Subnet <String>]`: Volume Group subnet id.
+  - `[Tag <IVolumeGroupUpdateTags>]`: Resource tags.
+    - `[(Any) <String>]`: This indicates any property can be added to this object.
 
 ## RELATED LINKS
 

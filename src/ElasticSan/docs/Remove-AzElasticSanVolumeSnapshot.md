@@ -1,33 +1,32 @@
 ---
 external help file:
 Module Name: Az.ElasticSan
-online version: https://docs.microsoft.com/powershell/module/az.elasticsan/set-azelasticsan
+online version: https://docs.microsoft.com/powershell/module/az.elasticsan/remove-azelasticsanvolumesnapshot
 schema: 2.0.0
 ---
 
-# Set-AzElasticSan
+# Remove-AzElasticSanVolumeSnapshot
 
 ## SYNOPSIS
-Create or Update ElasticSan.
+Delete an Volume.
 
 ## SYNTAX
 
-### UpdateExpanded (Default)
+### Delete (Default)
 ```
-Set-AzElasticSan -Name <String> -ResourceGroupName <String> -Location <String> [-SubscriptionId <String>]
- [-AvailabilityZone <String[]>] [-BaseSizeInGb <Int64>] [-ExtendedSizeInTb <Int64>] [-Sku <SkuName>]
- [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+Remove-AzElasticSanVolumeSnapshot -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
+ -VolumeGroupName <String> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-PassThru] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
-### Update
+### DeleteViaIdentity
 ```
-Set-AzElasticSan -Name <String> -ResourceGroupName <String> -ElasticSanCreatePayload <IElasticSanCreate>
- [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf]
- [<CommonParameters>]
+Remove-AzElasticSanVolumeSnapshot -InputObject <IElasticSanIdentity> [-DefaultProfile <PSObject>] [-AsJob]
+ [-NoWait] [-PassThru] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Create or Update ElasticSan.
+Delete an Volume.
 
 ## EXAMPLES
 
@@ -66,36 +65,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -AvailabilityZone
-Logical zone for Elastic San resource; example: ["1"].
-
-```yaml
-Type: System.String[]
-Parameter Sets: UpdateExpanded
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -BaseSizeInGb
-Base size of the Elastic San appliance in GB.
-
-```yaml
-Type: System.Int64
-Parameter Sets: UpdateExpanded
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -DefaultProfile
 The credentials, account, tenant, and subscription used for communication with Azure.
 
@@ -111,13 +80,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ElasticSanCreatePayload
-Request payload for create or update Elastic San request.
-To construct, see NOTES section for ELASTICSANCREATEPAYLOAD properties and create a hash table.
+### -ElasticSanName
+The name of the ElasticSan.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IElasticSanCreate
-Parameter Sets: Update
+Type: System.String
+Parameter Sets: Delete
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -InputObject
+Identity Parameter
+To construct, see NOTES section for INPUTOBJECT properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
+Parameter Sets: DeleteViaIdentity
 Aliases:
 
 Required: True
@@ -127,43 +111,13 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
-### -ExtendedSizeInTb
-Extended size of the Elastic San appliance in TB.
-
-```yaml
-Type: System.Int64
-Parameter Sets: UpdateExpanded
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Location
-The geo-location where the resource lives.
-
-```yaml
-Type: System.String
-Parameter Sets: UpdateExpanded
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Name
-The name of the ElasticSan.
+The name of the snapshot within the given subscription, resource and volume group.
 
 ```yaml
 Type: System.String
-Parameter Sets: (All)
-Aliases: ElasticSanName
+Parameter Sets: Delete
+Aliases: SnapshotName
 
 Required: True
 Position: Named
@@ -187,31 +141,31 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -ResourceGroupName
-The name of the resource group.
-The name is case insensitive.
+### -PassThru
+Returns true when the command succeeds
 
 ```yaml
-Type: System.String
+Type: System.Management.Automation.SwitchParameter
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Sku
-resource sku
+### -ResourceGroupName
+The name of the resource group.
+The name is case insensitive.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Support.SkuName
-Parameter Sets: UpdateExpanded
+Type: System.String
+Parameter Sets: Delete
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -223,7 +177,7 @@ The ID of the target subscription.
 
 ```yaml
 Type: System.String
-Parameter Sets: (All)
+Parameter Sets: Delete
 Aliases:
 
 Required: False
@@ -233,15 +187,15 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -Tag
-Resource tags.
+### -VolumeGroupName
+The name of the VolumeGroup.
 
 ```yaml
-Type: System.Collections.Hashtable
-Parameter Sets: UpdateExpanded
+Type: System.String
+Parameter Sets: Delete
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -284,11 +238,11 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IElasticSanCreate
+### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
 
 ## OUTPUTS
 
-### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IElasticSan
+### System.Boolean
 
 ## NOTES
 
@@ -299,14 +253,14 @@ COMPLEX PARAMETER PROPERTIES
 To create the parameters described below, construct a hash table containing the appropriate properties. For information on hash tables, run Get-Help about_Hash_Tables.
 
 
-ELASTICSANCREATEPAYLOAD <IElasticSanCreate>: Request payload for create or update Elastic San request.
-  - `Location <String>`: The geo-location where the resource lives.
-  - `[AvailabilityZone <String[]>]`: Logical zone for Elastic San resource; example: ["1"].
-  - `[BaseSizeInGb <Int64?>]`: Base size of the Elastic San appliance in GB.
-  - `[ExtendedSizeInTb <Int64?>]`: Extended size of the Elastic San appliance in TB.
-  - `[Sku <SkuName?>]`: resource sku
-  - `[Tag <IElasticSanCreateTags>]`: Resource tags.
-    - `[(Any) <String>]`: This indicates any property can be added to this object.
+INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
+  - `[ElasticSanName <String>]`: The name of the ElasticSan.
+  - `[Id <String>]`: Resource identity path
+  - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
+  - `[SubscriptionId <String>]`: The ID of the target subscription.
+  - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
+  - `[VolumeName <String>]`: The name of the Volume.
 
 ## RELATED LINKS
 

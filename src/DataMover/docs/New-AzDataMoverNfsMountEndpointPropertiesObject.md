@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzDataMoverNfsMountEndpointPropertiesObject
 
 ## SYNOPSIS
-Create a in-memory object for NfsMountEndpointProperties
+Create an in-memory object for NfsMountEndpointProperties.
 
 ## SYNTAX
 
@@ -18,7 +18,7 @@ New-AzDataMoverNfsMountEndpointPropertiesObject -EndpointType <EndpointType> -Ho
 ```
 
 ## DESCRIPTION
-Create a in-memory object for NfsMountEndpointProperties
+Create an in-memory object for NfsMountEndpointProperties.
 
 ## EXAMPLES
 

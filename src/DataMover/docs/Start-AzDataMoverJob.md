@@ -12,16 +12,29 @@ Requests an agent to start a new instance of this job definition, generating a n
 
 ## SYNTAX
 
-### Start (Default)
+### StartExpanded (Default)
 ```
 Start-AzDataMoverJob -DataMoverName <String> -JobDefinitionName <String> -ProjectName <String>
- -ResourceGroupName <String> -AgentId <String> [-SubscriptionId <String>] [-DefaultProfile <PSObject>]
+ -ResourceGroupName <String> [-SubscriptionId <String>] [-AgentId <String>] [-DefaultProfile <PSObject>]
  [-Confirm] [-WhatIf] [<CommonParameters>]
+```
+
+### Start
+```
+Start-AzDataMoverJob -DataMoverName <String> -JobDefinitionName <String> -ProjectName <String>
+ -ResourceGroupName <String> -Parameter <IJobDefinitionStartParameters> [-SubscriptionId <String>]
+ [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### StartViaIdentity
 ```
-Start-AzDataMoverJob -InputObject <IDataMoverIdentity> -AgentId <String> [-DefaultProfile <PSObject>]
+Start-AzDataMoverJob -InputObject <IDataMoverIdentity> -Parameter <IJobDefinitionStartParameters>
+ [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
+```
+
+### StartViaIdentityExpanded
+```
+Start-AzDataMoverJob -InputObject <IDataMoverIdentity> [-AgentId <String>] [-DefaultProfile <PSObject>]
  [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
@@ -55,13 +68,13 @@ The fully qualified resource ID of the agent that should perform this job.
 
 ```yaml
 Type: System.String
-Parameter Sets: (All)
+Parameter Sets: StartExpanded, StartViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -70,7 +83,7 @@ The name of the data mover resource.
 
 ```yaml
 Type: System.String
-Parameter Sets: Start
+Parameter Sets: Start, StartExpanded
 Aliases:
 
 Required: True
@@ -101,7 +114,7 @@ To construct, see NOTES section for INPUTOBJECT properties and create a hash tab
 
 ```yaml
 Type: Microsoft.Azure.PowerShell.Cmdlets.DataMover.Models.IDataMoverIdentity
-Parameter Sets: StartViaIdentity
+Parameter Sets: StartViaIdentity, StartViaIdentityExpanded
 Aliases:
 
 Required: True
@@ -116,7 +129,7 @@ The name of the job definition resource.
 
 ```yaml
 Type: System.String
-Parameter Sets: Start
+Parameter Sets: Start, StartExpanded
 Aliases:
 
 Required: True
@@ -126,12 +139,28 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Parameter
+The start job definition parameters.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.DataMover.Models.Api20210801.IJobDefinitionStartParameters
+Parameter Sets: Start, StartViaIdentity
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -ProjectName
 The name of the project resource.
 
 ```yaml
 Type: System.String
-Parameter Sets: Start
+Parameter Sets: Start, StartExpanded
 Aliases:
 
 Required: True
@@ -147,7 +176,7 @@ The name is case insensitive.
 
 ```yaml
 Type: System.String
-Parameter Sets: Start
+Parameter Sets: Start, StartExpanded
 Aliases:
 
 Required: True
@@ -162,7 +191,7 @@ The ID of the target subscription.
 
 ```yaml
 Type: System.String
-Parameter Sets: Start
+Parameter Sets: Start, StartExpanded
 Aliases:
 
 Required: False
@@ -208,9 +237,9 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### Microsoft.Azure.PowerShell.Cmdlets.DataMover.Models.IDataMoverIdentity
+### Microsoft.Azure.PowerShell.Cmdlets.DataMover.Models.Api20210801.IJobDefinitionStartParameters
 
-### System.String
+### Microsoft.Azure.PowerShell.Cmdlets.DataMover.Models.IDataMoverIdentity
 
 ## OUTPUTS
 
@@ -235,6 +264,9 @@ INPUTOBJECT <IDataMoverIdentity>: Identity Parameter
   - `[ProjectName <String>]`: The name of the project resource.
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
+
+PARAMETER <IJobDefinitionStartParameters>: The start job definition parameters.
+  - `[AgentId <String>]`: The fully qualified resource ID of the agent that should perform this job.
 
 ## RELATED LINKS
 

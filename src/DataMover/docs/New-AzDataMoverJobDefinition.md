@@ -15,8 +15,8 @@ Creates or updates a job definition resource, which contains configuration for a
 ```
 New-AzDataMoverJobDefinition -DataMoverName <String> -Name <String> -ProjectName <String>
  -ResourceGroupName <String> [-SubscriptionId <String>] [-Description <String>] [-Source <String>]
- [-SourceSubpath <String>] [-Target <String>] [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf]
- [<CommonParameters>]
+ [-SourceSubpath <String>] [-Target <String>] [-TargetSubpath <String>] [-DefaultProfile <PSObject>]
+ [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -181,7 +181,22 @@ Accept wildcard characters: False
 ```
 
 ### -Target
-The target to use when writing to the target.
+The resource ID of the target endpoint.
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -TargetSubpath
+The subpath to use when writing to the target.
 
 ```yaml
 Type: System.String
