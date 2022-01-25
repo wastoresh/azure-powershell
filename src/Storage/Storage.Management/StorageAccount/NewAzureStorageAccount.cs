@@ -177,6 +177,12 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Parameter(
             Mandatory = false,
+            HelpMessage = "Set ClientId of the multi-tenant application to be used in conjunction with the user-assigned identity for cross-tenant customer-managed-keys server-side encryption on the storage account.")]
+        [ValidateNotNull]
+        public string KeyVaultFederatedClientId { get; set; }
+
+        [Parameter(
+            Mandatory = false,
             HelpMessage = "Storage Account encryption keySource KeyVault KeyName")]
         [ValidateNotNullOrEmpty]
         public string KeyName { get; set; }
@@ -743,7 +749,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     }
                 }
             }
-            if (this.KeyVaultUri !=null || this.KeyName != null || this.KeyVersion != null || this.KeyVaultUserAssignedIdentityId != null)
+            if (this.KeyVaultUri !=null || this.KeyName != null || this.KeyVersion != null || this.KeyVaultUserAssignedIdentityId != null || this.KeyVaultFederatedClientId != null)
             {
                 if ((this.KeyVaultUri != null && this.KeyName == null) || (this.KeyVaultUri == null && this.KeyName != null))
                 {
@@ -755,9 +761,9 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     throw new ArgumentException("KeyVersion can only be specified when specify KeyVaultUri and KeyName together.", "KeyVersion"); 
                 }
 
-                if (this.KeyVaultUserAssignedIdentityId != null && (this.KeyVaultUri == null || this.KeyName == null))
+                if ((this.KeyVaultUserAssignedIdentityId != null || this.KeyVaultFederatedClientId != null) && (this.KeyVaultUri == null || this.KeyName == null))
                 {
-                    throw new ArgumentException("KeyVaultUserAssignedIdentityId can only be specified when specify KeyVaultUri and KeyName together.", "KeyVaultUserAssignedIdentityId");
+                    throw new ArgumentException("KeyVaultUserAssignedIdentityId, KeyVaultFederatedClientId can only be specified when specify KeyVaultUri and KeyName together.", "KeyVaultUserAssignedIdentityId, KeyVaultFederatedClientId");
                 }
 
                 if (createParameters.Encryption == null)
@@ -778,10 +784,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     createParameters.Encryption.KeyVaultProperties = new KeyVaultProperties(this.KeyName, this.KeyVersion, this.KeyVaultUri);
                 }
 
-                if (this.KeyVaultUserAssignedIdentityId != null)
+                if (this.KeyVaultUserAssignedIdentityId != null || this.KeyVaultFederatedClientId != null)
                 {
                     createParameters.Encryption.EncryptionIdentity = new EncryptionIdentity();
                     createParameters.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity = this.KeyVaultUserAssignedIdentityId;
+                    createParameters.Encryption.EncryptionIdentity.EncryptionFederatedIdentityClientId = this.KeyVaultFederatedClientId;
                 }
             }
             if (this.minimumTlsVersion != null)

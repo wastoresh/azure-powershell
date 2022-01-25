@@ -18,9 +18,9 @@ Creates a Storage account.
 New-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-SkuName] <String> [-Location] <String>
  [-Kind <String>] [-AccessTier <String>] [-CustomDomainName <String>] [-UseSubDomain <Boolean>]
  [-Tag <Hashtable>] [-EnableHttpsTrafficOnly <Boolean>] [-AssignIdentity] [-UserAssignedIdentityId <String>]
- [-IdentityType <String>] [-KeyVaultUserAssignedIdentityId <String>] [-KeyName <String>] [-KeyVersion <String>]
- [-KeyVaultUri <String>] [-NetworkRuleSet <PSNetworkRuleSet>] [-EnableSftp <Boolean>]
- [-EnableLocalUser <Boolean>] [-EnableHierarchicalNamespace <Boolean>]
+ [-IdentityType <String>] [-KeyVaultUserAssignedIdentityId <String>] [-KeyVaultFederatedClientId <String>]
+ [-KeyName <String>] [-KeyVersion <String>] [-KeyVaultUri <String>] [-NetworkRuleSet <PSNetworkRuleSet>]
+ [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>] [-EnableHierarchicalNamespace <Boolean>]
  [-EnableAzureActiveDirectoryDomainServicesForFile <Boolean>] [-EnableLargeFileShare]
  [-PublishMicrosoftEndpoint <Boolean>] [-PublishInternetEndpoint <Boolean>] [-AsJob]
  [-EncryptionKeyTypeForTable <String>] [-EncryptionKeyTypeForQueue <String>] [-RequireInfrastructureEncryption]
@@ -37,10 +37,10 @@ New-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-SkuName] <
 New-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-SkuName] <String> [-Location] <String>
  [-Kind <String>] [-AccessTier <String>] [-CustomDomainName <String>] [-UseSubDomain <Boolean>]
  [-Tag <Hashtable>] [-EnableHttpsTrafficOnly <Boolean>] [-AssignIdentity] [-UserAssignedIdentityId <String>]
- [-IdentityType <String>] [-KeyVaultUserAssignedIdentityId <String>] [-KeyName <String>] [-KeyVersion <String>]
- [-KeyVaultUri <String>] [-NetworkRuleSet <PSNetworkRuleSet>] [-EnableSftp <Boolean>]
- [-EnableLocalUser <Boolean>] [-EnableHierarchicalNamespace <Boolean>] [-EnableLargeFileShare]
- [-PublishMicrosoftEndpoint <Boolean>] [-PublishInternetEndpoint <Boolean>]
+ [-IdentityType <String>] [-KeyVaultUserAssignedIdentityId <String>] [-KeyVaultFederatedClientId <String>]
+ [-KeyName <String>] [-KeyVersion <String>] [-KeyVaultUri <String>] [-NetworkRuleSet <PSNetworkRuleSet>]
+ [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>] [-EnableHierarchicalNamespace <Boolean>]
+ [-EnableLargeFileShare] [-PublishMicrosoftEndpoint <Boolean>] [-PublishInternetEndpoint <Boolean>]
  [-EnableActiveDirectoryDomainServicesForFile <Boolean>] [-ActiveDirectoryDomainName <String>]
  [-ActiveDirectoryNetBiosDomainName <String>] [-ActiveDirectoryForestName <String>]
  [-ActiveDirectoryDomainGuid <String>] [-ActiveDirectoryDomainSid <String>]
@@ -854,6 +854,21 @@ Accept wildcard characters: False
 
 ### -KeyName
 Storage Account encryption keySource KeyVault KeyName
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -KeyVaultFederatedClientId
+Set ClientId of the multi-tenant application to be used in conjunction with the user-assigned identity for cross-tenant customer-managed-keys server-side encryption on the storage account.
 
 ```yaml
 Type: System.String
