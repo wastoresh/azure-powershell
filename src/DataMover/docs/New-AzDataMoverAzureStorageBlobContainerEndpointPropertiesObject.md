@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzDataMoverAzureStorageBlobContainerEndpointPropertiesObject
 
 ## SYNOPSIS
-Create a in-memory object for AzureStorageBlobContainerEndpointProperties
+Create an in-memory object for AzureStorageBlobContainerEndpointProperties.
 
 ## SYNTAX
 
@@ -18,7 +18,7 @@ New-AzDataMoverAzureStorageBlobContainerEndpointPropertiesObject -BlobContainerN
 ```
 
 ## DESCRIPTION
-Create a in-memory object for AzureStorageBlobContainerEndpointProperties
+Create an in-memory object for AzureStorageBlobContainerEndpointProperties.
 
 ## EXAMPLES
 

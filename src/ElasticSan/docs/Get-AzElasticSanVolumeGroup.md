@@ -171,7 +171,7 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.

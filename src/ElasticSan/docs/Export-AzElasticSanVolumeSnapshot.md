@@ -1,32 +1,45 @@
 ---
 external help file:
 Module Name: Az.ElasticSan
-online version: https://docs.microsoft.com/powershell/module/az.elasticsan/remove-azelasticsansnapshot
+online version: https://docs.microsoft.com/powershell/module/az.elasticsan/export-azelasticsanvolumesnapshot
 schema: 2.0.0
 ---
 
-# Remove-AzElasticSanSnapshot
+# Export-AzElasticSanVolumeSnapshot
 
 ## SYNOPSIS
-Delete an Volume Snapshot.
+Export a volume to a different Volume Group in same San account or different San account
 
 ## SYNTAX
 
-### Delete (Default)
+### ExportExpanded (Default)
 ```
-Remove-AzElasticSanSnapshot -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
- -VolumeGroupName <String> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
- [-PassThru] [-Confirm] [-WhatIf] [<CommonParameters>]
+Export-AzElasticSanVolumeSnapshot -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
+ -VolumeGroupName <String> [-SubscriptionId <String>] [-CreationDataTargetUri <String>] [-Tag <Hashtable>]
+ [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
-### DeleteViaIdentity
+### Export
 ```
-Remove-AzElasticSanSnapshot -InputObject <IElasticSanIdentity> [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
- [-PassThru] [-Confirm] [-WhatIf] [<CommonParameters>]
+Export-AzElasticSanVolumeSnapshot -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
+ -VolumeGroupName <String> -Parameter <IExportSnapshot> [-SubscriptionId <String>]
+ [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
+```
+
+### ExportViaIdentity
+```
+Export-AzElasticSanVolumeSnapshot -InputObject <IElasticSanIdentity> -Parameter <IExportSnapshot>
+ [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
+```
+
+### ExportViaIdentityExpanded
+```
+Export-AzElasticSanVolumeSnapshot -InputObject <IElasticSanIdentity> [-CreationDataTargetUri <String>]
+ [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Delete an Volume Snapshot.
+Export a volume to a different Volume Group in same San account or different San account
 
 ## EXAMPLES
 
@@ -50,12 +63,12 @@ PS C:\> {{ Add code here }}
 
 ## PARAMETERS
 
-### -AsJob
-Run the command as a job
+### -CreationDataTargetUri
+Target location for the source to be copied or exported
 
 ```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
+Type: System.String
+Parameter Sets: ExportExpanded, ExportViaIdentityExpanded
 Aliases:
 
 Required: False
@@ -85,7 +98,7 @@ The name of the ElasticSan.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: Export, ExportExpanded
 Aliases:
 
 Required: True
@@ -101,7 +114,7 @@ To construct, see NOTES section for INPUTOBJECT properties and create a hash tab
 
 ```yaml
 Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
-Parameter Sets: DeleteViaIdentity
+Parameter Sets: ExportViaIdentity, ExportViaIdentityExpanded
 Aliases:
 
 Required: True
@@ -112,11 +125,11 @@ Accept wildcard characters: False
 ```
 
 ### -Name
-The name of the Volume Snapshot.
+The name of the snapshot within the given subscription, resource and volume group.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: Export, ExportExpanded
 Aliases: SnapshotName
 
 Required: True
@@ -126,33 +139,19 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -NoWait
-Run the command asynchronously
+### -Parameter
+Response for Volume Snapshot request to export.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
 
 ```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IExportSnapshot
+Parameter Sets: Export, ExportViaIdentity
 Aliases:
 
-Required: False
+Required: True
 Position: Named
 Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -PassThru
-Returns true when the command succeeds
-
-```yaml
-Type: System.Management.Automation.SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
+Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
@@ -162,7 +161,7 @@ The name is case insensitive.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: Export, ExportExpanded
 Aliases:
 
 Required: True
@@ -177,7 +176,7 @@ The ID of the target subscription.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: Export, ExportExpanded
 Aliases:
 
 Required: False
@@ -187,12 +186,27 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Tag
+Azure resource tags.
+
+```yaml
+Type: System.Collections.Hashtable
+Parameter Sets: ExportExpanded, ExportViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -VolumeGroupName
 The name of the VolumeGroup.
 
 ```yaml
 Type: System.String
-Parameter Sets: Delete
+Parameter Sets: Export, ExportExpanded
 Aliases:
 
 Required: True
@@ -238,11 +252,13 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
+### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IExportSnapshot
+
 ### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
 
 ## OUTPUTS
 
-### System.Boolean
+### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.ISnapshot
 
 ## NOTES
 
@@ -257,10 +273,15 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.
+
+PARAMETER <IExportSnapshot>: Response for Volume Snapshot request to export.
+  - `[Tag <IResourceTags>]`: Azure resource tags.
+    - `[(Any) <String>]`: This indicates any property can be added to this object.
+  - `[CreationDataTargetUri <String>]`: Target location for the source to be copied or exported
 
 ## RELATED LINKS
 

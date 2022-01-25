@@ -15,27 +15,27 @@ Update an Volume.
 ### UpdateExpanded (Default)
 ```
 Update-AzElasticSanVolume -ElasticSanName <String> -GroupName <String> -Name <String>
- -ResourceGroupName <String> [-SubscriptionId <String>] [-SizeInGb <Int64>] [-DefaultProfile <PSObject>]
- [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+ -ResourceGroupName <String> [-SubscriptionId <String>] [-SizeGb <Int64>] [-Tag <Hashtable>]
+ [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### Update
 ```
 Update-AzElasticSanVolume -ElasticSanName <String> -GroupName <String> -Name <String>
- -ResourceGroupName <String> -VolumeUpdatePayload <IVolumeUpdate> [-SubscriptionId <String>]
+ -ResourceGroupName <String> -Parameter <IVolumeUpdate> [-SubscriptionId <String>]
  [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### UpdateViaIdentity
 ```
-Update-AzElasticSanVolume -InputObject <IElasticSanIdentity> -VolumeUpdatePayload <IVolumeUpdate>
+Update-AzElasticSanVolume -InputObject <IElasticSanIdentity> -Parameter <IVolumeUpdate>
  [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### UpdateViaIdentityExpanded
 ```
-Update-AzElasticSanVolume -InputObject <IElasticSanIdentity> [-SizeInGb <Int64>] [-DefaultProfile <PSObject>]
- [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+Update-AzElasticSanVolume -InputObject <IElasticSanIdentity> [-SizeGb <Int64>] [-Tag <Hashtable>]
+ [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -169,6 +169,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Parameter
+Response for Volume request.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeUpdate
+Parameter Sets: Update, UpdateViaIdentity
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -ResourceGroupName
 The name of the resource group.
 The name is case insensitive.
@@ -185,8 +201,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -SizeInGb
-Volume size in GB.
+### -SizeGb
+Volume size.
 
 ```yaml
 Type: System.Int64
@@ -215,19 +231,18 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -VolumeUpdatePayload
-Payload for Volume update requests.
-To construct, see NOTES section for VOLUMEUPDATEPAYLOAD properties and create a hash table.
+### -Tag
+Resource tags.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeUpdate
-Parameter Sets: Update, UpdateViaIdentity
+Type: System.Collections.Hashtable
+Parameter Sets: UpdateExpanded, UpdateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -288,13 +303,15 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.
 
-VOLUMEUPDATEPAYLOAD <IVolumeUpdate>: Payload for Volume update requests.
-  - `[SizeInGb <Int64?>]`: Volume size in GB.
+PARAMETER <IVolumeUpdate>: Response for Volume request.
+  - `[SizeGb <Int64?>]`: Volume size.
+  - `[Tag <IVolumeUpdateTags>]`: Resource tags.
+    - `[(Any) <String>]`: This indicates any property can be added to this object.
 
 ## RELATED LINKS
 

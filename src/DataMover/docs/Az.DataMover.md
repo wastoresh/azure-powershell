@@ -36,10 +36,10 @@ Creates or updates a top-level data mover resource.
 Creates or updates an agent resource, which references a hybrid compute machine that can run migration jobs.
 
 ### [New-AzDataMoverAzureStorageBlobContainerEndpointPropertiesObject](New-AzDataMoverAzureStorageBlobContainerEndpointPropertiesObject.md)
-Create a in-memory object for AzureStorageBlobContainerEndpointProperties
+Create an in-memory object for AzureStorageBlobContainerEndpointProperties.
 
 ### [New-AzDataMoverAzureStorageBlobContainerEndpointUpdatePropertiesObject](New-AzDataMoverAzureStorageBlobContainerEndpointUpdatePropertiesObject.md)
-Create a in-memory object for AzureStorageBlobContainerEndpointUpdateProperties
+Create an in-memory object for AzureStorageBlobContainerEndpointUpdateProperties.
 
 ### [New-AzDataMoverEndpoint](New-AzDataMoverEndpoint.md)
 Creates or updates an endpoint resource, which represents a data source or destination for migration.
@@ -48,10 +48,10 @@ Creates or updates an endpoint resource, which represents a data source or desti
 Creates or updates a job definition resource, which contains configuration for a single unit of data migration.
 
 ### [New-AzDataMoverNfsMountEndpointPropertiesObject](New-AzDataMoverNfsMountEndpointPropertiesObject.md)
-Create a in-memory object for NfsMountEndpointProperties
+Create an in-memory object for NfsMountEndpointProperties.
 
 ### [New-AzDataMoverNfsMountEndpointUpdatePropertiesObject](New-AzDataMoverNfsMountEndpointUpdatePropertiesObject.md)
-Create a in-memory object for NfsMountEndpointUpdateProperties
+Create an in-memory object for NfsMountEndpointUpdateProperties.
 
 ### [New-AzDataMoverProject](New-AzDataMoverProject.md)
 Creates or updates a project resource, which is a logical grouping of related jobs.

@@ -1,5 +1,5 @@
 @{
-  GUID = '6f3f3d3e-fdfe-4f44-ab8e-3de888c3982a'
+  GUID = '59312ee6-fca5-496d-b524-376bb54a5c68'
   RootModule = './Az.ElasticSan.psm1'
   ModuleVersion = '0.1.0'
   CompatiblePSEditions = 'Core', 'Desktop'
@@ -11,7 +11,7 @@
   DotNetFrameworkVersion = '4.7.2'
   RequiredAssemblies = './bin/Az.ElasticSan.private.dll'
   FormatsToProcess = './Az.ElasticSan.format.ps1xml'
-  FunctionsToExport = 'Get-AzElasticSan', 'Get-AzElasticSanSnapshot', 'Get-AzElasticSanVolume', 'Get-AzElasticSanVolumeGroup', 'New-AzElasticSan', 'New-AzElasticSanSnapshot', 'New-AzElasticSanVolume', 'New-AzElasticSanVolumeGroup', 'Remove-AzElasticSan', 'Remove-AzElasticSanSnapshot', 'Remove-AzElasticSanVolume', 'Remove-AzElasticSanVolumeGroup', 'Set-AzElasticSan', 'Set-AzElasticSanSnapshot', 'Set-AzElasticSanVolume', 'Set-AzElasticSanVolumeGroup', 'Update-AzElasticSan', 'Update-AzElasticSanSnapshot', 'Update-AzElasticSanVolume', 'Update-AzElasticSanVolumeGroup', '*'
+  FunctionsToExport = 'Export-AzElasticSanVolumeSnapshot', 'Get-AzElasticSan', 'Get-AzElasticSanSku', 'Get-AzElasticSanVolume', 'Get-AzElasticSanVolumeGroup', 'Get-AzElasticSanVolumeSnapshot', 'New-AzElasticSan', 'New-AzElasticSanVirtualNetworkRuleObject', 'New-AzElasticSanVolume', 'New-AzElasticSanVolumeGroup', 'New-AzElasticSanVolumeSnapshot', 'Remove-AzElasticSan', 'Remove-AzElasticSanVolume', 'Remove-AzElasticSanVolumeGroup', 'Remove-AzElasticSanVolumeSnapshot', 'Update-AzElasticSan', 'Update-AzElasticSanVolume', 'Update-AzElasticSanVolumeGroup', 'Update-AzElasticSanVolumeSnapshot', '*'
   AliasesToExport = '*'
   PrivateData = @{
     PSData = @{

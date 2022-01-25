@@ -15,26 +15,30 @@ Create or Update a Volume.
 ### CreateExpanded (Default)
 ```
 New-AzElasticSanVolume -ElasticSanName <String> -GroupName <String> -Name <String> -ResourceGroupName <String>
- -SizeInGb <Int64> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm]
- [-WhatIf] [<CommonParameters>]
+ [-SubscriptionId <String>] [-CreationDataCreateSource <VolumeOrSnapshotCreateOption>]
+ [-CreationDataSourceUri <String>] [-Location <String>] [-SizeGb <Int64>] [-Tag <Hashtable>]
+ [-VolumeId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf]
+ [<CommonParameters>]
 ```
 
 ### Create
 ```
 New-AzElasticSanVolume -ElasticSanName <String> -GroupName <String> -Name <String> -ResourceGroupName <String>
- -VolumeCreate <IVolumeCreate> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
- [-Confirm] [-WhatIf] [<CommonParameters>]
+ -Parameter <IVolume> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm]
+ [-WhatIf] [<CommonParameters>]
 ```
 
 ### CreateViaIdentity
 ```
-New-AzElasticSanVolume -InputObject <IElasticSanIdentity> -VolumeCreate <IVolumeCreate>
- [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+New-AzElasticSanVolume -InputObject <IElasticSanIdentity> -Parameter <IVolume> [-DefaultProfile <PSObject>]
+ [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### CreateViaIdentityExpanded
 ```
-New-AzElasticSanVolume -InputObject <IElasticSanIdentity> -SizeInGb <Int64> [-DefaultProfile <PSObject>]
+New-AzElasticSanVolume -InputObject <IElasticSanIdentity>
+ [-CreationDataCreateSource <VolumeOrSnapshotCreateOption>] [-CreationDataSourceUri <String>]
+ [-Location <String>] [-SizeGb <Int64>] [-Tag <Hashtable>] [-VolumeId <String>] [-DefaultProfile <PSObject>]
  [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
@@ -69,6 +73,37 @@ Run the command as a job
 ```yaml
 Type: System.Management.Automation.SwitchParameter
 Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CreationDataCreateSource
+This enumerates the possible sources of a volume or snapshot's creation.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Support.VolumeOrSnapshotCreateOption
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -CreationDataSourceUri
+If createOption is Copy, this is the ARM id of the source snapshot or disk.
+If createOption is Restore, this is the ARM-like id of the source disk restore point.
+
+```yaml
+Type: System.String
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
 Aliases:
 
 Required: False
@@ -139,6 +174,21 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 
+### -Location
+The geo-location where the resource lives.
+
+```yaml
+Type: System.String
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Name
 The name of the Volume.
 
@@ -169,6 +219,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Parameter
+Response for Volume request.
+To construct, see NOTES section for PARAMETER properties and create a hash table.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolume
+Parameter Sets: Create, CreateViaIdentity
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
 ### -ResourceGroupName
 The name of the resource group.
 The name is case insensitive.
@@ -185,15 +251,15 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -SizeInGb
-Volume size in GB.
+### -SizeGb
+Volume size.
 
 ```yaml
 Type: System.Int64
 Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -215,19 +281,33 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -VolumeCreate
-Payload for Volume create or update requests.
-To construct, see NOTES section for VOLUMECREATE properties and create a hash table.
+### -Tag
+Azure resource tags.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeCreate
-Parameter Sets: Create, CreateViaIdentity
+Type: System.Collections.Hashtable
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -VolumeId
+Unique Id of the volume in GUID format
+
+```yaml
+Type: System.String
+Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -267,7 +347,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolumeCreate
+### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IVolume
 
 ### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
 
@@ -288,13 +368,21 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.
   - `[Id <String>]`: Resource identity path
   - `[ResourceGroupName <String>]`: The name of the resource group. The name is case insensitive.
-  - `[SnapshotName <String>]`: The name of the Volume Snapshot.
+  - `[SnapshotName <String>]`: The name of the snapshot within the given subscription, resource and volume group.
   - `[SubscriptionId <String>]`: The ID of the target subscription.
   - `[VolumeGroupName <String>]`: The name of the VolumeGroup.
   - `[VolumeName <String>]`: The name of the Volume.
 
-VOLUMECREATE <IVolumeCreate>: Payload for Volume create or update requests.
-  - `SizeInGb <Int64>`: Volume size in GB.
+PARAMETER <IVolume>: Response for Volume request.
+  - `[Location <String>]`: The geo-location where the resource lives.
+  - `[Tag <IResourceTags>]`: Azure resource tags.
+    - `[(Any) <String>]`: This indicates any property can be added to this object.
+  - `[CreationDataCreateSource <VolumeOrSnapshotCreateOption?>]`: This enumerates the possible sources of a volume or snapshot's creation.
+  - `[CreationDataSourceUri <String>]`: If createOption is Copy, this is the ARM id of the source snapshot or disk. If createOption is Restore, this is the ARM-like id of the source disk restore point.
+  - `[SizeGb <Int64?>]`: Volume size.
+  - `[StorageTargetEndpoint <String[]>]`: List of private IPv4 addresses to connect to the storage Target.
+  - `[StorageTargetStatus <OperationalStatus?>]`: Operational status of the iSCSI Target.
+  - `[VolumeId <String>]`: Unique Id of the volume in GUID format
 
 ## RELATED LINKS
 
