@@ -30,16 +30,16 @@ Get an VolumeGroups.
 Create a Volume Snapshot.
 
 ### [New-AzElasticSan](New-AzElasticSan.md)
-Create or Update ElasticSan.
+Create ElasticSan.
 
 ### [New-AzElasticSanVirtualNetworkRuleObject](New-AzElasticSanVirtualNetworkRuleObject.md)
 Create an in-memory object for VirtualNetworkRule.
 
 ### [New-AzElasticSanVolume](New-AzElasticSanVolume.md)
-Create or Update a Volume.
+Create a Volume.
 
 ### [New-AzElasticSanVolumeGroup](New-AzElasticSanVolumeGroup.md)
-Create or Update a Volume Group.
+Create a Volume Group.
 
 ### [New-AzElasticSanVolumeSnapshot](New-AzElasticSanVolumeSnapshot.md)
 Create a Volume Snapshot.

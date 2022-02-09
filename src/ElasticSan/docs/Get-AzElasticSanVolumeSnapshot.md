@@ -12,10 +12,10 @@ Create a Volume Snapshot.
 
 ## SYNTAX
 
-### ListExpanded (Default)
+### List (Default)
 ```
 Get-AzElasticSanVolumeSnapshot -ElasticSanName <String> -ResourceGroupName <String> -VolumeGroupName <String>
- [-SubscriptionId <String[]>] [-VolumeId <String>] [-DefaultProfile <PSObject>] [<CommonParameters>]
+ [-SubscriptionId <String[]>] [-Filter <String>] [-DefaultProfile <PSObject>] [<CommonParameters>]
 ```
 
 ### Get
@@ -28,12 +28,6 @@ Get-AzElasticSanVolumeSnapshot -ElasticSanName <String> -Name <String> -Resource
 ```
 Get-AzElasticSanVolumeSnapshot -InputObject <IElasticSanIdentity> [-DefaultProfile <PSObject>]
  [<CommonParameters>]
-```
-
-### List
-```
-Get-AzElasticSanVolumeSnapshot -ElasticSanName <String> -ResourceGroupName <String> -VolumeGroupName <String>
- -FilterBy <IFilterByVolume> [-SubscriptionId <String[]>] [-DefaultProfile <PSObject>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -81,7 +75,7 @@ The name of the ElasticSan.
 
 ```yaml
 Type: System.String
-Parameter Sets: Get, List, ListExpanded
+Parameter Sets: Get, List
 Aliases:
 
 Required: True
@@ -91,19 +85,18 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -FilterBy
-Filter data by volume name.
-To construct, see NOTES section for FILTERBY properties and create a hash table.
+### -Filter
+Specify $filter='volumeName eq \<volume name\>' to filter on volume.
 
 ```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IFilterByVolume
+Type: System.String
 Parameter Sets: List
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -144,7 +137,7 @@ The name is case insensitive.
 
 ```yaml
 Type: System.String
-Parameter Sets: Get, List, ListExpanded
+Parameter Sets: Get, List
 Aliases:
 
 Required: True
@@ -159,7 +152,7 @@ The ID of the target subscription.
 
 ```yaml
 Type: System.String[]
-Parameter Sets: Get, List, ListExpanded
+Parameter Sets: Get, List
 Aliases:
 
 Required: False
@@ -174,25 +167,10 @@ The name of the VolumeGroup.
 
 ```yaml
 Type: System.String
-Parameter Sets: Get, List, ListExpanded
+Parameter Sets: Get, List
 Aliases:
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -VolumeId
-Volume Id to filter
-
-```yaml
-Type: System.String
-Parameter Sets: ListExpanded
-Aliases:
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -203,8 +181,6 @@ Accept wildcard characters: False
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
-
-### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.Api20211120Preview.IFilterByVolume
 
 ### Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Models.IElasticSanIdentity
 
@@ -220,9 +196,6 @@ COMPLEX PARAMETER PROPERTIES
 
 To create the parameters described below, construct a hash table containing the appropriate properties. For information on hash tables, run Get-Help about_Hash_Tables.
 
-
-FILTERBY <IFilterByVolume>: Filter data by volume name.
-  - `[VolumeId <String>]`: Volume Id to filter
 
 INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[ElasticSanName <String>]`: The name of the ElasticSan.

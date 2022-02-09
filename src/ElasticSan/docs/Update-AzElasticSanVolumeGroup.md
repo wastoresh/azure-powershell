@@ -346,7 +346,6 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
 NETWORKACLSVIRTUALNETWORKRULE <IVirtualNetworkRule[]>: The list of virtual network rules.
   - `Id <String>`: Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
   - `[IgnoreMissingVnetServiceEndpoint <Boolean?>]`: Ignore missing vnet service endpoint or not.
-  - `[State <String>]`: Gets the state of virtual network rule.
   - `[Subnet <String[]>]`: The list of subnets.
 
 PARAMETER <IVolumeGroupUpdate>: Volume Group request.
@@ -355,7 +354,6 @@ PARAMETER <IVolumeGroupUpdate>: Volume Group request.
   - `[NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]`: The list of virtual network rules.
     - `Id <String>`: Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
     - `[IgnoreMissingVnetServiceEndpoint <Boolean?>]`: Ignore missing vnet service endpoint or not.
-    - `[State <String>]`: Gets the state of virtual network rule.
     - `[Subnet <String[]>]`: The list of subnets.
   - `[ProtocolType <StorageTargetType?>]`: Type of storage target
   - `[Tag <IVolumeGroupUpdateTags>]`: Resource tags.

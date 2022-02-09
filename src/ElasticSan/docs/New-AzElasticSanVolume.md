@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzElasticSanVolume
 
 ## SYNOPSIS
-Create or Update a Volume.
+Create a Volume.
 
 ## SYNTAX
 
@@ -17,8 +17,7 @@ Create or Update a Volume.
 New-AzElasticSanVolume -ElasticSanName <String> -GroupName <String> -Name <String> -ResourceGroupName <String>
  [-SubscriptionId <String>] [-CreationDataCreateSource <VolumeOrSnapshotCreateOption>]
  [-CreationDataSourceUri <String>] [-Location <String>] [-SizeGb <Int64>] [-Tag <Hashtable>]
- [-VolumeId <String>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf]
- [<CommonParameters>]
+ [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ### Create
@@ -38,12 +37,12 @@ New-AzElasticSanVolume -InputObject <IElasticSanIdentity> -Parameter <IVolume> [
 ```
 New-AzElasticSanVolume -InputObject <IElasticSanIdentity>
  [-CreationDataCreateSource <VolumeOrSnapshotCreateOption>] [-CreationDataSourceUri <String>]
- [-Location <String>] [-SizeGb <Int64>] [-Tag <Hashtable>] [-VolumeId <String>] [-DefaultProfile <PSObject>]
- [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+ [-Location <String>] [-SizeGb <Int64>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
+ [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Create or Update a Volume.
+Create a Volume.
 
 ## EXAMPLES
 
@@ -296,21 +295,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -VolumeId
-Unique Id of the volume in GUID format
-
-```yaml
-Type: System.String
-Parameter Sets: CreateExpanded, CreateViaIdentityExpanded
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Confirm
 Prompts you for confirmation before running the cmdlet.
 
@@ -382,7 +366,12 @@ PARAMETER <IVolume>: Response for Volume request.
   - `[SizeGb <Int64?>]`: Volume size.
   - `[StorageTargetEndpoint <String[]>]`: List of private IPv4 addresses to connect to the storage Target.
   - `[StorageTargetStatus <OperationalStatus?>]`: Operational status of the iSCSI Target.
-  - `[VolumeId <String>]`: Unique Id of the volume in GUID format
+  - `[SystemDataCreatedAt <DateTime?>]`: The timestamp of resource creation (UTC).
+  - `[SystemDataCreatedBy <String>]`: The identity that created the resource.
+  - `[SystemDataCreatedByType <CreatedByType?>]`: The type of identity that created the resource.
+  - `[SystemDataLastModifiedAt <DateTime?>]`: The timestamp of resource last modification (UTC)
+  - `[SystemDataLastModifiedBy <String>]`: The identity that last modified the resource.
+  - `[SystemDataLastModifiedByType <CreatedByType?>]`: The type of identity that last modified the resource.
 
 ## RELATED LINKS
 

@@ -14,7 +14,7 @@ Create an in-memory object for VirtualNetworkRule.
 
 ```
 New-AzElasticSanVirtualNetworkRuleObject -Id <String> [-IgnoreMissingVnetServiceEndpoint <Boolean>]
- [-State <String>] [-Subnet <String[]>] [<CommonParameters>]
+ [-Subnet <String[]>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -62,21 +62,6 @@ Ignore missing vnet service endpoint or not.
 
 ```yaml
 Type: System.Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -State
-Gets the state of virtual network rule.
-
-```yaml
-Type: System.String
 Parameter Sets: (All)
 Aliases:
 
