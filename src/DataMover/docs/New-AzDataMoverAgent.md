@@ -14,7 +14,7 @@ Creates or updates an agent resource, which references a hybrid compute machine 
 
 ```
 New-AzDataMoverAgent -DataMoverName <String> -Name <String> -ResourceGroupName <String>
- [-SubscriptionId <String>] [-ArcResourceId <String>] [-Description <String>] [-Guid <String>]
+ [-SubscriptionId <String>] [-ArcResourceId <String>] [-ArcVMUuid <String>] [-Description <String>]
  [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
@@ -45,6 +45,21 @@ PS C:\> {{ Add code here }}
 
 ### -ArcResourceId
 The fully qualified resource ID of the hybrid compute resource for the agent.
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ArcVMUuid
+A GUID for this agent.
 
 ```yaml
 Type: System.String
@@ -90,21 +105,6 @@ Accept wildcard characters: False
 
 ### -Description
 A description for the agent.
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Guid
-A GUID for this agent.
 
 ```yaml
 Type: System.String
