@@ -14,7 +14,7 @@ Create an in-memory object for NfsMountEndpointProperties.
 
 ```
 New-AzDataMoverNfsMountEndpointPropertiesObject -EndpointType <EndpointType> -Host <String>
- -NfsVersion <NfsVersion> -RemoteExport <String> [-Description <String>] [<CommonParameters>]
+ -RemoteExport <String> [-Description <String>] [-NfsVersion <NfsVersion>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -95,7 +95,7 @@ Type: Microsoft.Azure.PowerShell.Cmdlets.DataMover.Support.NfsVersion
 Parameter Sets: (All)
 Aliases:
 
-Required: True
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False

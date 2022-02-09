@@ -52,7 +52,7 @@ require:
 input-file:
 # You need to specify your swagger files here.
 # - https://github.com/golddove/azure-rest-api-specs-pr/blob/dev-datamover-Microsoft.Storage-2021-10-01-privatepreview/specification/datamover/resource-manager/Microsoft.Storage/preview/2021-08-01/datamover.json
- - C:\code\swagger\specification\datamover\resource-manager\Microsoft.Storage\preview\2021-08-01\datamover.json
+ - D:\code\swagger\specification\datamover\resource-manager\Microsoft.Storage\preview\2021-08-01\datamover.json
 # If the swagger has not been put in the repo, you may uncomment the following line and refer to it locally
 # - (this-folder)/relative-path-to-your-swagger 
 
@@ -106,11 +106,32 @@ directive:
       verb: Set
     remove: true
   - where:
+      model-name: Agent
+    set:
+      suppress-format: true
+#      format-table:
+#       properties:
+#          - Name
+#          - ArcVMUuid
+#          - Description
+  - where:
       model-name: DataMover
     set:
-      format-table:
-        properties:
-          - Name
-          - Location
-          - Description
+      suppress-format: true
+  - where:
+      model-name: Endpoint
+    set:
+      suppress-format: true
+  - where:
+      model-name: JobDefinition
+    set:
+      suppress-format: true
+  - where:
+      model-name: JobRun
+    set:
+      suppress-format: true
+  - where:
+      model-name: Project
+    set:
+      suppress-format: true
 ```

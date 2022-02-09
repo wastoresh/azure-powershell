@@ -13,8 +13,7 @@ Create an in-memory object for NfsMountEndpointUpdateProperties.
 ## SYNTAX
 
 ```
-New-AzDataMoverNfsMountEndpointUpdatePropertiesObject [-Description <String>] [-Host <String>]
- [-NfsVersion <NfsVersion>] [-RemoteExport <String>] [<CommonParameters>]
+New-AzDataMoverNfsMountEndpointUpdatePropertiesObject [-Description <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -44,51 +43,6 @@ PS C:\> {{ Add code here }}
 
 ### -Description
 A description for the endpoint.
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Host
-The host name or IP address of the server exporting the file system.
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -NfsVersion
-The NFS protocol version.
-
-```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.DataMover.Support.NfsVersion
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -RemoteExport
-The directory being exported from the server.
 
 ```yaml
 Type: System.String

@@ -15,14 +15,14 @@ Requests the agent of any active instance of this job definition to stop.
 ### Stop (Default)
 ```
 Stop-AzDataMoverJob -DataMoverName <String> -JobDefinitionName <String> -ProjectName <String>
- -ResourceGroupName <String> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf]
- [<CommonParameters>]
+ -ResourceGroupName <String> [-SubscriptionId <String>] [-DefaultProfile <PSObject>] [-PassThru] [-Confirm]
+ [-WhatIf] [<CommonParameters>]
 ```
 
 ### StopViaIdentity
 ```
-Stop-AzDataMoverJob -InputObject <IDataMoverIdentity> [-DefaultProfile <PSObject>] [-Confirm] [-WhatIf]
- [<CommonParameters>]
+Stop-AzDataMoverJob -InputObject <IDataMoverIdentity> [-DefaultProfile <PSObject>] [-PassThru] [-Confirm]
+ [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -105,6 +105,21 @@ Parameter Sets: Stop
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -PassThru
+Returns true when the command succeeds
+
+```yaml
+Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False

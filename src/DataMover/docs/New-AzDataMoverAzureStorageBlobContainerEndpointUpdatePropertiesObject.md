@@ -13,8 +13,8 @@ Create an in-memory object for AzureStorageBlobContainerEndpointUpdateProperties
 ## SYNTAX
 
 ```
-New-AzDataMoverAzureStorageBlobContainerEndpointUpdatePropertiesObject [-BlobContainerName <String>]
- [-Description <String>] [-ResourceId <String>] [<CommonParameters>]
+New-AzDataMoverAzureStorageBlobContainerEndpointUpdatePropertiesObject [-Description <String>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -42,38 +42,8 @@ PS C:\> {{ Add code here }}
 
 ## PARAMETERS
 
-### -BlobContainerName
-The name of the Storage blob container that is the target destination.
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Description
 A description for the endpoint.
-
-```yaml
-Type: System.String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -ResourceId
-The Azure Resource ID of the storage account that is the target destination.
 
 ```yaml
 Type: System.String
