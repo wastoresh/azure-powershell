@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzElasticSanVolumeGroup
 
 ## SYNOPSIS
-Create or Update a Volume Group.
+Create a Volume Group.
 
 ## SYNTAX
 
@@ -43,7 +43,7 @@ New-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> [-Encryption <Enc
 ```
 
 ## DESCRIPTION
-Create or Update a Volume Group.
+Create a Volume Group.
 
 ## EXAMPLES
 
@@ -362,7 +362,6 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
 NETWORKACLSVIRTUALNETWORKRULE <IVirtualNetworkRule[]>: The list of virtual network rules.
   - `Id <String>`: Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
   - `[IgnoreMissingVnetServiceEndpoint <Boolean?>]`: Ignore missing vnet service endpoint or not.
-  - `[State <String>]`: Gets the state of virtual network rule.
   - `[Subnet <String[]>]`: The list of subnets.
 
 PARAMETER <IVolumeGroup>: Response for Volume Group request.
@@ -374,9 +373,14 @@ PARAMETER <IVolumeGroup>: Response for Volume Group request.
   - `[NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]`: The list of virtual network rules.
     - `Id <String>`: Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
     - `[IgnoreMissingVnetServiceEndpoint <Boolean?>]`: Ignore missing vnet service endpoint or not.
-    - `[State <String>]`: Gets the state of virtual network rule.
     - `[Subnet <String[]>]`: The list of subnets.
   - `[ProtocolType <StorageTargetType?>]`: Type of storage target
+  - `[SystemDataCreatedAt <DateTime?>]`: The timestamp of resource creation (UTC).
+  - `[SystemDataCreatedBy <String>]`: The identity that created the resource.
+  - `[SystemDataCreatedByType <CreatedByType?>]`: The type of identity that created the resource.
+  - `[SystemDataLastModifiedAt <DateTime?>]`: The timestamp of resource last modification (UTC)
+  - `[SystemDataLastModifiedBy <String>]`: The identity that last modified the resource.
+  - `[SystemDataLastModifiedByType <CreatedByType?>]`: The type of identity that last modified the resource.
 
 ## RELATED LINKS
 

@@ -8,7 +8,7 @@ schema: 2.0.0
 # New-AzElasticSan
 
 ## SYNOPSIS
-Create or Update ElasticSan.
+Create ElasticSan.
 
 ## SYNTAX
 
@@ -41,7 +41,7 @@ New-AzElasticSan -InputObject <IElasticSanIdentity> [-AvailabilityZone <String[]
 ```
 
 ## DESCRIPTION
-Create or Update ElasticSan.
+Create ElasticSan.
 
 ## EXAMPLES
 
@@ -364,6 +364,12 @@ PARAMETER <IElasticSan>: Response for ElasticSan request.
   - `[ExtendedSizeTb <Int64?>]`: Extended size of the Elastic San appliance in TB.
   - `[SkuName <Name?>]`: The sku name.
   - `[SkuTier <Tier?>]`: The sku tier.
+  - `[SystemDataCreatedAt <DateTime?>]`: The timestamp of resource creation (UTC).
+  - `[SystemDataCreatedBy <String>]`: The identity that created the resource.
+  - `[SystemDataCreatedByType <CreatedByType?>]`: The type of identity that created the resource.
+  - `[SystemDataLastModifiedAt <DateTime?>]`: The timestamp of resource last modification (UTC)
+  - `[SystemDataLastModifiedBy <String>]`: The identity that last modified the resource.
+  - `[SystemDataLastModifiedByType <CreatedByType?>]`: The type of identity that last modified the resource.
 
 ## RELATED LINKS
 
