@@ -31,6 +31,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
     using global::Azure.Storage.Blobs;
     using global::Azure.Storage;
     using global::Azure.Storage.Files.Shares.Models;
+    using global::Azure.Storage.Files.Shares;
 
     internal static class Util
     {
@@ -287,15 +288,20 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// <summary>
         /// Get snapshot Time of a blob Uri.
         /// </summary>
-        public static DateTimeOffset? GetSnapshotTimeFromBlobUri(Uri BlobUri)
+        public static DateTimeOffset? GetSnapshotTimeFromUri(Uri itemUri)
         {
             string snapshotQueryParameter = "snapshot=";
-            string[] queryBlocks = BlobUri.Query.Split(new char[] { '&', '?' });
+            string shareSnapshotQueryParameter = "sharesnapshot=";
+            string[] queryBlocks = itemUri.Query.Split(new char[] { '&', '?' });
             foreach (string block in queryBlocks)
             {
                 if (block.StartsWith(snapshotQueryParameter))
                 {
                     return DateTimeOffset.Parse(System.Web.HttpUtility.UrlDecode(block.Replace(snapshotQueryParameter, ""))).ToUniversalTime();
+                }
+                if (block.StartsWith(shareSnapshotQueryParameter))
+                {
+                    return DateTimeOffset.Parse(System.Web.HttpUtility.UrlDecode(block.Replace(shareSnapshotQueryParameter, ""))).ToUniversalTime();
                 }
             }
             return null;
@@ -534,7 +540,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                 return null;
             }
 
-            switch(pageBlobTier)
+            switch (pageBlobTier)
             {
                 case PremiumPageBlobTier.P4:
                     return global::Azure.Storage.Blobs.Models.AccessTier.P4;
@@ -714,6 +720,40 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                 }
             }
             return null;
+        }
+
+        public static ShareServiceClient GetTrack2FileServiceClient(AzureStorageContext context, ShareClientOptions options = null)
+        {
+            ShareServiceClient serviceClient;
+            //if (context.StorageAccount.Credentials.IsToken) //Oauth
+            //{
+            //    serviceClient = new ShareServiceClient(context.StorageAccount.FileEndpoint, context.Track2OauthToken, options);
+            //}
+            //else  //sas , key or Anonymous, use connection string
+            //{
+            string connectionString = context.ConnectionString;
+
+            // remove the "?" at the begin of SAS if any
+            if (context.StorageAccount.Credentials.IsSAS)
+            {
+                connectionString = connectionString.Replace("SharedAccessSignature=?", "SharedAccessSignature=");
+            }
+            serviceClient = new ShareServiceClient(connectionString, options);
+            //}
+            return serviceClient;
+        }
+
+        public static ShareClient GetTrack2ShareReference(string shareName, AzureStorageContext context, string snapshotTime = null, ShareClientOptions options = null)
+        {
+            ShareClient shareClient = GetTrack2FileServiceClient(context, options).GetShareClient(shareName);
+            if (snapshotTime != null)
+            {
+                return shareClient.WithSnapshot(snapshotTime);
+            }
+            else
+            {
+                return shareClient;
+            }
         }
     }
 }

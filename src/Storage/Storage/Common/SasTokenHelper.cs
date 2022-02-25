@@ -275,9 +275,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             {
                 sasBuilder.BlobVersionId = Util.GetVersionIdFromBlobUri(blobClient.Uri);
             }
-            if (Util.GetSnapshotTimeFromBlobUri(blobClient.Uri) != null)
+            if (Util.GetSnapshotTimeFromUri(blobClient.Uri) != null)
             {
-                sasBuilder.Snapshot = Util.GetSnapshotTimeFromBlobUri(blobClient.Uri).Value.UtcDateTime.ToString("o");
+                sasBuilder.Snapshot = Util.GetSnapshotTimeFromUri(blobClient.Uri).Value.UtcDateTime.ToString("o");
             }
             return sasBuilder;
         }

@@ -408,6 +408,10 @@
             <Label>SnapshotTime</Label>
             <Alignment>Left</Alignment>
           </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>IsDeleted</Label>
+            <Alignment>Left</Alignment>
+          </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -419,13 +423,16 @@
                 <ScriptBlock>$_.Quota</ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
-                <ScriptBlock>$_.LastModified</ScriptBlock>
+                <ScriptBlock>$_.LastModified.UtcDateTime.ToString("o")</ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
                 <ScriptBlock>$_.IsSnapshot</ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
-                <ScriptBlock>$_.SnapshotTime</ScriptBlock>
+                <ScriptBlock>$_.SnapshotTime.UtcDateTime.ToString("o")</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.IsDeleted</ScriptBlock>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

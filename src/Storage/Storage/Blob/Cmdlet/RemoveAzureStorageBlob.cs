@@ -225,11 +225,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob
             Track2Models.DeleteSnapshotsOption deleteSnapshotsOption = Track2Models.DeleteSnapshotsOption.None;
             bool retryDeleteSnapshot = false;
 
-            if (Util.GetSnapshotTimeFromBlobUri(blob.Uri) != null)
+            if (Util.GetSnapshotTimeFromUri(blob.Uri) != null)
             {
                 if (deleteSnapshot)
                 {
-                    throw new ArgumentException(String.Format(Resources.CannotDeleteSnapshotForSnapshot, blob.Name, Util.GetSnapshotTimeFromBlobUri(blob.Uri)));
+                    throw new ArgumentException(String.Format(Resources.CannotDeleteSnapshotForSnapshot, blob.Name, Util.GetSnapshotTimeFromUri(blob.Uri)));
                 }
             }
             else if (!string.IsNullOrEmpty(Util.GetVersionIdFromBlobUri(blob.Uri)))

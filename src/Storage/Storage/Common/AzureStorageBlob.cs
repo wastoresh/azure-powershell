@@ -362,7 +362,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             }
             else // This code might should not be necessary, since currently only blob version will has Track1 Blob as null, and blob veresion won't have snapshot time
             {
-                SnapshotTime = Util.GetSnapshotTimeFromBlobUri(track2BlobClient.Uri);
+                SnapshotTime = Util.GetSnapshotTimeFromUri(track2BlobClient.Uri);
             }
 
             // Set the AzureStorageBlob Properties
