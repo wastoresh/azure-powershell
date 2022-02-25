@@ -117,24 +117,37 @@ namespace Microsoft.Azure.Commands.Management.Storage
             set { storageClientWrapper = new StorageManagementClientWrapper(value); }
         }
 
-        public Subscription DefaultSubscription
+        private Track2StorageManagementClient _track2StorageManagementClient;
+        public Track2StorageManagementClient StorageClientTrack2
         {
             get
             {
-                if (defaultSubscription == null)
-                {
-                    
-                        ArmClient  armClient= new ArmClient(
-                         DefaultProfile.DefaultContext.Subscription.Id,
-                        new AzureARMSessionCredential(DefaultProfile.DefaultContext));
-                    defaultSubscription = armClient.GetDefaultSubscription();
-                }
-                return defaultSubscription;
+                return _track2StorageManagementClient ?? (_track2StorageManagementClient = new Track2StorageManagementClient(
+                    Microsoft.Azure.Commands.Common.Authentication.AzureSession.Instance.ClientFactory, 
+                    DefaultContext));
             }
 
-            set { defaultSubscription = value; }
+            set { _track2StorageManagementClient = value; }
         }
-        private Subscription defaultSubscription = null;
+
+        //public Subscription DefaultSubscription
+        //{
+        //    get
+        //    {
+        //        if (defaultSubscription == null)
+        //        {
+                    
+        //                ArmClient  armClient= new ArmClient(
+        //                 DefaultProfile.DefaultContext.Subscription.Id,
+        //                new AzureARMSessionCredential(DefaultProfile.DefaultContext));
+        //            defaultSubscription = armClient.GetDefaultSubscription();
+        //        }
+        //        return defaultSubscription;
+        //    }
+
+        //    set { defaultSubscription = value; }
+        //}
+        //private Subscription defaultSubscription = null;
 
         public string SubscriptionId
         {

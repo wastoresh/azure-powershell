@@ -20,6 +20,7 @@ using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 using Microsoft.Rest.Azure;
 using System.Management.Automation;
+using Track2 = Azure.ResourceManager.Storage;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -99,8 +100,8 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 //    WriteStorageAccountList(storageAccounts);
                 //}
 
-                Pageable<global::Azure.ResourceManager.Storage.StorageAccount> accounts = DefaultSubscription.GetStorageAccounts();
-                foreach (global::Azure.ResourceManager.Storage.StorageAccount account in accounts)
+                Pageable<Track2.StorageAccount> accounts = this.StorageClientTrack2.ListStorageAccounts();
+                foreach (Track2.StorageAccount account in accounts)
                 {
                     WriteObject(account.Data);
                 }
@@ -117,17 +118,16 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 //    WriteStorageAccountList(storageAccounts);
                 //}
 
-                StorageAccountCollection storageAccountContainer = DefaultSubscription.GetResourceGroups().Get(this.ResourceGroupName).Value.GetStorageAccounts();
-                Pageable<global::Azure.ResourceManager.Storage.StorageAccount> accounts = storageAccountContainer.GetAll();
-                foreach (global::Azure.ResourceManager.Storage.StorageAccount account in accounts)
+                Pageable<Track2.StorageAccount> accounts = this.StorageClientTrack2.ListStorageAccounts(this.ResourceGroupName);
+                foreach (Track2.StorageAccount account in accounts)
                 {
                     WriteObject(account.Data);
                 }
             }
             else
             {
-                StorageAccountCollection storageAccountContainer = DefaultSubscription.GetResourceGroups().Get(this.ResourceGroupName).Value.GetStorageAccounts();
-                WriteObject(storageAccountContainer.Get(this.Name).Value.Data);
+                Track2.StorageAccount account = this.StorageClientTrack2.GetStorageAccount(this.ResourceGroupName, this.Name);
+                WriteObject(account.Get().Value.Data);
                 //// ParameterSet ensure can only set one of the following 2 parameters
                 //StorageAccountExpand? expandproperties = null;
                 //if (this.IncludeGeoReplicationStats)

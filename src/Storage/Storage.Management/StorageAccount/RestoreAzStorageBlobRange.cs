@@ -12,8 +12,8 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Azure.ResourceManager.Storage;
-//using Azure.ResourceManager.Storage.Models;
+using Track2 = Azure.ResourceManager.Storage;
+//using Track2Model = Azure.ResourceManager.Storage.Models;
 using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
@@ -149,12 +149,12 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
                     //    WriteObject(new PSBlobRestoreStatus(result.Body));
 
-                    StorageAccountCollection storageAccountContainer = DefaultSubscription.GetResourceGroups().Get(this.ResourceGroupName).Value.GetStorageAccounts();
-                    var account = storageAccountContainer.Get(this.StorageAccountName).Value;
+                    Track2.StorageAccount account = this.StorageClientTrack2.GetStorageAccount(this.ResourceGroupName, this.StorageAccountName);
                     var restoreLro = account.RestoreBlobRanges(
                         new global::Azure.ResourceManager.Storage.Models.BlobRestoreParameters(
                             this.TimeToRestore,
-                            ParseBlobRestoreRangesnew(this.BlobRestoreRange)));
+                            ParseBlobRestoreRangesnew(this.BlobRestoreRange)),
+                        waitForCompletion: false);
                     WriteWarning(string.Format("Restore blob ranges with Id '{0}' started. Restore blob ranges time to complete is dependent on the size of the restore.", restoreLro.Value is null ? "" : restoreLro.Value.RestoreId));
                     
                     try
@@ -186,12 +186,12 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
 
 
-                    StorageAccountCollection storageAccountContainer = DefaultSubscription.GetResourceGroups().Get(this.ResourceGroupName).Value.GetStorageAccounts();
-                    var account = storageAccountContainer.Get(this.StorageAccountName).Value;
+                    Track2.StorageAccount account = this.StorageClientTrack2.GetStorageAccount(this.ResourceGroupName, this.StorageAccountName);
                     var restoreLro = account.RestoreBlobRanges(
                         new global::Azure.ResourceManager.Storage.Models.BlobRestoreParameters(
                             this.TimeToRestore.ToUniversalTime(),
-                            ParseBlobRestoreRangesnew(this.BlobRestoreRange)));
+                            ParseBlobRestoreRangesnew(this.BlobRestoreRange)),
+                        waitForCompletion: false);
                     WriteObject(restoreLro.Value);
                     if (restoreLro.Value != null && restoreLro.Value.Status != null && restoreLro.Value.Status == global::Azure.ResourceManager.Storage.Models.BlobRestoreProgressStatus.Failed)
                     {
