@@ -62,7 +62,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         /// <summary>
         /// File share Quota
         /// </summary>
-        public int? Quota { get; private set; }
+        public int? Quota { get; internal set; }
 
         /// <summary>
         /// XSCL Track2 File Share Client, used to run file APIs
@@ -75,7 +75,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                 {
                     if (this.IsDeleted == null || !this.IsDeleted.Value)
                     {
-                        privateShareClient = GetTrack2FileShareClient(this.CloudFileShare, (AzureStorageContext)this.Context);
+                        privateShareClient = GetTrack2FileShareClient(this.CloudFileShare, this.Context is null? null : (AzureStorageContext)this.Context);
                     }
                     else
                     {
@@ -86,6 +86,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             }
         }
         private ShareClient privateShareClient = null;
+
+        //internal void setShareClient(ShareClient inputShareClient)
+        //{
+        //    this.privateShareClient = inputShareClient;
+        //}
 
         /// <summary>
         /// XSCL Track2 File Share properties, will retrieve the properties on server and return to user
@@ -116,13 +121,13 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         private ShareClientOptions shareClientOptions { get; set; }
         private ShareServiceClient shareService { get; set; }
 
-        public string AccountName
-        {
-            get
-            {
-                if (sharelc)
-            }
-        }
+        //public string AccountName
+        //{
+        //    get
+        //    {
+        //        if (sharelc)
+        //    }
+        //}
 
         /// <summary>
         /// Azure storage file constructor
@@ -187,6 +192,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                 {
                     SnapshotTime = DateTimeOffset.Parse(shareItem.Snapshot).ToUniversalTime();
                     IsSnapshot = true;
+                    CloudFileShare = GetTrack1FileShareClient(shareClient.WithSnapshot(shareItem.Snapshot), storageContext.StorageAccount.Credentials);
                 }
             }
             Context = storageContext;
@@ -247,7 +253,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         }
 
         // Convert Track1 File share object to Track 2 file share Client
-        protected static ShareClient GetTrack2FileShareClient(CloudFileShare cloudFileShare, AzureStorageContext context)
+        public static ShareClient GetTrack2FileShareClient(CloudFileShare cloudFileShare, AzureStorageContext context, ShareClientOptions clientOptions = null)
         {
             ShareClient fileShareClient;
             if (cloudFileShare.ServiceClient.Credentials.IsSAS) //SAS
@@ -263,16 +269,16 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                 {
                     fullUri = fullUri + "?" + sas;
                 }
-                fileShareClient = new ShareClient(new Uri(fullUri));
+                fileShareClient = new ShareClient(new Uri(fullUri), clientOptions);
             }
             else if (cloudFileShare.ServiceClient.Credentials.IsSharedKey) //Shared Key
             {
                 fileShareClient = new ShareClient(cloudFileShare.SnapshotQualifiedUri,
-                    new StorageSharedKeyCredential(context.StorageAccountName, cloudFileShare.ServiceClient.Credentials.ExportBase64EncodedKey()));
+                    new StorageSharedKeyCredential(cloudFileShare.ServiceClient.Credentials.AccountName, cloudFileShare.ServiceClient.Credentials.ExportBase64EncodedKey()), clientOptions);
             }
             else //Anonymous
             {
-                fileShareClient = new ShareClient(cloudFileShare.SnapshotQualifiedUri);
+                fileShareClient = new ShareClient(cloudFileShare.SnapshotQualifiedUri, clientOptions);
             }
 
             return fileShareClient;

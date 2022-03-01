@@ -19,6 +19,8 @@ using System.Management.Automation;
 using System.Security.Permissions;
 using Microsoft.WindowsAzure.Commands.Common.CustomAttributes;
 using Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel;
+using Azure.Storage.Files.Shares;
+using Azure.Storage.Files.Shares.Models;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
 {
@@ -56,31 +58,63 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public override void ExecuteCmdlet()
         {
-            CloudFileShare fileShare = null;
+            ShareClient shareClient;
 
             switch (this.ParameterSetName)
             {
                 case Constants.ShareNameParameterSetName:
-                    fileShare = this.BuildFileShareObjectFromName(this.ShareName);
+                    shareClient = Util.GetTrack2ShareReference(this.ShareName,
+                        (AzureStorageContext)this.Context,
+                        null,
+                        ClientOptions);
                     break;
 
                 case Constants.ShareParameterSetName:
-                    fileShare = this.Share;
+                    shareClient = AzureStorageFileShare.GetTrack2FileShareClient(this.Share, (AzureStorageContext)this.Context, ClientOptions);
                     break;
 
                 default:
                     throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
             }
 
-            this.Channel.FetchShareAttributes(fileShare, null, this.RequestOptions, this.OperationContext);
+            ShareProperties properties =  shareClient.GetProperties(cancellationToken: this.CmdletCancellationToken).Value;
 
-            if (fileShare.Properties.Quota != this.Quota)
+            if (properties.QuotaInGB != this.Quota)
             {
-                fileShare.Properties.Quota = this.Quota;
-                this.Channel.SetShareProperties(fileShare, null, this.RequestOptions, this.OperationContext);
+                ShareSetPropertiesOptions options = new ShareSetPropertiesOptions();
+                options.QuotaInGB = Quota;
+                shareClient.SetProperties(options, this.CmdletCancellationToken);
             }
 
-            WriteObject( new AzureStorageFileShare(fileShare, this.Channel.StorageContext));
+            AzureStorageFileShare azureshare = GetOutputShareObject(this.Channel, this.Share, shareClient);
+            azureshare.Quota = this.Quota;
+            WriteObject(azureshare);
+
+            //CloudFileShare fileShare = null;
+
+            //switch (this.ParameterSetName)
+            //{
+            //    case Constants.ShareNameParameterSetName:
+            //        fileShare = this.BuildFileShareObjectFromName(this.ShareName);
+            //        break;
+
+            //    case Constants.ShareParameterSetName:
+            //        fileShare = this.Share;
+            //        break;
+
+            //    default:
+            //        throw new PSArgumentException(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", this.ParameterSetName));
+            //}
+
+            //this.Channel.FetchShareAttributes(fileShare, null, this.RequestOptions, this.OperationContext);
+
+            //if (fileShare.Properties.Quota != this.Quota)
+            //{
+            //    fileShare.Properties.Quota = this.Quota;
+            //    this.Channel.SetShareProperties(fileShare, null, this.RequestOptions, this.OperationContext);
+            //}
+
+            //WriteObject(new AzureStorageFileShare(fileShare, this.Channel.StorageContext));
         }
     }
 }

@@ -62,6 +62,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
             HelpMessage = "Path to an existing file/directory.")]
         public string Path { get; set; }
 
+
+        [Parameter(Mandatory = false, HelpMessage = "Not include extended file info like timestamps, ETag, attributes, permissionKey in list file and Directory.")]
+        public SwitchParameter ExcludeExtendedInfo { get; set; }
+
         public override void ExecuteCmdlet()
         {
             CloudFileDirectory baseDirectory;
@@ -90,6 +94,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                 ShareDirectoryGetFilesAndDirectoriesOptions listFileOptions = new ShareDirectoryGetFilesAndDirectoriesOptions();
                 listFileOptions.Traits = ShareFileTraits.All;
                 listFileOptions.IncludeExtendedInfo = true;
+                if (this.ExcludeExtendedInfo.IsPresent)
+                {
+                    listFileOptions.Traits = ShareFileTraits.None;
+                    listFileOptions.IncludeExtendedInfo = false;
+                }
                 Pageable<ShareFileItem> fileItems = baseDirClient.GetFilesAndDirectories(listFileOptions, this.CmdletCancellationToken);
                 IEnumerable<Page<ShareFileItem>> fileitempages = fileItems.AsPages();
                 foreach (var page in fileitempages)
@@ -104,7 +113,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         else // Dir
                         {
                             ShareDirectoryClient shareDirClient = baseDirClient.GetSubdirectoryClient(file.Name);
-                            WriteObject(new AzureStorageFileDirectory(shareDirClient, (AzureStorageContext)this.Context, file)); 
+                            WriteObject(new AzureStorageFileDirectory(shareDirClient, (AzureStorageContext)this.Context, file, ClientOptions)); 
                         }
 
                     }
@@ -112,6 +121,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
             }
             else
             {
+                if (ExcludeExtendedInfo.IsPresent)
+                {
+                    WriteWarning("'-ExcludeExtendedInfo' will be omit, it only works when list file and directory without '-Path'.");
+                }
                 bool foundAFolder = true;
                 ShareDirectoryClient targetDir = baseDirClient.GetSubdirectoryClient(this.Path);
                 ShareDirectoryProperties dirProperties = null;

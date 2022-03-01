@@ -26,15 +26,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
     using global::Azure.Storage.Files.Shares;
     using Microsoft.WindowsAzure.Commands.Common;
     using global::Azure.Core;
+    using global::Azure;
+    using global::Azure.Storage.Files.Shares.Models;
+    using System.Linq;
 
     public abstract class AzureStorageFileCmdletBase : StorageCloudCmdletBase<IStorageFileManagement>
     {
-        [Parameter(
-            ValueFromPipeline = true,
-            ValueFromPipelineByPropertyName = true,
-            ParameterSetName = Constants.ShareNameParameterSetName,
-            HelpMessage = "Azure Storage Context Object")]
-        public override IStorageContext Context { get; set; }
+        //[Parameter(
+        //    ValueFromPipeline = true,
+        //    ValueFromPipelineByPropertyName = true,
+        //    ParameterSetName = Constants.ShareNameParameterSetName,
+        //    HelpMessage = "Azure Storage Context Object")]
+        //public override IStorageContext Context { get; set; }
 
         protected FileRequestOptions RequestOptions
         {
@@ -48,9 +51,20 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
         {
             if (this.Channel == null || !this.ShareChannel)
             {
-                this.Channel = new StorageFileManagement(
-                        this.GetCmdletStorageContext()
-                );
+                try
+                {
+                    this.Channel = new StorageFileManagement(
+                            this.GetCmdletStorageContext(outputErrorMessage: false)
+                    );
+                }
+                catch (InvalidOperationException)
+                {
+                    this.Channel = new StorageFileManagement(
+                        AzureStorageContext.EmptyContextInstance
+                    );
+                }
+
+                // [Wei] this is caused before, only "ShareName" parameter set has parameter Context.
                 //this.Channel = new StorageFileManagement(
                 //    this.ParameterSetName == Constants.ShareNameParameterSetName ||
                 //    this.ParameterSetName.StartsWith("ShareName") ||
@@ -81,6 +95,23 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
                 {
                     return !(listedFiles.MoveNext() && listedFiles.Current != null);
                 }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        protected bool ShareIsEmpty(ShareClient share)
+        {
+            try
+            {
+                Pageable<ShareFileItem> listedFiles = share.GetRootDirectoryClient().GetFilesAndDirectories("", this.CmdletCancellationToken);
+                if (listedFiles.AsPages(null, 1).First().Values.Count == 0)
+                {
+                    return true;
+                }
+                return false;
             }
             catch (Exception)
             {
@@ -120,6 +151,18 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
         {
             AzureStorageFileShare azureshare = new AzureStorageFileShare(share, channel.StorageContext);
             OutputStream.WriteObject(taskId, azureshare);
+        }
+
+        internal AzureStorageFileShare GetOutputShareObject(IStorageFileManagement channel, CloudFileShare share, ShareClient shareClient)
+        {
+            if (channel.StorageContext != null && channel.StorageContext.StorageAccount != null)
+            {
+                return new AzureStorageFileShare(shareClient, channel.StorageContext, clientOptions: ClientOptions);
+            }
+            else
+            {
+                return new AzureStorageFileShare(share, channel.StorageContext);
+            }
         }
 
         /// <summary>
