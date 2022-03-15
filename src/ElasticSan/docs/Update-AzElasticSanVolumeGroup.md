@@ -15,7 +15,7 @@ Update an VolumeGroup.
 ### UpdateExpanded (Default)
 ```
 Update-AzElasticSanVolumeGroup -ElasticSanName <String> -Name <String> -ResourceGroupName <String>
- [-SubscriptionId <String>] [-Encryption <EncryptionType>] [-NetworkAclsDefaultAction <NetworkRuleAction>]
+ [-SubscriptionId <String>] [-Encryption <EncryptionType>]
  [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>] [-ProtocolType <StorageTargetType>]
  [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
@@ -36,9 +36,8 @@ Update-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> -Parameter <IV
 ### UpdateViaIdentityExpanded
 ```
 Update-AzElasticSanVolumeGroup -InputObject <IElasticSanIdentity> [-Encryption <EncryptionType>]
- [-NetworkAclsDefaultAction <NetworkRuleAction>] [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]
- [-ProtocolType <StorageTargetType>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait]
- [-Confirm] [-WhatIf] [<CommonParameters>]
+ [-NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>] [-ProtocolType <StorageTargetType>]
+ [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -151,22 +150,6 @@ Parameter Sets: Update, UpdateExpanded
 Aliases: VolumeGroupName
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -NetworkAclsDefaultAction
-The default action when no rule from ipRules and from virtualNetworkRules match.
-This is only used after the bypass property has been evaluated.
-
-```yaml
-Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Support.NetworkRuleAction
-Parameter Sets: UpdateExpanded, UpdateViaIdentityExpanded
-Aliases:
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
@@ -344,17 +327,14 @@ INPUTOBJECT <IElasticSanIdentity>: Identity Parameter
   - `[VolumeName <String>]`: The name of the Volume.
 
 NETWORKACLSVIRTUALNETWORKRULE <IVirtualNetworkRule[]>: The list of virtual network rules.
-  - `Id <String>`: Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-  - `[IgnoreMissingVnetServiceEndpoint <Boolean?>]`: Ignore missing vnet service endpoint or not.
-  - `[Subnet <String[]>]`: The list of subnets.
+  - `VirtualNetworkResourceId <String>`: Resource ID of a subnet, for example: /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+  - `[Action <Action?>]`: The action of virtual network rule.
 
 PARAMETER <IVolumeGroupUpdate>: Volume Group request.
   - `[Encryption <EncryptionType?>]`: Type of encryption
-  - `[NetworkAclsDefaultAction <NetworkRuleAction?>]`: The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after the bypass property has been evaluated.
   - `[NetworkAclsVirtualNetworkRule <IVirtualNetworkRule[]>]`: The list of virtual network rules.
-    - `Id <String>`: Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
-    - `[IgnoreMissingVnetServiceEndpoint <Boolean?>]`: Ignore missing vnet service endpoint or not.
-    - `[Subnet <String[]>]`: The list of subnets.
+    - `VirtualNetworkResourceId <String>`: Resource ID of a subnet, for example: /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+    - `[Action <Action?>]`: The action of virtual network rule.
   - `[ProtocolType <StorageTargetType?>]`: Type of storage target
   - `[Tag <IVolumeGroupUpdateTags>]`: Resource tags.
     - `[(Any) <String>]`: This indicates any property can be added to this object.
