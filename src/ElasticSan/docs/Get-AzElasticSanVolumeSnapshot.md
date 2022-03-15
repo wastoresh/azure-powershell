@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-AzElasticSanVolumeSnapshot
 
 ## SYNOPSIS
-Create a Volume Snapshot.
+Get a Volume Snapshot.
 
 ## SYNTAX
 
@@ -31,7 +31,7 @@ Get-AzElasticSanVolumeSnapshot -InputObject <IElasticSanIdentity> [-DefaultProfi
 ```
 
 ## DESCRIPTION
-Create a Volume Snapshot.
+Get a Volume Snapshot.
 
 ## EXAMPLES
 

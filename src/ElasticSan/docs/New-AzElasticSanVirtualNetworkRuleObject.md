@@ -13,8 +13,8 @@ Create an in-memory object for VirtualNetworkRule.
 ## SYNTAX
 
 ```
-New-AzElasticSanVirtualNetworkRuleObject -Id <String> [-IgnoreMissingVnetServiceEndpoint <Boolean>]
- [-Subnet <String[]>] [<CommonParameters>]
+New-AzElasticSanVirtualNetworkRuleObject -VirtualNetworkResourceId <String> [-Action <Action>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -42,8 +42,23 @@ PS C:\> {{ Add code here }}
 
 ## PARAMETERS
 
-### -Id
-Full resource id of a vnet subnet, such as '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.
+### -Action
+The action of virtual network rule.
+
+```yaml
+Type: Microsoft.Azure.PowerShell.Cmdlets.ElasticSan.Support.Action
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -VirtualNetworkResourceId
+Resource ID of a subnet, for example: /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
 
 ```yaml
 Type: System.String
@@ -51,36 +66,6 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -IgnoreMissingVnetServiceEndpoint
-Ignore missing vnet service endpoint or not.
-
-```yaml
-Type: System.Boolean
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Subnet
-The list of subnets.
-
-```yaml
-Type: System.String[]
-Parameter Sets: (All)
-Aliases:
-
-Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False

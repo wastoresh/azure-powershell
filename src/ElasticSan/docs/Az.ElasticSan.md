@@ -27,7 +27,7 @@ Get an Volume.
 Get an VolumeGroups.
 
 ### [Get-AzElasticSanVolumeSnapshot](Get-AzElasticSanVolumeSnapshot.md)
-Create a Volume Snapshot.
+Get a Volume Snapshot.
 
 ### [New-AzElasticSan](New-AzElasticSan.md)
 Create ElasticSan.
