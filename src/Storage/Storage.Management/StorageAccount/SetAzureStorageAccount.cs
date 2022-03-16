@@ -93,6 +93,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
             HelpMessage = "Storage Account Access Tier.")]
         [ValidateSet(AccountAccessTier.Hot,
             AccountAccessTier.Cool,
+            AccountAccessTier.Premium,
             IgnoreCase = true)]
         public string AccessTier { get; set; }
 
