@@ -70,6 +70,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.PublicNetworkAccess = storageAccount.PublicNetworkAccess;
             this.ImmutableStorageWithVersioning = storageAccount.ImmutableStorageWithVersioning is null ? null : new PSImmutableStorageAccount(storageAccount.ImmutableStorageWithVersioning);
             this.StorageAccountSkuConversionStatus = storageAccount.StorageAccountSkuConversionStatus is null ? null : new PSStorageAccountSkuConversionStatus(storageAccount.StorageAccountSkuConversionStatus);
+            this.DnsEndpointType = storageAccount.DnsEndpointType;
         }
         public bool? AllowCrossTenantReplication { get; set; }
 
@@ -158,6 +159,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
 
         public PSImmutableStorageAccount ImmutableStorageWithVersioning { get; set; }
         public PSStorageAccountSkuConversionStatus StorageAccountSkuConversionStatus { get; set; }
+        public string DnsEndpointType { get; set; }
 
 
         public static PSStorageAccount Create(StorageModels.StorageAccount storageAccount, IStorageManagementClient client)

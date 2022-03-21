@@ -216,9 +216,11 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public PSBlobInventoryPolicyFilter(BlobInventoryPolicyFilter filters)
         {
             this.PrefixMatch = PSManagementPolicyRuleFilter.StringListToArray(filters.PrefixMatch);
+            this.ExcludePrefix = PSManagementPolicyRuleFilter.StringListToArray(filters.ExcludePrefix);
             this.BlobTypes = PSManagementPolicyRuleFilter.StringListToArray(filters.BlobTypes);
             this.IncludeBlobVersions = filters.IncludeBlobVersions;
             this.IncludeSnapshots = filters.IncludeSnapshots;
+            this.IncludeDeleted = filters.IncludeDeleted;
         }
 
         public BlobInventoryPolicyFilter ParseBlobInventoryPolicyFilter()
@@ -226,16 +228,20 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             return new BlobInventoryPolicyFilter()
             {
                 PrefixMatch = PSManagementPolicyRuleFilter.StringArrayToList(this.PrefixMatch),
+                ExcludePrefix = PSManagementPolicyRuleFilter.StringArrayToList(this.ExcludePrefix),
                 BlobTypes = PSManagementPolicyRuleFilter.StringArrayToList(this.BlobTypes),
                 IncludeSnapshots = this.IncludeSnapshots,
+                IncludeDeleted = this.IncludeDeleted,
                 IncludeBlobVersions = this.IncludeBlobVersions
             };
         }
 
         public string[] PrefixMatch { get; set; }
+        public string[] ExcludePrefix { get; set; }        
         public string[] BlobTypes { get; set; }
         public bool? IncludeBlobVersions { get; set; }
         public bool? IncludeSnapshots { get; set; }
+        public bool? IncludeDeleted { get; set; }
     }
 
     /// <summary>

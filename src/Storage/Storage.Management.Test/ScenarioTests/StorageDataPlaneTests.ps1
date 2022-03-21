@@ -332,7 +332,7 @@ function Test-Blob
         Update-AzStorageBlobServiceProperty -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -IsVersioningEnabled $true
         $containerNamevlw = "vlwcontainer"
         # create container with ImmutableStorageWithVersioning
-        New-AzRmStorageContainer -ResourceGroupName $ResourceGroupName -Name $StorageAccountName -Name $containerNamevlw -EnableImmutableStorageWithVersioning
+        New-AzRmStorageContainer -ResourceGroupName $ResourceGroupName -StorageAccountName $StorageAccountName -Name $containerNamevlw -EnableImmutableStorageWithVersioning
         # upload a blob
         Set-AzStorageBlobContent -File $localSrcFile -Container $containerNamevlw -Blob $objectName -Force -Context $storageContext
         # manage ImmutabilityPolicy
