@@ -1,10 +1,10 @@
 <!-- region Generated -->
-# Az.StorageMover
-This directory contains the PowerShell module for the StorageMover service.
+# Az.DataMover
+This directory contains the PowerShell module for the DataMover service.
 
 ---
 ## Status
-[![Az.StorageMover](https://img.shields.io/powershellgallery/v/Az.StorageMover.svg?style=flat-square&label=Az.StorageMover "Az.StorageMover")](https://www.powershellgallery.com/packages/Az.StorageMover/)
+[![Az.DataMover](https://img.shields.io/powershellgallery/v/Az.DataMover.svg?style=flat-square&label=Az.DataMover "Az.DataMover")](https://www.powershellgallery.com/packages/Az.DataMover/)
 
 ## Info
 - Modifiable: yes
@@ -23,7 +23,7 @@ This module was primarily generated via [AutoRest](https://github.com/Azure/auto
 AutoRest does not generate authentication code for the module. Authentication is handled via Az.Accounts by altering the HTTP payload before it is sent.
 
 ## Development
-For information on how to develop for `Az.StorageMover`, see [how-to.md](how-to.md).
+For information on how to develop for `Az.DataMover`, see [how-to.md](how-to.md).
 <!-- endregion -->
 
 ## Generation Requirements
@@ -51,7 +51,7 @@ require:
   - $(this-folder)/../../readme.azure.noprofile.md
 input-file:
 # You need to specify your swagger files here.
-# - https://github.com/golddove/azure-rest-api-specs-pr/blob/dev-DataMover-Microsoft.Storage-2021-10-01-privatepreview/specification/DataeMover/resource-manager/Microsoft.Storage/preview/2021-08-01/DataMover.json
+# - https://github.com/golddove/azure-rest-api-specs-pr/blob/dev-datamover-Microsoft.Storage-2021-10-01-privatepreview/specification/datamover/resource-manager/Microsoft.Storage/preview/2021-08-01/datamover.json
  - D:\code\swagger\specification\storagemover\resource-manager\Microsoft.StorageMover\preview\2022-07-01-preview\storagemover.json
 # If the swagger has not been put in the repo, you may uncomment the following line and refer to it locally
 # - (this-folder)/relative-path-to-your-swagger 
@@ -59,7 +59,7 @@ input-file:
 # For new RP, the version is 0.1.0
 module-version: 0.1.0
 # Normally, title is the service name
-title: StorageMover
+title: DataMover
 subject-prefix: $(service-name)
 
 # If there are post APIs for some kinds of actions in the RP, you may need to 
@@ -81,14 +81,14 @@ directive:
   - model-cmdlet:
       - NfsMountEndpointUpdateProperties
       - AzureStorageBlobContainerEndpointUpdateProperties
-  # Rename Start-AzStorageMoverJobDefinitionJob -> Start-AzStorageMoverJob 
+  # Rename Start-AzDataMoverJobDefinitionJob -> Start-AzDataMoverJob 
   - where:
       verb: Start
       subject: JobDefinitionJob
     set:
       verb: Start
       subject: Job
-  # Rename Stop-AzStorageMoverJobDefinitionJob -> Stop-AzStorageMoverJob 
+  # Rename Stop-AzDataMoverJobDefinitionJob -> Stop-AzDataMoverJob 
   - where:
       verb: Stop
       subject: JobDefinitionJob
@@ -115,7 +115,7 @@ directive:
 #          - ArcVMUuid
 #          - Description
   - where:
-      model-name: StorageMover
+      model-name: DataMover
     set:
       suppress-format: true
   - where:
