@@ -51,8 +51,8 @@ require:
   - $(this-folder)/../readme.azure.noprofile.md
 input-file:
 # You need to specify your swagger files here.
-# - https://github.com/Azure/azure-rest-api-specs-pr/blob/elastic-san-preview/specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2021-11-20-preview/elasticsan.json
- - D:\code\swagger\specification\elasticsan\resource-manager\Microsoft.ElasticSan\preview\2021-11-20-preview\elasticsan.json
+ - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2021-11-20-preview/elasticsan.json
+# - D:\code\swagger\specification\elasticsan\resource-manager\Microsoft.ElasticSan\preview\2021-11-20-preview\elasticsan.json
 # If the swagger has not been put in the repo, you may uncomment the following line and refer to it locally
 # - (this-folder)/relative-path-to-your-swagger 
 
