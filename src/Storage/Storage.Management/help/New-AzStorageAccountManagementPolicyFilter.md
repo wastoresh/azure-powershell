@@ -14,7 +14,7 @@ Creates a ManagementPolicy rule filter object, which can be used in New-AzStorag
 
 ```
 New-AzStorageAccountManagementPolicyFilter [-PrefixMatch <String[]>] [-BlobType <String[]>]
- [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
+ [-BlobIndexMatch <PSTagFilter[]>] [-DefaultProfile <IAzureContextContainer>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -39,6 +39,21 @@ PS C:\>$policy = Set-AzStorageAccountManagementPolicy -ResourceGroupName "myreso
 This command create a ManagementPolicy rule filter object. Then add it to a management policy rule and set to a Storage account.
 
 ## PARAMETERS
+
+### -BlobIndexMatch
+An array of blob index tag based filters, there can be at most 10 tag filters.
+
+```yaml
+Type: Microsoft.Azure.Commands.Management.Storage.Models.PSTagFilter[]
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -BlobType
 An array of strings for blobtypes to be match. Currently blockBlob supports all tiering and delete actions. Only delete actions are supported for appendBlob.
@@ -88,7 +103,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
