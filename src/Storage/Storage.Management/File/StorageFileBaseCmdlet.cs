@@ -20,7 +20,6 @@ using Microsoft.WindowsAzure.Commands.Utilities.Common;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using StorageModels = Microsoft.Azure.Management.Storage.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -85,6 +84,33 @@ namespace Microsoft.Azure.Commands.Management.Storage
             internal const string Snapshots = "snapshots";
         }
 
+        protected struct RootSquashType
+        {
+            internal const string NoRootSquash = "NoRootSquash";
+            internal const string RootSquash = "RootSquash";
+            internal const string AllSquash = "AllSquash";
+        }
+
+        protected struct ShareAccessTier
+        {
+            internal const string TransactionOptimized = "TransactionOptimized";
+            internal const string Hot = "Hot";
+            internal const string Cool = "Cool";
+            internal const string Premium = "Premium";
+        }
+
+        protected struct EncryptionScopeState
+        {
+            internal const string Enabled = "Enabled";
+            internal const string Disabled = "Disabled";
+        }
+
+        protected struct EnabledProtocols
+        {
+            internal const string SMB = "SMB";
+            internal const string NFS = "NFS";
+        }
+
         public string ConnectStringArray(string[] stringArray, string seperator = ";")
         {
             if (stringArray == null)
@@ -121,6 +147,19 @@ namespace Microsoft.Azure.Commands.Management.Storage
             }
 
             set { storageClientWrapper = new StorageManagementClientWrapper(value); }
+        }
+
+        private Track2StorageManagementClient _track2StorageManagementClient;
+        public Track2StorageManagementClient StorageClientTrack2
+        {
+            get
+            {
+                return _track2StorageManagementClient ?? (_track2StorageManagementClient = new Track2StorageManagementClient(
+                    Microsoft.Azure.Commands.Common.Authentication.AzureSession.Instance.ClientFactory,
+                    DefaultContext));
+            }
+
+            set { _track2StorageManagementClient = value; }
         }
 
         public string SubscriptionId

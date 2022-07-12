@@ -14,7 +14,6 @@
 
 using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
-using Microsoft.Azure.Management.Storage;
 using System.Management.Automation;
 
 namespace Microsoft.Azure.Commands.Management.Storage
@@ -105,11 +104,8 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         // For AccountNameParameterSet, the ResourceGroupName and StorageAccountName can get from input directly
                         break;
                 }
-
-                this.StorageClient.ObjectReplicationPolicies.Delete(
-                     this.ResourceGroupName,
-                     this.StorageAccountName,
-                     PolicyId);
+                this.StorageClientTrack2.GetObjectReplicationPolicyResource(this.ResourceGroupName, this.StorageAccountName, this.PolicyId)
+                    .Delete(global::Azure.WaitUntil.Completed);
 
                 if (PassThru.IsPresent)
                 {

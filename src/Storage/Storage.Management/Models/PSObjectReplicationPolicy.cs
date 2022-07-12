@@ -12,10 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
-using Microsoft.Azure.Management.Storage.Models;
 using Microsoft.WindowsAzure.Commands.Common.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Track2 = Azure.ResourceManager.Storage;
+using Track2Models = Azure.ResourceManager.Storage.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage.Models
 {
@@ -35,7 +37,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         [Ps1Xml(Label = "PolicyId", Target = ViewControl.Table, Position = 2)]
         public string PolicyId { get; set; }
         [Ps1Xml(Label = "EnabledTime", Target = ViewControl.Table, Position = 3)]
-        public DateTime? EnabledTime { get; }
+        public DateTimeOffset? EnabledTime { get; }
         [Ps1Xml(Label = "SourceAccount", Target = ViewControl.Table, Position = 4)]
         public string SourceAccount { get; set; }
         [Ps1Xml(Label = "DestinationAccount", Target = ViewControl.Table, Position = 5)]
@@ -46,43 +48,31 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public PSObjectReplicationPolicy()
         { }
 
-        public PSObjectReplicationPolicy(ObjectReplicationPolicy policy, string ResourceGroupName, string StorageAccountName)
+        public PSObjectReplicationPolicy(Track2.ObjectReplicationPolicyResource policy, string ResourceGroupName, string StorageAccountName)
         {
             this.ResourceGroupName = ResourceGroupName;
             this.StorageAccountName = StorageAccountName;
             this.ResourceId = policy.Id;
-            this.Name = policy.Name;
-            this.Type = policy.Type;
-            this.PolicyId = policy.PolicyId;
-            this.EnabledTime = policy.EnabledTime;
-            this.SourceAccount = policy.SourceAccount;
-            this.DestinationAccount = policy.DestinationAccount;
-            this.Rules = PSObjectReplicationPolicyRule.GetPSObjectReplicationPolicyRules(policy.Rules);
+            this.Name = policy.Data.Name;
+            this.Type = policy.Data.ResourceType;
+            this.PolicyId = policy.Data.PolicyId;
+            this.EnabledTime = policy.Data.EnabledOn;
+            this.SourceAccount = policy.Data.SourceAccount;
+            this.DestinationAccount = policy.Data.DestinationAccount;
+            this.Rules = PSObjectReplicationPolicyRule.GetPSObjectReplicationPolicyRules(policy.Data.Rules);
         }
 
-        public ObjectReplicationPolicy ParseObjectReplicationPolicy()
+        public Track2.ObjectReplicationPolicyData ParseObjectReplicationPolicy()
         {
-            ObjectReplicationPolicy policy = new ObjectReplicationPolicy()
-            {
-                SourceAccount = this.SourceAccount,
-                DestinationAccount = this.DestinationAccount,
-                Rules = PSObjectReplicationPolicyRule.ParseObjectReplicationPolicyRules(this.Rules)
-            };
-            return policy;
-        }
+            Track2.ObjectReplicationPolicyData data = new Track2.ObjectReplicationPolicyData();
+            data.SourceAccount = this.SourceAccount;
+            data.DestinationAccount = this.DestinationAccount;
 
-        public static PSObjectReplicationPolicy[] GetPSObjectReplicationPolicies(IEnumerable<ObjectReplicationPolicy> policies, string ResourceGroupName, string StorageAccountName)
-        {
-            if (policies == null)
+            foreach(PSObjectReplicationPolicyRule rule in this.Rules)
             {
-                return null;
+                data.Rules.Add(rule.ParseObjectReplicationPolicyRule());
             }
-            List<PSObjectReplicationPolicy> pspolicies = new List<PSObjectReplicationPolicy>();
-            foreach (ObjectReplicationPolicy policy in policies)
-            {
-                pspolicies.Add(new PSObjectReplicationPolicy(policy, ResourceGroupName, StorageAccountName));
-            }
-            return pspolicies.ToArray();
+            return data;
         }
     }
 
@@ -104,7 +94,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         {
         }
 
-        public PSObjectReplicationPolicyRule(ObjectReplicationPolicyRule rule)
+        public PSObjectReplicationPolicyRule(Track2Models.ObjectReplicationPolicyRule rule)
         {
             this.RuleId = rule.RuleId;
             this.SourceContainer = rule.SourceContainer;
@@ -112,42 +102,26 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.Filters = rule.Filters is null ? null : new PSObjectReplicationPolicyFilter(rule.Filters);
         }
 
-        public ObjectReplicationPolicyRule ParseObjectReplicationPolicyRule()
+        public Track2Models.ObjectReplicationPolicyRule ParseObjectReplicationPolicyRule()
         {
-            ObjectReplicationPolicyRule rule = new ObjectReplicationPolicyRule();
+            Track2Models.ObjectReplicationPolicyRule rule = new Track2Models.ObjectReplicationPolicyRule(this.SourceContainer, this.DestinationContainer);
             rule.RuleId = this.RuleId;
-            rule.SourceContainer = this.SourceContainer;
-            rule.DestinationContainer = this.DestinationContainer;
-            rule.Filters = this.Filters is null ? null : this.Filters.ParseObjectReplicationPolicyFilter();
+            rule.Filters = this.Filters?.ParseObjectReplicationPolicyFilter();
             return rule;
         }
 
-        public static PSObjectReplicationPolicyRule[] GetPSObjectReplicationPolicyRules(IList<ObjectReplicationPolicyRule> rules)
+        public static PSObjectReplicationPolicyRule[] GetPSObjectReplicationPolicyRules(IList<Track2Models.ObjectReplicationPolicyRule> rules)
         {
             if (rules == null)
             {
                 return null;
             }
             List<PSObjectReplicationPolicyRule> psrules = new List<PSObjectReplicationPolicyRule>();
-            foreach (ObjectReplicationPolicyRule rule in rules)
+            foreach (Track2Models.ObjectReplicationPolicyRule rule in rules)
             {
                 psrules.Add(new PSObjectReplicationPolicyRule(rule));
             }
             return psrules.ToArray();
-        }
-
-        public static List<ObjectReplicationPolicyRule> ParseObjectReplicationPolicyRules(PSObjectReplicationPolicyRule[] psrules)
-        {
-            if (psrules == null)
-            {
-                return null;
-            }
-            List<ObjectReplicationPolicyRule> rules = new List<ObjectReplicationPolicyRule>();
-            foreach (PSObjectReplicationPolicyRule psrule in psrules)
-            {
-                rules.Add(psrule.ParseObjectReplicationPolicyRule());
-            }
-            return rules;
         }
     }
 
@@ -157,39 +131,44 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
     public class PSObjectReplicationPolicyFilter
     {
         public string[] PrefixMatch { get; set; }
-        public DateTime? MinCreationTime;
+        public DateTimeOffset? MinCreationTime;
 
         public PSObjectReplicationPolicyFilter()
         {
         }
 
-        public PSObjectReplicationPolicyFilter(ObjectReplicationPolicyFilter filter)
+        public PSObjectReplicationPolicyFilter(Track2Models.ObjectReplicationPolicyFilter filter)
         {
             if (filter != null)
             {
                 this.PrefixMatch = filter.PrefixMatch is null ? null : new List<string>(filter.PrefixMatch).ToArray();
-                if (string.IsNullOrEmpty(filter.MinCreationTime))
-                {
-                    this.MinCreationTime = null;
-                }
-                else
+                if (filter.MinCreationTime != null)
                 {
                     if (filter.MinCreationTime.ToUpper()[filter.MinCreationTime.Length - 1] != 'Z')
                     {
-                        filter.MinCreationTime = filter.MinCreationTime + "Z";
+                        filter.MinCreationTime += "Z";
                     }
                     this.MinCreationTime = Convert.ToDateTime(filter.MinCreationTime);
                 }
             }
         }
-        public ObjectReplicationPolicyFilter ParseObjectReplicationPolicyFilter()
+
+        public Track2Models.ObjectReplicationPolicyFilter ParseObjectReplicationPolicyFilter()
         {
-            return new ObjectReplicationPolicyFilter()
+            Track2Models.ObjectReplicationPolicyFilter filter = new Track2Models.ObjectReplicationPolicyFilter();
+            
+            if (this.PrefixMatch != null)
             {
-                PrefixMatch = this.PrefixMatch is null ? null : new List<string>(this.PrefixMatch),
-                //must be in format: 2020-02-19T16:05:00Z
-                MinCreationTime = this.MinCreationTime is null ? null : this.MinCreationTime.Value.ToUniversalTime().ToString("s") + "Z"
-            };
+                foreach (string itm in this.PrefixMatch)
+                {
+                    filter.PrefixMatch.Add(itm);
+                }
+            }
+            if (this.MinCreationTime != null)
+            {
+                filter.MinCreationTime = this.MinCreationTime.Value.ToUniversalTime().ToString("s") + "Z";
+            }
+            return filter;
         }
     }
 }

@@ -40,18 +40,18 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Parameter(Mandatory = false, HelpMessage = "Blobs created after the time will be replicated to the destination..")]
         [ValidateNotNull]
-        public DateTime MinCreationTime
+        public DateTimeOffset MinCreationTime
         {
             get
             {
-                return minCreationTime is null ? DateTime.MinValue : minCreationTime.Value;
+                return minCreationTime is null ? DateTimeOffset.MinValue : minCreationTime.Value;
             }
             set
             {
                 minCreationTime = value;
             }
         }
-        private DateTime? minCreationTime;
+        private DateTimeOffset? minCreationTime;
 
         [Parameter(Mandatory = false,
             HelpMessage = "Object Replication Rule Id.")]

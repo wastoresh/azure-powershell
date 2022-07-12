@@ -13,8 +13,6 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Management.Storage.Models;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,6 +20,8 @@ using System.Management.Automation;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
 using Microsoft.Rest.Azure;
 using Microsoft.WindowsAzure.Commands.Utilities.Common;
+using Azure;
+using Track2 = Azure.ResourceManager.Storage;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -85,35 +85,26 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
             if (this.EncryptionScopeName == null)
             {
-                IPage<EncryptionScope> scopes = this.StorageClient.EncryptionScopes.List(
-                        this.ResourceGroupName,
-                        this.StorageAccountName);
-                WriteEncryptionScopeList(scopes);
 
-                while (scopes.NextPageLink != null)
+                Pageable<Track2.EncryptionScopeResource> scopes = this.StorageClientTrack2
+                    .GetStorageAccount(this.ResourceGroupName, this.StorageAccountName)
+                    .GetEncryptionScopes()
+                    .GetAll();
+
+                List<PSEncryptionScope> output = new List<PSEncryptionScope>();
+                foreach (Track2.EncryptionScopeResource scope in scopes)
                 {
-                    scopes = this.StorageClient.EncryptionScopes.ListNext(scopes.NextPageLink);
-                    WriteEncryptionScopeList(scopes);
+                    output.Add(new PSEncryptionScope(scope));
                 }
+                WriteObject(output, true);
             }
             else
             {
-                var scope = this.StorageClient.EncryptionScopes.Get(
-                            this.ResourceGroupName,
-                            this.StorageAccountName,
-                            this.EncryptionScopeName);
-
+                Track2.EncryptionScopeResource scope = this.StorageClientTrack2
+                    .GetEncryptionScopeResource(this.ResourceGroupName, this.StorageAccountName, this.EncryptionScopeName)
+                    .Get();
+       
                 WriteObject(new PSEncryptionScope(scope));
-            }
-        }
-
-        protected void WriteEncryptionScopeList(IEnumerable<EncryptionScope> scopes)
-        {
-            if (scopes != null)
-            {
-                List<PSEncryptionScope> output = new List<PSEncryptionScope>();
-                scopes.ForEach(s => output.Add(new PSEncryptionScope(s)));
-                WriteObject(output, true);
             }
         }
     }

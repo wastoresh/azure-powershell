@@ -12,12 +12,12 @@
 // limitations under the License.
 // ----------------------------------------------------------------------------------
 
+using Azure;
 using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
 using System.Collections.Generic;
 using System.Management.Automation;
+using Track2 = Azure.ResourceManager.Storage;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -82,19 +82,26 @@ namespace Microsoft.Azure.Commands.Management.Storage
             }
             if (!string.IsNullOrEmpty(PolicyId))
             {
-                ObjectReplicationPolicy policy = this.StorageClient.ObjectReplicationPolicies.Get(
-                     this.ResourceGroupName,
-                     this.StorageAccountName,
-                     PolicyId);
+                Track2.ObjectReplicationPolicyResource policy = this.StorageClientTrack2
+                    .GetObjectReplicationPolicyResource(this.ResourceGroupName, this.StorageAccountName, this.PolicyId)
+                    .Get();
 
                 WriteObject(new PSObjectReplicationPolicy(policy, this.ResourceGroupName, this.StorageAccountName));
             }
             else
             {
-                IEnumerable<ObjectReplicationPolicy> policies = this.StorageClient.ObjectReplicationPolicies.List(
-                     this.ResourceGroupName,
-                     this.StorageAccountName);
-                WriteObject(PSObjectReplicationPolicy.GetPSObjectReplicationPolicies(policies, this.ResourceGroupName, this.StorageAccountName), true);
+                Pageable<Track2.ObjectReplicationPolicyResource> policies = this.StorageClientTrack2
+                    .GetStorageAccount(this.ResourceGroupName, this.StorageAccountName)
+                    .GetObjectReplicationPolicies()
+                    .GetAll();
+
+                List<PSObjectReplicationPolicy> pspolicies = new List<PSObjectReplicationPolicy>();
+                
+                foreach (Track2.ObjectReplicationPolicyResource policy in policies)
+                {
+                    pspolicies.Add(new PSObjectReplicationPolicy(policy, this.ResourceGroupName, this.StorageAccountName));
+                }
+                WriteObject(pspolicies.ToArray(), true);
             }
         }
     }

@@ -13,34 +13,33 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Common.Authentication.Abstractions;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
 using Microsoft.WindowsAzure.Commands.Common.Attributes;
 using Microsoft.WindowsAzure.Commands.Common.Storage;
 using Microsoft.WindowsAzure.Commands.Storage.Adapters;
 using Microsoft.Azure.Storage;
 using System;
 using System.Collections.Generic;
-using StorageModels = Microsoft.Azure.Management.Storage.Models;
+using Track2 = Azure.ResourceManager.Storage;
+using Track2Models = Azure.ResourceManager.Storage.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage.Models
 {
     // wrapper of EncryptionScope
     public class PSEncryptionScope
     {
-        public PSEncryptionScope(StorageModels.EncryptionScope scope)
+        public PSEncryptionScope(Track2.EncryptionScopeResource scope)
         {
             this.ResourceGroupName = ParseResourceGroupFromId(scope.Id);
             this.StorageAccountName = ParseStorageAccountNameFromId(scope.Id);
             this.Id = scope.Id;
-            this.Name = scope.Name;
-            this.Type = scope.Type;
-            this.LastModifiedTime = scope.LastModifiedTime;
-            this.CreationTime = scope.CreationTime;
-            this.Source = scope.Source;
-            this.State = scope.State;
-            this.KeyVaultProperties = scope.KeyVaultProperties is null ? null : new PSEncryptionScopeKeyVaultProperties(scope.KeyVaultProperties);
-            this.RequireInfrastructureEncryption = scope.RequireInfrastructureEncryption;
+            this.Name = scope.Data.Name;
+            this.Type = scope.Data.ResourceType;
+            this.LastModifiedTime = scope.Data.LastModifiedOn;
+            this.CreationTime = scope.Data.CreationOn;
+            this.Source = scope.Data.Source.ToString();
+            this.State = scope.Data.State.ToString();
+            this.KeyVaultProperties = scope.Data.KeyVaultProperties is null ? null : new PSEncryptionScopeKeyVaultProperties(scope.Data.KeyVaultProperties);
+            this.RequireInfrastructureEncryption = scope.Data.RequireInfrastructureEncryption;
         }
 
         [Ps1Xml(Label = "ResourceGroupName", Target = ViewControl.List, Position = 0)]
@@ -65,9 +64,9 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public bool? RequireInfrastructureEncryption { get; set; }
 
         [Ps1Xml(Label = "LastModifiedTime", Target = ViewControl.List, Position = 4)]
-        public DateTime? LastModifiedTime { get; set; }
+        public DateTimeOffset? LastModifiedTime { get; set; }
 
-        public DateTime? CreationTime { get; set; }
+        public DateTimeOffset? CreationTime { get; set; }
 
         public static string ParseResourceGroupFromId(string idFromServer)
         {
@@ -98,11 +97,14 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
     //wrapper of EncryptionScopeKeyVaultProperties
     public class PSEncryptionScopeKeyVaultProperties
     {
-        public PSEncryptionScopeKeyVaultProperties(StorageModels.EncryptionScopeKeyVaultProperties keyVaultProperties)
+        public PSEncryptionScopeKeyVaultProperties(Track2Models.EncryptionScopeKeyVaultProperties keyVaultProperties)
         {
             if (keyVaultProperties != null)
             {
-                this.keyUri = keyVaultProperties.KeyUri;
+                if (keyVaultProperties.KeyUri != null)
+                {
+                    this.keyUri = keyVaultProperties.KeyUri.OriginalString;
+                }
             }
         }
 

@@ -14,9 +14,8 @@
 
 using Microsoft.Azure.Commands.Management.Storage.Models;
 using Microsoft.Azure.Commands.ResourceManager.Common.ArgumentCompleters;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
 using System.Management.Automation;
+using Track2 = Azure.ResourceManager.Storage;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -142,7 +141,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
             if (ShouldProcess(this.StorageAccountName, "Set Storage Account Object Replication Policy"))
             {
-                ObjectReplicationPolicy policyToSet = null;
+                Track2.ObjectReplicationPolicyData data = new Track2.ObjectReplicationPolicyData();
                 switch (ParameterSetName)
                 {
                     case AccountObjectParameterSet:
@@ -151,7 +150,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         break;
                     case PolicyObjectParameterSet:
                         this.PolicyId = InputObject.PolicyId;
-                        policyToSet = InputObject.ParseObjectReplicationPolicy();
+                        data = InputObject.ParseObjectReplicationPolicy();
                         break;
                     default:
                         // For AccountNameParameterSet, the ResourceGroupName and StorageAccountName can get from input directly
@@ -167,7 +166,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         // If source account is resource ID, destonation account also need be resource ID
                         if (this.SourceAccount.Contains("/"))
                         {
-                            var account = this.StorageClient.StorageAccounts.GetProperties(this.ResourceGroupName, this.StorageAccountName);
+                            Track2.StorageAccountResource account = this.StorageClientTrack2.GetStorageAccount(this.ResourceGroupName, this.StorageAccountName).Get();
                             this.DestinationAccount = account.Id;
                         }
                         else // if source account is account name, destination account should also be account name
@@ -176,19 +175,28 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         }
                     }
 
-                    policyToSet = new ObjectReplicationPolicy()
+                    data.SourceAccount = this.SourceAccount;
+                    data.DestinationAccount = this.DestinationAccount;
+                    if (this.Rule != null)
                     {
-                        SourceAccount = this.SourceAccount,
-                        DestinationAccount = this.DestinationAccount,
-                        Rules = PSObjectReplicationPolicyRule.ParseObjectReplicationPolicyRules(this.Rule)
-                    };
+                        if (this.Rule.Length == 0)
+                        {
+                            data.Rules.Clear();
+                        } 
+                        else
+                        {
+                            foreach (PSObjectReplicationPolicyRule policyRule in this.Rule)
+                            {
+                                data.Rules.Add(policyRule.ParseObjectReplicationPolicyRule());
+                            }
+                        }
+                    } 
                 }
 
-                ObjectReplicationPolicy policy = this.StorageClient.ObjectReplicationPolicies.CreateOrUpdate(
-                     this.ResourceGroupName,
-                     this.StorageAccountName,
-                     PolicyId,
-                     policyToSet);
+                Track2.ObjectReplicationPolicyResource policy = this.StorageClientTrack2
+                    .GetStorageAccount(this.ResourceGroupName, this.StorageAccountName)
+                    .GetObjectReplicationPolicies()
+                    .CreateOrUpdate(global::Azure.WaitUntil.Completed, this.PolicyId, data).Value;
 
                 WriteObject(new PSObjectReplicationPolicy(policy, this.ResourceGroupName, this.StorageAccountName));
             }

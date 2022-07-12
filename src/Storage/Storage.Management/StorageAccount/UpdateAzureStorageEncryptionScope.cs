@@ -13,13 +13,13 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Management.Storage.Models;
-using Microsoft.Azure.Management.Storage;
-using Microsoft.Azure.Management.Storage.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
+using Track2 = Azure.ResourceManager.Storage;
+using Track2Models = Azure.ResourceManager.Storage.Models;
 
 namespace Microsoft.Azure.Commands.Management.Storage
 {
@@ -188,34 +188,35 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         break;
                 }
 
-                EncryptionScope scope = new EncryptionScope();
+                Track2.EncryptionScopeData data = new Track2.EncryptionScopeData();
                 if (this.KeyvaultEncryption.IsPresent)
                 {
-                    scope.Source = EncryptionScopeSource.MicrosoftKeyVault;
-                    scope.KeyVaultProperties = new EncryptionScopeKeyVaultProperties(this.KeyUri);
+                    data.Source = Track2Models.EncryptionScopeSource.MicrosoftKeyVault;
+                    data.KeyVaultProperties = new Track2Models.EncryptionScopeKeyVaultProperties
+                    {
+                        KeyUri = new Uri(this.KeyUri)
+                    };
                 }
                 if (this.StorageEncryption.IsPresent)
                 {
-                    scope.Source = EncryptionScopeSource.MicrosoftStorage;
+                    data.Source = Track2Models.EncryptionScopeSource.MicrosoftStorage;
                 }
 
                 if (this.State != null)
                 {
                     if (this.State.Equals(EncryptionScopeState.Enabled, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        scope.State = EncryptionScopeState.Enabled;
+                        data.State = Track2Models.EncryptionScopeState.Enabled;
                     }
                     if (this.State.Equals(EncryptionScopeState.Disabled, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        scope.State = EncryptionScopeState.Disabled;
+                        data.State = Track2Models.EncryptionScopeState.Disabled;
                     }
                 }
 
-                scope = this.StorageClient.EncryptionScopes.Patch(
-                            this.ResourceGroupName,
-                            this.StorageAccountName,
-                            this.EncryptionScopeName,
-                            scope);
+                Track2.EncryptionScopeResource scope = this.StorageClientTrack2
+                    .GetEncryptionScopeResource(this.ResourceGroupName, this.StorageAccountName, this.EncryptionScopeName)
+                    .Update(data);
 
                 WriteObject(new PSEncryptionScope(scope));
             }
