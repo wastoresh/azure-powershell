@@ -56,8 +56,7 @@ DotNetFrameworkVersion = '4.7.2'
 RequiredModules = @(@{ModuleName = 'Az.Accounts'; ModuleVersion = '2.9.0'; })
 
 # Assemblies that must be loaded prior to importing this module
-RequiredAssemblies = 'Microsoft.Azure.Management.Storage.dll', 
-               'Microsoft.Azure.Storage.Common.dll', 
+RequiredAssemblies = 'Microsoft.Azure.Storage.Common.dll', 
                'Microsoft.Azure.Storage.Blob.dll', 
                'Microsoft.Azure.Storage.File.dll', 
                'Microsoft.Azure.Storage.Queue.dll', 
