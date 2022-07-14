@@ -1000,7 +1000,7 @@ namespace Microsoft.Azure.Management.Storage
                 _responseContent = await _httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 try
                 {
-                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<Page<BlobInventoryPolicy>>(_responseContent, Client.DeserializationSettings);
+                    _result.Body = Rest.Serialization.SafeJsonConvert.DeserializeObject<Page1<BlobInventoryPolicy>>(_responseContent, Client.DeserializationSettings);
                 }
                 catch (JsonException ex)
                 {
