@@ -85,8 +85,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                     break;
 
                 case Constants.ShareNameParameterSetName:
+                    // TODO: Share snapshot for oauth
                     NamingUtil.ValidateShareName(this.ShareName, false);
-                    ShareServiceClient fileserviceClient = Util.GetTrack2FileServiceClient((AzureStorageContext)this.Context, ClientOptions, this.ShareFileRequestIntent);
+                    ShareServiceClient fileserviceClient = Util.GetTrack2FileServiceClient((AzureStorageContext)this.Context, ClientOptions);
                     baseDirClient = fileserviceClient.GetShareClient(this.ShareName).GetRootDirectoryClient();
                     // baseDirectory = this.BuildFileShareObjectFromName(this.ShareName).GetRootDirectoryReference();
                     break;
