@@ -33,6 +33,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
 
     public abstract class AzureStorageFileCmdletBase : StorageCloudCmdletBase<IStorageFileManagement>
     {
+        [Parameter(HelpMessage = "File request intent, only for Oauth authentication.")]
+        public ShareFileRequestIntent ShareFileRequestIntent { get; set; }
+
         protected FileRequestOptions RequestOptions
         {
             get
@@ -147,7 +150,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             {
                 if (clientOptions == null)
                 {
-                    clientOptions = new ShareClientOptions();
+                    clientOptions = new ShareClientOptions(ShareClientOptions.ServiceVersion.V2021_04_10);
                     clientOptions.AddPolicy(new UserAgentPolicy(ApiConstants.UserAgentHeaderValue), HttpPipelinePosition.PerCall);
                     return clientOptions;
                 }
