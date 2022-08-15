@@ -24,8 +24,9 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-MinimumTlsVersion <String>] [-AllowSharedKeyAccess <Boolean>] [-SasExpirationPeriod <TimeSpan>]
  [-KeyExpirationPeriodInDay <Int32>] [-AllowCrossTenantReplication <Boolean>]
  [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>] [-ImmutabilityPeriod <Int32>]
- [-ImmutabilityPolicyState <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>]
+ [-AllowedCopyScope <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### KeyvaultEncryption
@@ -40,8 +41,9 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-MinimumTlsVersion <String>] [-AllowSharedKeyAccess <Boolean>] [-SasExpirationPeriod <TimeSpan>]
  [-KeyExpirationPeriodInDay <Int32>] [-AllowCrossTenantReplication <Boolean>]
  [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>] [-ImmutabilityPeriod <Int32>]
- [-ImmutabilityPolicyState <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>]
+ [-AllowedCopyScope <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AzureActiveDirectoryKerberosForFile
@@ -56,8 +58,9 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-MinimumTlsVersion <String>] [-AllowSharedKeyAccess <Boolean>] [-SasExpirationPeriod <TimeSpan>]
  [-KeyExpirationPeriodInDay <Int32>] [-AllowCrossTenantReplication <Boolean>]
  [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>] [-ImmutabilityPeriod <Int32>]
- [-ImmutabilityPolicyState <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>]
+ [-AllowedCopyScope <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### ActiveDirectoryDomainServicesForFile
@@ -75,8 +78,9 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-AllowBlobPublicAccess <Boolean>] [-MinimumTlsVersion <String>] [-AllowSharedKeyAccess <Boolean>]
  [-SasExpirationPeriod <TimeSpan>] [-KeyExpirationPeriodInDay <Int32>] [-AllowCrossTenantReplication <Boolean>]
  [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>] [-ImmutabilityPeriod <Int32>]
- [-ImmutabilityPolicyState <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>]
+ [-AllowedCopyScope <String>] [-AsJob] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -398,6 +402,20 @@ The command updates account-level immutability policy properties on an existing 
 The storage account must be created with enable account level immutability with versioning.
 The account-level immutability policy will be inherited and applied to objects that do not possess an explicit immutability policy at the object level.
 
+### Example 20: Update a Storage account by enable Sftp and localuser
+```powershell
+PS C:\> $account = Set-AzStorageAccount -ResourceGroupName "myresourcegroup" -AccountName "mystorageaccount" -EnableSftp $true -EnableLocalUser $true 
+
+PS C:\> $account.EnableSftp
+True
+
+PS C:\> $account.EnableLocalUser
+True
+```
+
+This command updates a Storage account by enable Sftp and localuser. 
+To run the command succssfully, the Storage account should already enable Hierarchical Namespace.
+
 ## PARAMETERS
 
 ### -AccessTier
@@ -571,6 +589,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -AllowedCopyScope
+Set restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the same VNet. Possible values include: 'PrivateLink', 'AAD'
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -AllowSharedKeyAccess
 Indicates whether the storage account permits requests to be authorized with the account access key via Shared Key. If false, then all requests, including shared access signatures, must be authorized with Azure Active Directory (Azure AD). The default value is null, which is equivalent to true.
 
@@ -730,6 +763,36 @@ Learn more in https://go.microsoft.com/fwlink/?linkid=2086047
 
 ```yaml
 Type: System.Management.Automation.SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnableLocalUser
+Enable local users feature for the Storage account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnableSftp
+Enable Secure File Transfer Protocol for the Storage account.
+
+```yaml
+Type: System.Boolean
 Parameter Sets: (All)
 Aliases:
 
