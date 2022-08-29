@@ -33,6 +33,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
 
     public abstract class AzureStorageFileCmdletBase : StorageCloudCmdletBase<IStorageFileManagement>
     {
+        //[Parameter(HelpMessage = "File request intent, only for Oauth authentication.")]
+        //public ShareFileRequestIntent ShareFileRequestIntent { get; set; }
+
         protected FileRequestOptions RequestOptions
         {
             get
@@ -68,17 +71,43 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             return this.Channel.GetShareReference(name);
         }
 
-        protected bool ShareIsEmpty(CloudFileShare share)
+        //protected bool ShareIsEmpty(CloudFileShare share)
+        //{
+        //    try
+        //    {
+        //        FileContinuationToken fileToken = new FileContinuationToken();
+        //        using (IEnumerator<IListFileItem> listedFiles = share.GetRootDirectoryReference()
+        //            .ListFilesAndDirectoriesSegmentedAsync(1, fileToken, RequestOptions, OperationContext).Result
+        //            .Results.GetEnumerator())
+        //        {
+        //            return !(listedFiles.MoveNext() && listedFiles.Current != null);
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
+
+        protected bool ShareIsEmpty(ShareClient share)
         {
             try
             {
-                FileContinuationToken fileToken = new FileContinuationToken();
-                using (IEnumerator<IListFileItem> listedFiles = share.GetRootDirectoryReference()
-                    .ListFilesAndDirectoriesSegmentedAsync(1, fileToken, RequestOptions, OperationContext).Result
-                    .Results.GetEnumerator())
+                ShareDirectoryGetFilesAndDirectoriesOptions listFileOptions = new ShareDirectoryGetFilesAndDirectoriesOptions();
+                listFileOptions.Traits = ShareFileTraits.All;
+
+                Pageable<ShareFileItem> fileItems = share.GetRootDirectoryClient().GetFilesAndDirectories(listFileOptions, this.CmdletCancellationToken);
+                IEnumerable<Page<ShareFileItem>> fileitempages = fileItems.AsPages(null, 1);
+
+                foreach (var page in fileitempages)
                 {
-                    return !(listedFiles.MoveNext() && listedFiles.Current != null);
+                    foreach (var file in page.Values)
+                    {
+                        return false;
+
+                    }
                 }
+                return true;
             }
             catch (Exception)
             {
@@ -147,7 +176,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             {
                 if (clientOptions == null)
                 {
-                    clientOptions = new ShareClientOptions();
+                    clientOptions = new ShareClientOptions(ShareClientOptions.ServiceVersion.V2021_04_10);
+                    // clientOptions = new ShareClientOptions();
                     clientOptions.AddPolicy(new UserAgentPolicy(ApiConstants.UserAgentHeaderValue), HttpPipelinePosition.PerCall);
                     return clientOptions;
                 }
