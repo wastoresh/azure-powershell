@@ -119,14 +119,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
             // if FIPS policy is enabled, must use native MD5 for DMlib. 
             if (fipsEnabled)
             {
-                if (fileSize < sizeTB)
-                {
-                    CloudStorageAccount.UseV1MD5 = false;
-                }
-                else // use Track2 SDK
-                {
+                //if (fileSize < sizeTB)
+                //{
+                //    CloudStorageAccount.UseV1MD5 = false;
+                //}
+                //else // use Track2 SDK
+                //{
                     WriteWarning("The uploaded file won't have Content MD5 hash, since caculate MD5 hash fail, most possiblly caused by FIPS is enabled on this machine.");
-                }
+                //}
             }
 
             bool isDirectory;
@@ -145,25 +145,25 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                             cloudFileToBeUploaded.GetFullPath(), cloudFileToBeUploaded.Share.Name),
                         Resources.PrepareUploadingFile);
 
-                    if (fileSize <= sizeTB)
-                    {
+                    //if (fileSize <= sizeTB)
+                    //{
 
 
-                        await DataMovementTransferHelper.DoTransfer(() =>
-                            this.TransferManager.UploadAsync(
-                                    localFile.FullName,
-                                    cloudFileToBeUploaded,
-                                    new UploadOptions
-                                    {
-                                        PreserveSMBAttributes = context is null ? false : context.PreserveSMBAttribute.IsPresent
-                                    },
-                                    this.GetTransferContext(progressRecord, localFile.Length),
-                                    this.CmdletCancellationToken),
-                                progressRecord,
-                                this.OutputStream).ConfigureAwait(false);
-                    }
-                    else // use Track2 SDK
-                    {
+                    //    await DataMovementTransferHelper.DoTransfer(() =>
+                    //        this.TransferManager.UploadAsync(
+                    //                localFile.FullName,
+                    //                cloudFileToBeUploaded,
+                    //                new UploadOptions
+                    //                {
+                    //                    PreserveSMBAttributes = context is null ? false : context.PreserveSMBAttribute.IsPresent
+                    //                },
+                    //                this.GetTransferContext(progressRecord, localFile.Length),
+                    //                this.CmdletCancellationToken),
+                    //            progressRecord,
+                    //            this.OutputStream).ConfigureAwait(false);
+                    //}
+                    //else // use Track2 SDK
+                    //{
                         //Create File
                         ShareFileClient fileClient = AzureStorageFile.GetTrack2FileClient(cloudFileToBeUploaded, ClientOptions);
 
@@ -278,11 +278,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         {
                             // fetch latest file properties for output
                             cloudFileToBeUploaded.FetchAttributes();
-                        }
-                    }
+                    //    }
+                    //}
 
-                    if (this.PassThru)
-                    {
+                    //if (this.PassThru)
+                    //{
                         WriteCloudFileObject(taskId, this.Channel, cloudFileToBeUploaded);
                     }
                 });

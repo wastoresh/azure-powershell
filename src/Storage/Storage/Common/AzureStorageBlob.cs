@@ -210,6 +210,11 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         public Hashtable Tags { get; set; }
 
         /// <summary>
+        /// XSCL Track2 File List properties
+        /// </summary>
+        public BlobItem ListBlobProperties { get; private set; }
+
+        /// <summary>
         /// Azure storage blob constructor
         /// </summary>
         /// <param name="blob">ICloud blob object</param>
@@ -245,6 +250,7 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             if (listBlobItem == null)
             {
                 SetProperties(track2BlobClient, storageContext, track2BlobClient.GetProperties().Value, options);
+                this.ListBlobProperties = listBlobItem;
                 return;
             }
 

@@ -777,5 +777,26 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                 return shareClient;
             }
         }
+
+
+
+        /// <summary>
+        /// Get SnapshotQualifiedUri without credential from a blob/file service item Uri.
+        /// </summary>
+        public static string GetSnapshotQualifiedUri(Uri itemUri)
+        {
+            string snapshotQueryParameter = "snapshot=";
+            string shareSnapshotQueryParameter = "sharesnapshot=";
+            string[] queryBlocks = itemUri.Query.Split(new char[] { '&', '?' });
+            foreach (string block in queryBlocks)
+            {
+                if (block.StartsWith(snapshotQueryParameter)|| block.StartsWith(shareSnapshotQueryParameter))
+                {
+                    return itemUri.ToString().Replace(itemUri.Query, "?" + block);
+                }
+            }
+            return itemUri.ToString().Replace(itemUri.Query, "");
+        }
+
     }
 }

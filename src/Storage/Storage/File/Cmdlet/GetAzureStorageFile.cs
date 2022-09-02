@@ -149,7 +149,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                 {
                     dirProperties = targetDir.GetProperties(this.CmdletCancellationToken).Value;
                 }
-                catch (global::Azure.RequestFailedException e) when (e.Status == 404)
+                catch (global::Azure.RequestFailedException e) when (e.Status == 404 || e.Status == 403)
                 {
                     foundAFolder = false;
                 }

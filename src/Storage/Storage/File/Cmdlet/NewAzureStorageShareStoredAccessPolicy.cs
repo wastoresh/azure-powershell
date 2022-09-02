@@ -98,7 +98,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
             {
                 signedIdentifier.AccessPolicy.PolicyExpiresOn = ExpiryTime.Value.ToUniversalTime();
             }
-            signedIdentifier.AccessPolicy.Permissions = AccessPolicyHelper.OrderBlobPermission(this.Permission);
+            if (!string.IsNullOrEmpty(this.Permission))
+            {
+                signedIdentifier.AccessPolicy.Permissions = AccessPolicyHelper.OrderBlobPermission(this.Permission);
+            }
             var newsignedIdentifiers = new List<ShareSignedIdentifier>(signedIdentifiers);
             newsignedIdentifiers.Add(signedIdentifier);
 

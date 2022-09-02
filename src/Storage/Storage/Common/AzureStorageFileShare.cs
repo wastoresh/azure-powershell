@@ -116,14 +116,6 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
         private ShareClientOptions shareClientOptions { get; set; }
         private ShareServiceClient shareService { get; set; }
 
-        //public string AccountName
-        //{
-        //    get
-        //    {
-        //        if (sharelc)
-        //    }
-        //}
-
         /// <summary>
         /// Azure storage file constructor
         /// </summary>

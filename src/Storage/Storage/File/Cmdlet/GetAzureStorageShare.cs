@@ -107,6 +107,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                         else // normal share
                         {
                             ShareClient shareClient = shareService.GetShareClient(shareitem.Name);
+                            if (!String.IsNullOrEmpty(shareitem.Snapshot))
+                            {
+                                shareClient = shareClient.WithSnapshot(shareitem.Snapshot);
+                            }
                             WriteObject(new AzureStorageFileShare(shareClient, (AzureStorageContext)this.Context, shareitem, ClientOptions));
                         }
                     }
