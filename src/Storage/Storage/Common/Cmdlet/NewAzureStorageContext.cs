@@ -28,6 +28,7 @@ using System.Management.Automation;
 using System.Security.Permissions;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Storage.Files.Shares.Models;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
 {
@@ -282,6 +283,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [Parameter(HelpMessage = TableServiceEndPointHelpMessage, ParameterSetName = SasTokenServiceEndpointParameterSet)]
         [Parameter(HelpMessage = TableServiceEndPointHelpMessage, ParameterSetName = OAuthServiceEndpointParameterSet)]
         public string TableEndpoint { get; set; }
+        
+        [Parameter(HelpMessage = "File request intent, only for Oauth authentication.", Mandatory = false, ParameterSetName = OAuthParameterSet)]
+        [Parameter(HelpMessage = "File request intent, only for Oauth authentication.", Mandatory = false, ParameterSetName = OAuthEnvironmentParameterSet)]
+        [Parameter(HelpMessage = "File request intent, only for Oauth authentication.", Mandatory = false, ParameterSetName = OAuthServiceEndpointParameterSet)]
+        public ShareFileRequestIntent ShareFileRequestIntent { get; set; }
 
         /// <summary>
         /// Get storage account by account name and account key
@@ -713,7 +719,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
                     throw new ArgumentException(Resources.DefaultStorageCredentialsNotFound);
             }
 
-            AzureStorageContext context = new AzureStorageContext(account, GetRealAccountName(StorageAccountName), DefaultContext, WriteDebug);
+            AzureStorageContext context = new AzureStorageContext(account, GetRealAccountName(StorageAccountName), DefaultContext, WriteDebug); 
+            context.ShareFileRequestIntent = this.ShareFileRequestIntent;
 
             WriteObject(context);
         }
