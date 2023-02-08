@@ -156,7 +156,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             {
                 if (clientOptions == null)
                 {
-                    clientOptions = new ShareClientOptions();
+                    //clientOptions = new ShareClientOptions();
+                    clientOptions = new ShareClientOptions(ShareClientOptions.ServiceVersion.V2021_12_02);
                     clientOptions.AddPolicy(new UserAgentPolicy(ApiConstants.UserAgentHeaderValue), HttpPipelinePosition.PerCall);
                     return clientOptions;
                 }
@@ -191,6 +192,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File
             return new AzureStorageContext(account,
                 blobServiceClient.Credentials.AccountName,
                 DefaultContext);
+        }
+
+        protected bool WithOauthCredential()
+        {
+            if(this.Channel != null && this.Channel.StorageContext != null && this.Channel.StorageContext.StorageAccount != null && this.Channel.StorageContext.StorageAccount.Credentials.IsToken)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

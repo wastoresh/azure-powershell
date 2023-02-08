@@ -44,6 +44,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         public CloudFileShare Share { get; set; }
 
         [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = Constants.ShareParameterSetName,
+            HelpMessage = "ShareClient object indicated the share where the directory would be removed.")]
+        [ValidateNotNull]
+        public ShareClient ShareClient { get; set; }
+
+        [Parameter(
             Position = 0,
             Mandatory = true,
             ValueFromPipeline = true,
@@ -53,6 +62,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
         [ValidateNotNull]
         [Alias("CloudFileDirectory")]
         public CloudFileDirectory Directory { get; set; }
+
+        [Parameter(
+            Mandatory = false,
+            ValueFromPipeline = true,
+            ValueFromPipelineByPropertyName = true,
+            ParameterSetName = Constants.DirectoryParameterSetName,
+            HelpMessage = "ShareDirectoryClient object indicated the base folder where the directory would be removed.")]
+        [ValidateNotNull]
+        public ShareDirectoryClient ShareDirectoryClient { get; set; }
 
         [Parameter(
             Position = 1,
@@ -81,12 +99,20 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
             switch (this.ParameterSetName)
             {
                 case Constants.DirectoryParameterSetName:
-                    baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(this.Directory, ClientOptions);
-
-                    // when only track1 object input, will miss storage context, so need to build storage context for prepare the output object.
-                    if (this.Context == null)
+                    if (this.ShareDirectoryClient != null)
                     {
-                        this.Context = GetStorageContextFromTrack1FileServiceClient(this.Directory.ServiceClient, DefaultContext);
+                        baseDirClient = this.ShareDirectoryClient;
+                    }
+                    else
+                    {
+
+                        baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(this.Directory, ClientOptions);
+
+                        // when only track1 object input, will miss storage context, so need to build storage context for prepare the output object.
+                        if (this.Context == null)
+                        {
+                            this.Context = GetStorageContextFromTrack1FileServiceClient(this.Directory.ServiceClient, DefaultContext);
+                        }
                     }
                     break;
 
@@ -98,12 +124,19 @@ namespace Microsoft.WindowsAzure.Commands.Storage.File.Cmdlet
                     break;
 
                 case Constants.ShareParameterSetName:
-                    baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(this.Share.GetRootDirectoryReference(), ClientOptions);
-
-                    // when only track1 object input, will miss storage context, so need to build storage context for prepare the output object.
-                    if (this.Context == null)
+                    if (this.ShareClient != null)
                     {
-                        this.Context = GetStorageContextFromTrack1FileServiceClient(this.Share.ServiceClient, DefaultContext);
+                        baseDirClient = this.ShareClient.GetRootDirectoryClient();
+                    }
+                    else
+                    {
+                        baseDirClient = AzureStorageFileDirectory.GetTrack2FileDirClient(this.Share.GetRootDirectoryReference(), ClientOptions);
+
+                        // when only track1 object input, will miss storage context, so need to build storage context for prepare the output object.
+                        if (this.Context == null)
+                        {
+                            this.Context = GetStorageContextFromTrack1FileServiceClient(this.Share.ServiceClient, DefaultContext);
+                        }
                     }
                     break;
 
