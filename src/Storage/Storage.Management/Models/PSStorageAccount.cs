@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using Microsoft.WindowsAzure.Commands.Common.Attributes;
 using StorageModels = Microsoft.Azure.Management.Storage.Models;
 using Microsoft.Azure.Management.Internal.Resources.Utilities.Models;
+using Newtonsoft.Json;
 
 namespace Microsoft.Azure.Commands.Management.Storage.Models
 {
@@ -74,6 +75,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.EnableLocalUser = storageAccount.IsLocalUserEnabled;
             this.AllowedCopyScope = storageAccount.AllowedCopyScope;
             this.DnsEndpointType= storageAccount.DnsEndpointType;
+            this.DualStackEndpointPreference = storageAccount.DualStackEndpointPreference is null ? null : new PSDualStackEndpointPreference(storageAccount.DualStackEndpointPreference);
         }
         public bool? AllowCrossTenantReplication { get; set; }
 
@@ -168,7 +170,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public PSImmutableStorageAccount ImmutableStorageWithVersioning { get; set; }
         public PSStorageAccountSkuConversionStatus StorageAccountSkuConversionStatus { get; set; }
         public string DnsEndpointType { get; set; }
-
+        public PSDualStackEndpointPreference DualStackEndpointPreference { get; set; }
 
         public static PSStorageAccount Create(StorageModels.StorageAccount storageAccount, IStorageManagementClient client)
         {
@@ -330,5 +332,25 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
                 this.EndTime = status.EndTime;
             }
         }
+    }
+
+    public class PSDualStackEndpointPreference
+    {
+        public bool? DefaultDualStackEndpoints { get; set; }
+        public bool? PublishIpv4Endpoint { get; set; }
+        public bool? PublishIpv6Endpoint { get; set; }
+
+        public PSDualStackEndpointPreference(DualStackEndpointPreference preference)
+        {
+            this.DefaultDualStackEndpoints = preference.DefaultDualStackEndpoints;
+            this.PublishIpv4Endpoint = preference.PublishIpv4Endpoint;
+            this.PublishIpv6Endpoint = preference.PublishIpv6Endpoint;
+        }
+        //public PSDualStackEndpointPreference(bool? defaultDualStackEndpoints = null, bool? publishIpv4Endpoint = null, bool? publishIpv6Endpoint= null)
+        //{
+        //    this.DefaultDualStackEndpoints = defaultDualStackEndpoints;
+        //    this.PublishIpv4Endpoint = publishIpv4Endpoint;
+        //    this.PublishIpv6Endpoint = publishIpv6Endpoint;
+        //}
     }
 }

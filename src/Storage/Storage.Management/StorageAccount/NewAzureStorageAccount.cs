@@ -623,6 +623,57 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [ValidateNotNullOrEmpty]
         public string DnsEndpointType { get; set; }
 
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Whether dual-stack storage endpoints are to be published.")]
+        [ValidateNotNullOrEmpty]
+        public bool EnableDualStackEndpoint
+        {
+            get
+            {
+                return enableDualStackEndpoint != null ? enableDualStackEndpoint.Value : false;
+            }
+            set
+            {
+                enableDualStackEndpoint = value;
+            }
+        }
+        private bool? enableDualStackEndpoint = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Whether IPv4 storage endpoints are to be published.")]
+        [ValidateNotNullOrEmpty]
+        public bool PublishIpv4Endpoint
+        {
+            get
+            {
+                return publishIpv4Endpoint != null ? publishIpv4Endpoint.Value : false;
+            }
+            set
+            {
+                publishIpv4Endpoint = value;
+            }
+        }
+        private bool? publishIpv4Endpoint = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Whether IPv6 storage endpoints are to be published.")]
+        [ValidateNotNullOrEmpty]
+        public bool PublishIpv6Endpoint
+        {
+            get
+            {
+                return publishIpv6Endpoint != null ? publishIpv6Endpoint.Value : false;
+            }
+            set
+            {
+                publishIpv6Endpoint = value;
+            }
+        }
+        private bool? publishIpv6Endpoint = null;
+
         public override void ExecuteCmdlet()
         {
             base.ExecuteCmdlet();
@@ -901,6 +952,10 @@ namespace Microsoft.Azure.Commands.Management.Storage
             if (this.DnsEndpointType != null)
             {
                 createParameters.DnsEndpointType = this.DnsEndpointType;
+            }
+            if (this.enableDualStackEndpoint != null || this.publishIpv4Endpoint != null || this.publishIpv6Endpoint != null)
+            {
+                createParameters.DualStackEndpointPreference = new DualStackEndpointPreference(this.enableDualStackEndpoint, this.publishIpv4Endpoint, this.publishIpv6Endpoint);
             }
 
             var createAccountResponse = this.StorageClient.StorageAccounts.Create(
