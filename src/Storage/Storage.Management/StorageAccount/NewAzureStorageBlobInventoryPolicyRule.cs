@@ -232,13 +232,13 @@ namespace Microsoft.Azure.Commands.Management.Storage
                 {
                     definition.Filters.IncludeDeleted = true;
                 }
-                if (this.creationTimeLastNDay != null)
-                {
-                    definition.Filters.CreationTime = new PSBlobInventoryCreationTime()
-                    {
-                        LastNDays = this.creationTimeLastNDay,
-                    };
-                }
+                //if (this.creationTimeLastNDay != null)
+                //{
+                //    definition.Filters.CreationTime = new PSBlobInventoryCreationTime()
+                //    {
+                //        LastNDays = this.creationTimeLastNDay,
+                //    };
+                //}
             }
             definition.Format = NormalizeString<BlobInventoryPolicyRuleFormat>(this.Format);
             definition.Schedule = NormalizeString<BlobInventoryPolicyRuleSchedule>(this.Schedule);

@@ -578,39 +578,39 @@ namespace Microsoft.Azure.Commands.Management.Storage
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
 
-        [Parameter(
-            Mandatory = false,
-            HelpMessage = "Whether dual-stack storage endpoints are to be published.")]
-        [ValidateNotNullOrEmpty]
-        public bool EnableDualStackEndpoint
-        {
-            get
-            {
-                return enableDualStackEndpoint != null ? enableDualStackEndpoint.Value : false;
-            }
-            set
-            {
-                enableDualStackEndpoint = value;
-            }
-        }
-        private bool? enableDualStackEndpoint = null;
+        //[Parameter(
+        //    Mandatory = false,
+        //    HelpMessage = "Whether dual-stack storage endpoints are to be published.")]
+        //[ValidateNotNullOrEmpty]
+        //public bool EnableDualStackEndpoint
+        //{
+        //    get
+        //    {
+        //        return enableDualStackEndpoint != null ? enableDualStackEndpoint.Value : false;
+        //    }
+        //    set
+        //    {
+        //        enableDualStackEndpoint = value;
+        //    }
+        //}
+        //private bool? enableDualStackEndpoint = null;
 
-        [Parameter(
-            Mandatory = false,
-            HelpMessage = "Whether IPv4 storage endpoints are to be published.")]
-        [ValidateNotNullOrEmpty]
-        public bool PublishIpv4Endpoint
-        {
-            get
-            {
-                return publishIpv4Endpoint != null ? publishIpv4Endpoint.Value : false;
-            }
-            set
-            {
-                publishIpv4Endpoint = value;
-            }
-        }
-        private bool? publishIpv4Endpoint = null;
+        //[Parameter(
+        //    Mandatory = false,
+        //    HelpMessage = "Whether IPv4 storage endpoints are to be published.")]
+        //[ValidateNotNullOrEmpty]
+        //public bool PublishIpv4Endpoint
+        //{
+        //    get
+        //    {
+        //        return publishIpv4Endpoint != null ? publishIpv4Endpoint.Value : false;
+        //    }
+        //    set
+        //    {
+        //        publishIpv4Endpoint = value;
+        //    }
+        //}
+        //private bool? publishIpv4Endpoint = null;
 
         [Parameter(
             Mandatory = false,
@@ -943,9 +943,13 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     {
                         updateParameters.AllowedCopyScope = this.AllowedCopyScope;
                     }
-                    if (this.enableDualStackEndpoint != null || this.publishIpv4Endpoint != null || this.publishIpv6Endpoint != null)
+                    if (this.publishIpv6Endpoint != null)
                     {
-                        updateParameters.DualStackEndpointPreference = new DualStackEndpointPreference(this.enableDualStackEndpoint, this.publishIpv4Endpoint, this.publishIpv6Endpoint);
+                        // Per requst from feature team, will publish Ipv4/Ipv6 Endpoint automaticlly when set DualStackEndpointPreference as True.
+                        updateParameters.DualStackEndpointPreference = new DualStackEndpointPreference(
+                            //defaultDualStackEndpoints: this.enableDualStackEndpoint,
+                            //publishIpv4Endpoint: this.enableDualStackEndpoint,
+                            publishIpv6Endpoint: this.publishIpv6Endpoint);
                     }
 
                     var updatedAccountResponse = this.StorageClient.StorageAccounts.Update(

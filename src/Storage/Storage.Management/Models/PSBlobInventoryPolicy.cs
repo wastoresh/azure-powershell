@@ -226,7 +226,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.IncludeBlobVersions = filters.IncludeBlobVersions;
             this.IncludeSnapshots = filters.IncludeSnapshots;
             this.IncludeDeleted = filters.IncludeDeleted;
-            this.CreationTime = filters.CreationTime == null ? null : new PSBlobInventoryCreationTime(filters.CreationTime);
+            //this.CreationTime = filters.CreationTime == null ? null : new PSBlobInventoryCreationTime(filters.CreationTime);
         }
 
         public BlobInventoryPolicyFilter ParseBlobInventoryPolicyFilter()
@@ -239,7 +239,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
                 IncludeSnapshots = this.IncludeSnapshots,
                 IncludeBlobVersions = this.IncludeBlobVersions,
                 IncludeDeleted = this.IncludeDeleted,
-                CreationTime = this.CreationTime == null ? null : this.CreationTime.ParseBlobInventoryCreationTime(),
+                //CreationTime = this.CreationTime == null ? null : this.CreationTime.ParseBlobInventoryCreationTime(),
             };
         }
 
@@ -249,28 +249,28 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public bool? IncludeBlobVersions { get; set; }
         public bool? IncludeSnapshots { get; set; }
         public bool? IncludeDeleted { get; set; }
-        public PSBlobInventoryCreationTime CreationTime { get; set; }
+        //public PSBlobInventoryCreationTime CreationTime { get; set; }
     }
 
-    public class PSBlobInventoryCreationTime
-    {
-        public PSBlobInventoryCreationTime() { }
+    //public class PSBlobInventoryCreationTime
+    //{
+    //    public PSBlobInventoryCreationTime() { }
 
-        public PSBlobInventoryCreationTime(BlobInventoryCreationTime creationTime)
-        {
-            this.LastNDays = creationTime.LastNDays;
-        }
+    //    public PSBlobInventoryCreationTime(BlobInventoryCreationTime creationTime)
+    //    {
+    //        this.LastNDays = creationTime.LastNDays;
+    //    }
 
-        public BlobInventoryCreationTime ParseBlobInventoryCreationTime()
-        {
-            return new BlobInventoryCreationTime()
-            {
-                LastNDays = this.LastNDays,                 
-            };
-        }
+    //    public BlobInventoryCreationTime ParseBlobInventoryCreationTime()
+    //    {
+    //        return new BlobInventoryCreationTime()
+    //        {
+    //            LastNDays = this.LastNDays,                 
+    //        };
+    //    }
 
-        public int? LastNDays { get; set; }
-    }
+    //    public int? LastNDays { get; set; }
+    //}
 
     /// <summary>
     /// Wrapper of SDK type SystemData

@@ -26,11 +26,11 @@ namespace Microsoft.Azure.Management.Storage.Models
 
         /// <param name="allowedCopyScope">Restrict copy to and from Storage Accounts within an AAD tenant or with
         /// Private Links to the same VNet.
-        /// Possible values include: 'PrivateLink', 'AAD'</param>
+        /// Possible values include: &#39;PrivateLink&#39;, &#39;AAD&#39;</param>
 
         /// <param name="publicNetworkAccess">Allow or disallow public network access to Storage Account. Value is
         /// optional but if passed in, must be &#39;Enabled&#39; or &#39;Disabled&#39;.
-        /// Possible values include: 'Enabled', 'Disabled'</param>
+        /// Possible values include: &#39;Enabled&#39;, &#39;Disabled&#39;</param>
 
         /// <param name="sasPolicy">SasPolicy assigned to the storage account.
         /// </param>
@@ -55,7 +55,7 @@ namespace Microsoft.Azure.Management.Storage.Models
         /// used for billing. The &#39;Premium&#39; access tier is the default value for
         /// premium block blobs storage account type and it cannot be changed for the
         /// premium block blobs storage account type.
-        /// Possible values include: 'Hot', 'Cool', 'Premium'</param>
+        /// Possible values include: &#39;Hot&#39;, &#39;Cool&#39;, &#39;Premium&#39;</param>
 
         /// <param name="azureFilesIdentityBasedAuthentication">Provides the identity based authentication settings for Azure Files.
         /// </param>
@@ -75,19 +75,22 @@ namespace Microsoft.Azure.Management.Storage.Models
 
         /// <param name="largeFileSharesState">Allow large file shares if sets to Enabled. It cannot be disabled once it
         /// is enabled.
-        /// Possible values include: 'Disabled', 'Enabled'</param>
+        /// Possible values include: &#39;Disabled&#39;, &#39;Enabled&#39;</param>
 
         /// <param name="routingPreference">Maintains information about the network routing choice opted by the user
         /// for data transfer
         /// </param>
 
+        /// <param name="dualStackEndpointPreference">Maintains information about the Internet protocol opted by the user.
+        /// </param>
+
         /// <param name="allowBlobPublicAccess">Allow or disallow public access to all blobs or containers in the storage
-        /// account. The default interpretation is false for this property.
+        /// account. The default interpretation is true for this property.
         /// </param>
 
         /// <param name="minimumTlsVersion">Set the minimum TLS version to be permitted on requests to storage. The
         /// default interpretation is TLS 1.0 for this property.
-        /// Possible values include: 'TLS1_0', 'TLS1_1', 'TLS1_2'</param>
+        /// Possible values include: &#39;TLS1_0&#39;, &#39;TLS1_1&#39;, &#39;TLS1_2&#39;</param>
 
         /// <param name="allowSharedKeyAccess">Indicates whether the storage account permits requests to be authorized
         /// with the account access key via Shared Key. If false, then all requests,
@@ -99,11 +102,8 @@ namespace Microsoft.Azure.Management.Storage.Models
         /// <param name="enableNfsV3">NFS 3.0 protocol support enabled if set to true.
         /// </param>
 
-        /// <param name="allowCrossTenantReplication">Allow or disallow cross AAD tenant object replication. Set this property to
-        /// true for new or existing accounts only if object replication policies will
-        /// involve storage accounts in different AAD tenants. The default
-        /// interpretation is false for new accounts to follow best security practices
-        /// by default.
+        /// <param name="allowCrossTenantReplication">Allow or disallow cross AAD tenant object replication. The default
+        /// interpretation is true for this property.
         /// </param>
 
         /// <param name="defaultToOAuthAuthentication">A boolean flag which indicates whether the default authentication is OAuth
@@ -119,8 +119,8 @@ namespace Microsoft.Azure.Management.Storage.Models
         /// create a large number of accounts in a single subscription, which creates
         /// accounts in an Azure DNS Zone and the endpoint URL will have an
         /// alphanumeric DNS Zone identifier.
-        /// Possible values include: 'Standard', 'AzureDnsZone'</param>
-        public StorageAccountPropertiesCreateParameters(string allowedCopyScope = default(string), string publicNetworkAccess = default(string), SasPolicy sasPolicy = default(SasPolicy), KeyPolicy keyPolicy = default(KeyPolicy), CustomDomain customDomain = default(CustomDomain), Encryption encryption = default(Encryption), NetworkRuleSet networkRuleSet = default(NetworkRuleSet), AccessTier? accessTier = default(AccessTier?), AzureFilesIdentityBasedAuthentication azureFilesIdentityBasedAuthentication = default(AzureFilesIdentityBasedAuthentication), bool? enableHttpsTrafficOnly = default(bool?), bool? isSftpEnabled = default(bool?), bool? isLocalUserEnabled = default(bool?), bool? isHnsEnabled = default(bool?), string largeFileSharesState = default(string), RoutingPreference routingPreference = default(RoutingPreference), bool? allowBlobPublicAccess = default(bool?), string minimumTlsVersion = default(string), bool? allowSharedKeyAccess = default(bool?), bool? enableNfsV3 = default(bool?), bool? allowCrossTenantReplication = default(bool?), bool? defaultToOAuthAuthentication = default(bool?), ImmutableStorageAccount immutableStorageWithVersioning = default(ImmutableStorageAccount), string dnsEndpointType = default(string))
+        /// Possible values include: &#39;Standard&#39;, &#39;AzureDnsZone&#39;</param>
+        public StorageAccountPropertiesCreateParameters(string allowedCopyScope = default(string), string publicNetworkAccess = default(string), SasPolicy sasPolicy = default(SasPolicy), KeyPolicy keyPolicy = default(KeyPolicy), CustomDomain customDomain = default(CustomDomain), Encryption encryption = default(Encryption), NetworkRuleSet networkRuleSet = default(NetworkRuleSet), AccessTier? accessTier = default(AccessTier?), AzureFilesIdentityBasedAuthentication azureFilesIdentityBasedAuthentication = default(AzureFilesIdentityBasedAuthentication), bool? enableHttpsTrafficOnly = default(bool?), bool? isSftpEnabled = default(bool?), bool? isLocalUserEnabled = default(bool?), bool? isHnsEnabled = default(bool?), string largeFileSharesState = default(string), RoutingPreference routingPreference = default(RoutingPreference), DualStackEndpointPreference dualStackEndpointPreference = default(DualStackEndpointPreference), bool? allowBlobPublicAccess = default(bool?), string minimumTlsVersion = default(string), bool? allowSharedKeyAccess = default(bool?), bool? enableNfsV3 = default(bool?), bool? allowCrossTenantReplication = default(bool?), bool? defaultToOAuthAuthentication = default(bool?), ImmutableStorageAccount immutableStorageWithVersioning = default(ImmutableStorageAccount), string dnsEndpointType = default(string))
 
         {
             this.AllowedCopyScope = allowedCopyScope;
@@ -138,6 +138,7 @@ namespace Microsoft.Azure.Management.Storage.Models
             this.IsHnsEnabled = isHnsEnabled;
             this.LargeFileSharesState = largeFileSharesState;
             this.RoutingPreference = routingPreference;
+            this.DualStackEndpointPreference = dualStackEndpointPreference;
             this.AllowBlobPublicAccess = allowBlobPublicAccess;
             this.MinimumTlsVersion = minimumTlsVersion;
             this.AllowSharedKeyAccess = allowSharedKeyAccess;
@@ -259,8 +260,15 @@ namespace Microsoft.Azure.Management.Storage.Models
         public RoutingPreference RoutingPreference {get; set; }
 
         /// <summary>
+        /// Gets or sets maintains information about the Internet protocol opted by the
+        /// user.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "dualStackEndpointPreference")]
+        public DualStackEndpointPreference DualStackEndpointPreference {get; set; }
+
+        /// <summary>
         /// Gets or sets allow or disallow public access to all blobs or containers in
-        /// the storage account. The default interpretation is false for this property.
+        /// the storage account. The default interpretation is true for this property.
         /// </summary>
         [Newtonsoft.Json.JsonProperty(PropertyName = "allowBlobPublicAccess")]
         public bool? AllowBlobPublicAccess {get; set; }
@@ -289,11 +297,8 @@ namespace Microsoft.Azure.Management.Storage.Models
         public bool? EnableNfsV3 {get; set; }
 
         /// <summary>
-        /// Gets or sets allow or disallow cross AAD tenant object replication. Set
-        /// this property to true for new or existing accounts only if object
-        /// replication policies will involve storage accounts in different AAD
-        /// tenants. The default interpretation is false for new accounts to follow
-        /// best security practices by default.
+        /// Gets or sets allow or disallow cross AAD tenant object replication. The
+        /// default interpretation is true for this property.
         /// </summary>
         [Newtonsoft.Json.JsonProperty(PropertyName = "allowCrossTenantReplication")]
         public bool? AllowCrossTenantReplication {get; set; }
@@ -354,6 +359,7 @@ namespace Microsoft.Azure.Management.Storage.Models
             {
                 this.AzureFilesIdentityBasedAuthentication.Validate();
             }
+
 
 
 

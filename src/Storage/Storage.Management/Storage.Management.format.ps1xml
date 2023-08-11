@@ -948,12 +948,8 @@
                 <Label>InternetEndpoints</Label>
               </ListItem>
               <ListItem>
-                <ScriptBlock>ConvertTo-Json $_.Ipv4Endpoints -Compress</ScriptBlock>
-                <Label>InternetEndpoints</Label>
-              </ListItem>
-              <ListItem>
                 <ScriptBlock>ConvertTo-Json $_.Ipv6Endpoints -Compress</ScriptBlock>
-                <Label>InternetEndpoints</Label>
+                <Label>Ipv6Endpoints</Label>
               </ListItem>
             </ListItems>
           </ListEntry>

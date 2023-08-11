@@ -20,10 +20,13 @@ namespace Microsoft.Azure.Management.Storage
         /// List the local users associated with the storage account.
         /// </remarks>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -46,13 +49,17 @@ namespace Microsoft.Azure.Management.Storage
         /// Get the local user of the storage account by username.
         /// </remarks>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -69,19 +76,25 @@ namespace Microsoft.Azure.Management.Storage
         System.Threading.Tasks.Task<Microsoft.Rest.Azure.AzureOperationResponse<LocalUser>> GetWithHttpMessagesAsync(string resourceGroupName, string accountName, string username, System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> customHeaders = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 
         /// <summary>
-        /// Create or update the properties of a local user associated with the storage account
+        /// Create or update the properties of a local user associated with the storage
+        /// account
         /// </summary>
         /// <remarks>
-        /// Create or update the properties of a local user associated with the storage account
+        /// Create or update the properties of a local user associated with the storage
+        /// account
         /// </remarks>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='properties'>
         /// The local user associated with a storage account.
@@ -107,13 +120,17 @@ namespace Microsoft.Azure.Management.Storage
         /// Deletes the local user associated with the specified storage account.
         /// </remarks>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -133,13 +150,17 @@ namespace Microsoft.Azure.Management.Storage
         /// List SSH authorized keys and shared key of the local user.
         /// </remarks>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
@@ -162,13 +183,17 @@ namespace Microsoft.Azure.Management.Storage
         /// Regenerate the local user SSH password.
         /// </remarks>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='customHeaders'>
         /// The headers that will be added to request.
