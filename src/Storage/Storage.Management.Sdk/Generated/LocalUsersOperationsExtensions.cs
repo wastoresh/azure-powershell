@@ -19,14 +19,20 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
-        public static System.Collections.Generic.IEnumerable<LocalUser> List(this ILocalUsersOperations operations, string resourceGroupName, string accountName)
+        /// <param name='include'>
+        /// Optional, used to include NFSv3 enabled Local Users.
+        /// </param>
+        public static System.Collections.Generic.IEnumerable<LocalUser> List(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string include = default(string))
         {
-                return ((ILocalUsersOperations)operations).ListAsync(resourceGroupName, accountName).GetAwaiter().GetResult();
+                return ((ILocalUsersOperations)operations).ListAsync(resourceGroupName, accountName, include).GetAwaiter().GetResult();
         }
 
         /// <summary>
@@ -36,17 +42,23 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
+        /// </param>
+        /// <param name='include'>
+        /// Optional, used to include NFSv3 enabled Local Users.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.
         /// </param>
-        public static async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<LocalUser>> ListAsync(this ILocalUsersOperations operations, string resourceGroupName, string accountName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+        public static async System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<LocalUser>> ListAsync(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string include = default(string), System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
         {
-            using (var _result = await operations.ListWithHttpMessagesAsync(resourceGroupName, accountName, null, cancellationToken).ConfigureAwait(false))
+            using (var _result = await operations.ListWithHttpMessagesAsync(resourceGroupName, accountName, include, null, cancellationToken).ConfigureAwait(false))
             {
                 return _result.Body;
             }
@@ -58,13 +70,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         public static LocalUser Get(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string username)
         {
@@ -78,13 +94,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.
@@ -97,19 +117,24 @@ namespace Microsoft.Azure.Management.Storage
             }
         }
         /// <summary>
-        /// Create or update the properties of a local user associated with the storage account
+        /// Create or update the properties of a local user associated with the storage
+        /// account
         /// </summary>
         /// <param name='operations'>
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         public static LocalUser CreateOrUpdate(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string username, LocalUser properties)
         {
@@ -117,19 +142,24 @@ namespace Microsoft.Azure.Management.Storage
         }
 
         /// <summary>
-        /// Create or update the properties of a local user associated with the storage account
+        /// Create or update the properties of a local user associated with the storage
+        /// account
         /// </summary>
         /// <param name='operations'>
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.
@@ -148,13 +178,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         public static void Delete(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string username)
         {
@@ -168,13 +202,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.
@@ -190,13 +228,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         public static LocalUserKeys ListKeys(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string username)
         {
@@ -210,13 +252,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.
@@ -235,13 +281,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         public static LocalUserRegeneratePasswordResult RegeneratePassword(this ILocalUsersOperations operations, string resourceGroupName, string accountName, string username)
         {
@@ -255,13 +305,17 @@ namespace Microsoft.Azure.Management.Storage
         /// The operations group for this extension method.
         /// </param>
         /// <param name='resourceGroupName'>
-        /// The name of the resource group within the user&#39;s subscription. The name is case insensitive.
+        /// The name of the resource group within the user&#39;s subscription. The name is
+        /// case insensitive.
         /// </param>
         /// <param name='accountName'>
-        /// The name of the storage account within the specified resource group. Storage account names must be between 3 and 24 characters in length and use numbers and lower-case letters only.
+        /// The name of the storage account within the specified resource group.
+        /// Storage account names must be between 3 and 24 characters in length and use
+        /// numbers and lower-case letters only.
         /// </param>
         /// <param name='username'>
-        /// The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.
+        /// The name of local user. The username must contain lowercase letters and
+        /// numbers only. It must be unique only within the storage account.
         /// </param>
         /// <param name='cancellationToken'>
         /// The cancellation token.

@@ -62,7 +62,13 @@ namespace Microsoft.Azure.Management.Storage.Models
         /// <param name="hasSshPassword">Indicates whether ssh password exists. Set it to false to remove existing
         /// SSH password.
         /// </param>
-        public LocalUser(string id = default(string), string name = default(string), string type = default(string), SystemData systemData = default(SystemData), System.Collections.Generic.IList<PermissionScope> permissionScopes = default(System.Collections.Generic.IList<PermissionScope>), string homeDirectory = default(string), System.Collections.Generic.IList<SshPublicKey> sshAuthorizedKeys = default(System.Collections.Generic.IList<SshPublicKey>), string sid = default(string), bool? hasSharedKey = default(bool?), bool? hasSshKey = default(bool?), bool? hasSshPassword = default(bool?))
+
+        /// <param name="extendedGroups">Extended Groups of which user is part of, only for NFSv3 User.
+        /// </param>
+
+        /// <param name="isNfSv3Enabled">Indicates whether LocalUser belongs to NFSv3 or SFTP.
+        /// </param>
+        public LocalUser(string id = default(string), string name = default(string), string type = default(string), SystemData systemData = default(SystemData), System.Collections.Generic.IList<PermissionScope> permissionScopes = default(System.Collections.Generic.IList<PermissionScope>), string homeDirectory = default(string), System.Collections.Generic.IList<SshPublicKey> sshAuthorizedKeys = default(System.Collections.Generic.IList<SshPublicKey>), string sid = default(string), bool? hasSharedKey = default(bool?), bool? hasSshKey = default(bool?), bool? hasSshPassword = default(bool?), System.Collections.Generic.IList<int?> extendedGroups = default(System.Collections.Generic.IList<int?>), bool? isNfSv3Enabled = default(bool?))
 
         : base(id, name, type)
         {
@@ -74,6 +80,8 @@ namespace Microsoft.Azure.Management.Storage.Models
             this.HasSharedKey = hasSharedKey;
             this.HasSshKey = hasSshKey;
             this.HasSshPassword = hasSshPassword;
+            this.ExtendedGroups = extendedGroups;
+            this.IsNfSv3Enabled = isNfSv3Enabled;
             CustomInit();
         }
 
@@ -133,5 +141,17 @@ namespace Microsoft.Azure.Management.Storage.Models
         /// </summary>
         [Newtonsoft.Json.JsonProperty(PropertyName = "properties.hasSshPassword")]
         public bool? HasSshPassword {get; set; }
+
+        /// <summary>
+        /// Gets or sets extended Groups of which user is part of, only for NFSv3 User.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "properties.extendedGroups")]
+        public System.Collections.Generic.IList<int?> ExtendedGroups {get; set; }
+
+        /// <summary>
+        /// Gets or sets indicates whether LocalUser belongs to NFSv3 or SFTP.
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty(PropertyName = "properties.isNFSv3Enabled")]
+        public bool? IsNfSv3Enabled {get; set; }
     }
 }

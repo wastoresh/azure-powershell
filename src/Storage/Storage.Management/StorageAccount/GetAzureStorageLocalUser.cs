@@ -13,6 +13,7 @@
 // ----------------------------------------------------------------------------------
 
 using Microsoft.Azure.Commands.Management.Storage.Models;
+using Microsoft.Azure.Management.Monitor.Version2018_09_01.Models;
 using Microsoft.Azure.Management.Storage;
 using Microsoft.Azure.Management.Storage.Models;
 using System.Management.Automation;
@@ -32,11 +33,26 @@ namespace Microsoft.Azure.Commands.Management.Storage
         /// </summary>
         private const string AccountObjectParameterSet = "AccountObject";
 
+        /// <summary>
+        /// AccountName Parameter Set
+        /// </summary>
+        private const string AccountNameListParameterSet = "AccountNameList";
+
+        /// <summary>
+        /// Account object parameter set 
+        /// </summary>
+        private const string AccountObjectListParameterSet = "AccountObjectList";
+
         [Parameter(
             Position = 0,
             Mandatory = true,
             HelpMessage = "Resource Group Name.",
             ParameterSetName = AccountNameParameterSet)]
+        [Parameter(
+            Position = 0,
+            Mandatory = true,
+            HelpMessage = "Resource Group Name.",
+            ParameterSetName = AccountNameListParameterSet)]
         [ValidateNotNullOrEmpty]
         public string ResourceGroupName { get; set; }
 
@@ -45,6 +61,11 @@ namespace Microsoft.Azure.Commands.Management.Storage
             Mandatory = true,
             HelpMessage = "Storage Account Name.",
             ParameterSetName = AccountNameParameterSet)]
+        [Parameter(
+            Position = 1,
+            Mandatory = true,
+            HelpMessage = "Storage Account Name.",
+            ParameterSetName = AccountNameListParameterSet)]
         [Alias(AccountNameAlias)]
         [ValidateNotNullOrEmpty]
         public string StorageAccountName { get; set; }
@@ -53,14 +74,32 @@ namespace Microsoft.Azure.Commands.Management.Storage
             HelpMessage = "Storage account object",
             ValueFromPipeline = true,
             ParameterSetName = AccountObjectParameterSet)]
+        [Parameter(Mandatory = true,
+            HelpMessage = "Storage account object",
+            ValueFromPipeline = true,
+            ParameterSetName = AccountObjectListParameterSet)]
         [ValidateNotNullOrEmpty]
         public PSStorageAccount StorageAccount { get; set; }
 
         [Alias("Name")]
         [Parameter(Mandatory = false,
-            HelpMessage = "The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.")]
+            HelpMessage = "The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.",
+            ParameterSetName = AccountNameParameterSet)]
+        [Parameter(Mandatory = false,
+            HelpMessage = "The name of local user. The username must contain lowercase letters and numbers only. It must be unique only within the storage account.",
+            ParameterSetName = AccountObjectParameterSet)]
         [ValidateNotNullOrEmpty]
         public string UserName { get; set; }
+
+        [Parameter(Mandatory = false,
+            HelpMessage = "Specify to include NFSv3 enabled Local Users in list Local Users.",
+            ParameterSetName = AccountNameListParameterSet)]
+        [Parameter(Mandatory = false,
+            HelpMessage = "Specify to include NFSv3 enabled Local Users in list Local Users.",
+            ParameterSetName = AccountObjectListParameterSet)]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter IncludeNFSv3 { get; set; }
+
 
         public override void ExecuteCmdlet()
         {
@@ -69,6 +108,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
             switch (ParameterSetName)
             {
                 case AccountObjectParameterSet:
+                case AccountObjectListParameterSet:
                     this.ResourceGroupName = StorageAccount.ResourceGroupName;
                     this.StorageAccountName = StorageAccount.StorageAccountName;
                     break;
@@ -81,7 +121,8 @@ namespace Microsoft.Azure.Commands.Management.Storage
             {
                 var users = this.StorageClient.LocalUsers.List(
                         this.ResourceGroupName,
-                        this.StorageAccountName);
+                        this.StorageAccountName,
+                        include: this.IncludeNFSv3.IsPresent ? "nfsv3" : null);
                
                 if (users != null)
                 {
