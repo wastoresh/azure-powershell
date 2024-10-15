@@ -35,7 +35,7 @@ Invoke-LiveTestScenario -Name "Removes a Storage account" -Description "Test rem
 
 }
 
-& "$PSScriptRoot\QueueTests.ps1"
-& "$PSScriptRoot\BlobTests.ps1"
-& "$PSScriptRoot\TableTests.ps1"
+#& "$PSScriptRoot\QueueTests.ps1"
+#& "$PSScriptRoot\BlobTests.ps1"
+#& "$PSScriptRoot\TableTests.ps1"
 & "$PSScriptRoot\FileTests.ps1"

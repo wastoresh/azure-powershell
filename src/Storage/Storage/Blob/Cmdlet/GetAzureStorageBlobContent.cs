@@ -30,6 +30,7 @@ using System.Globalization;
 using Track2Models = global::Azure.Storage.Blobs.Models;
 using Azure.Storage.Blobs;
 using Azure.Storage;
+using Azure.Storage.Sas;
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
 {
@@ -362,12 +363,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         internal void GetBlobContent(string blobUri, string fileName)
         {
             BlobClientOptions blobClientOptions = this.ClientOptions;
-            BlobBaseClient blobclient = new BlobBaseClient(new Uri(blobUri), blobClientOptions);
+            //BlobBaseClient blobclient = new BlobBaseClient(new Uri(blobUri), blobClientOptions);
+            BlobBaseClient blobclient = Util.GetTrack2BlobClient(new Uri(blobUri), this.Context is null ? null : (AzureStorageContext)this.Context, blobClientOptions);
             Track2Models.BlobProperties blobproperties;
             if (blobclient.AccountName.ToLower().StartsWith("md-")) // managed disk account, must be page blob
             {
                 blobClientOptions.Diagnostics.LoggedHeaderNames.Add("WWW-Authenticate");
-                blobclient = new PageBlobClient(new Uri(blobUri), blobClientOptions);
+                //blobclient = new PageBlobClient(new Uri(blobUri), blobClientOptions);
+                blobclient = Util.GetTrack2BlobClient(new Uri(blobUri), this.Context is null ? null : (AzureStorageContext)this.Context, blobClientOptions, Track2Models.BlobType.Page);
 
                 try
                 {
@@ -378,6 +381,10 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
                     string audience = GetAudienceFrom401ExceptionMessage(e);
                     if (audience != null)
                     {
+                        if (this.Context != null)
+                        {
+                            throw new InvalidOperationException("Don't use Context parameter when download managed disk with disk Uri.");
+                        }
                         WriteDebugLog(string.Format("Need bearer token with audience {0} to access the blob, so will generate bearer token and resend the request.", audience));
                         AzureSessionCredential customerToken = new AzureSessionCredential(DefaultContext, customAudience: audience);
                         blobclient = new PageBlobClient(new Uri(blobUri), customerToken, this.ClientOptions);
@@ -390,9 +397,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
             }
             else // need check blob type for none md account
             {
-                blobproperties = blobclient.GetProperties(null, this.CmdletCancellationToken).Value;
 
-                blobclient = Util.GetTrack2BlobClient(new Uri(blobUri), null, blobClientOptions, blobproperties.BlobType);
+                // blobclient = Util.GetTrack2BlobClient(new Uri(blobUri), this.Context is null ? null : (AzureStorageContext)this.Context, blobClientOptions);
+                //blobproperties = blobclient.GetProperties(null, this.CmdletCancellationToken).Value;
+
+                //blobclient = Util.GetTrack2BlobClient(new Uri(blobUri), this.Context is null? null : (AzureStorageContext) this.Context, blobClientOptions, blobproperties.BlobType);
             }
             GetBlobContent(blobclient, fileName);
         }
@@ -473,7 +482,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Blob.Cmdlet
         protected override IStorageBlobManagement CreateChannel()
         {
             //Init storage blob management channel
-            if (skipSourceChannelInit)
+            if (skipSourceChannelInit && this.Context == null)
             {
                 return null;
             }

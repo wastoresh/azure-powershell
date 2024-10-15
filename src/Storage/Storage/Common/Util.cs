@@ -38,6 +38,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
     using global::Azure.Storage.Queues;
     using Microsoft.WindowsAzure.Commands.Storage.File;
     using System.Linq;
+    using Azure;
 
     internal static class Util
     {
@@ -483,7 +484,34 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                     }
                 }
             }
-            else //SAS or Anonymous
+            // else if (! && context != null && context.StorageAccount != null && context.StorageAccount.Credentials != null && context.StorageAccount.Credentials.IsSAS) //SAS only in context
+            else if (context != null && context.StorageAccount != null && context.StorageAccount.Credentials != null && context.StorageAccount.Credentials.IsSAS) //SAS in context, will fail if sas both in context and Uri
+            {
+                if (blobUri.Query.ToLower().Contains("sig="))
+                {
+                    throw new ArgumentException("SasToken is both in blob Uri and Context, it should be input only in one place.");
+                }
+                if (blobType == null)
+                {
+                    blobClient = new BlobBaseClient(blobUri, new global::Azure.AzureSasCredential(context.StorageAccount.Credentials.SASToken), options);
+                }
+                else
+                {
+                    switch (blobType.Value)
+                    {
+                        case global::Azure.Storage.Blobs.Models.BlobType.Page:
+                            blobClient = new PageBlobClient(blobUri, new global::Azure.AzureSasCredential(context.StorageAccount.Credentials.SASToken), options);
+                            break;
+                        case global::Azure.Storage.Blobs.Models.BlobType.Append:
+                            blobClient = new AppendBlobClient(blobUri, new global::Azure.AzureSasCredential(context.StorageAccount.Credentials.SASToken), options);
+                            break;
+                        default: //Block
+                            blobClient = new BlockBlobClient(blobUri, new global::Azure.AzureSasCredential(context.StorageAccount.Credentials.SASToken), options);
+                            break;
+                    }
+                }
+            }
+            else //SAS in Uri or Anonymous
             {
                 if (blobType == null)
                 {
