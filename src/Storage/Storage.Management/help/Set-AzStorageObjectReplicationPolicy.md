@@ -15,23 +15,23 @@ Creates or updates the specified object replication policy in a Storage account.
 ### AccountName (Default)
 ```
 Set-AzStorageObjectReplicationPolicy [-ResourceGroupName] <String> [-StorageAccountName] <String>
- [-PolicyId <String>] -SourceAccount <String> [-DestinationAccount <String>]
- -Rule <PSObjectReplicationPolicyRule[]> [-DefaultProfile <IAzureContextContainer>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-PolicyId <String>] -SourceAccount <String> [-DestinationAccount <String>] [-EnableMetrics <Boolean>]
+ -Rule <PSObjectReplicationPolicyRule[]> [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### PolicyObject
 ```
 Set-AzStorageObjectReplicationPolicy [-ResourceGroupName] <String> [-StorageAccountName] <String>
- -InputObject <PSObjectReplicationPolicy> [-DefaultProfile <IAzureContextContainer>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+ -InputObject <PSObjectReplicationPolicy> [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### AccountObject
 ```
 Set-AzStorageObjectReplicationPolicy -StorageAccount <PSStorageAccount> [-PolicyId <String>]
- -SourceAccount <String> [-DestinationAccount <String>] -Rule <PSObjectReplicationPolicyRule[]>
- [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ -SourceAccount <String> [-DestinationAccount <String>] [-EnableMetrics <Boolean>]
+ -Rule <PSObjectReplicationPolicyRule[]> [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
  [<CommonParameters>]
 ```
 
@@ -92,6 +92,21 @@ Object Replication Policy DestinationAccount, if SourceAccount is account name i
 
 ```yaml
 Type: System.String
+Parameter Sets: AccountName, AccountObject
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnableMetrics
+Indicates whether object replication metrics feature is enabled for the policy.
+
+```yaml
+Type: System.Boolean
 Parameter Sets: AccountName, AccountObject
 Aliases:
 
