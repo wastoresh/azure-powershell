@@ -79,10 +79,10 @@ namespace Microsoft.Azure.Management.Storage.Models
         public string Name {get; set; }
 
         /// <summary>
-        /// Gets or sets the SKU tier. This is based on the SKU name. Possible values include: &#39;Standard&#39;, &#39;Premium&#39;
+        /// Gets the SKU tier. This is based on the SKU name. Possible values include: &#39;Standard&#39;, &#39;Premium&#39;
         /// </summary>
         [Newtonsoft.Json.JsonProperty(PropertyName = "tier")]
-        public SkuTier? Tier {get; set; }
+        public SkuTier? Tier {get; private set; }
 
         /// <summary>
         /// Gets the type of the resource, usually it is &#39;storageAccounts&#39;.

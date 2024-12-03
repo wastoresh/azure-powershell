@@ -33,6 +33,11 @@ namespace Microsoft.Azure.Management.Storage
         public Microsoft.Rest.ServiceClientCredentials Credentials { get; private set; }
 
         /// <summary>
+        /// The API version to use for this operation.
+        /// </summary>
+        public string ApiVersion { get; private set; }
+
+        /// <summary>
         /// The ID of the target subscription.
         /// </summary>
         public string SubscriptionId { get; set;}
@@ -371,6 +376,7 @@ namespace Microsoft.Azure.Management.Storage
             this.FileServices = new FileServicesOperations(this);
             this.FileShares = new FileSharesOperations(this);
             this.BaseUri = new System.Uri("https://management.azure.com");
+            this.ApiVersion = "2024-01-01";
             this.AcceptLanguage = "en-US";
             this.LongRunningOperationRetryTimeout = 30;
             this.GenerateClientRequestId = true;
