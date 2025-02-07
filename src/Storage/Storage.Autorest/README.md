@@ -28,14 +28,13 @@ For information on how to develop for `Az.Storage`, see [how-to.md](how-to.md).
 
 ``` yaml
 # Please specify the commit id that includes your features to make sure generated codes stable.
-commit: 3e6b4ddca225530c27273d0f816466a905c0151b
+commit: ae38b76a7e681922a05b0b1e4d44cc725eb94802
 require:
 # readme.azure.noprofile.md is the common configuration file
   - $(this-folder)/../../readme.azure.noprofile.md
 input-file:
-#  - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/storage.json
-  - https://github.com/Azure/azure-rest-api-specs/tree/mgadsing/srpjan24apiswaggerupdates/specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/file.json
-  - https://github.com/Azure/azure-rest-api-specs/tree/mgadsing/srpjan24apiswaggerupdates/specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/storage.json
+  - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/storage.json
+  - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2024-01-01/file.json
 
 # For new RP, the version is 0.1.0
 module-version: 5.9.1
