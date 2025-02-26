@@ -71,6 +71,7 @@ function GetRandomAccountName
 function GetFileContentMD5
 {
     param([string]$filePath)
+    $filePath = (Get-Item $filePath).FullName
     $hash = [System.BitConverter]::ToString($md5.ComputeHash([System.IO.File]::ReadAllBytes($filePath)))
     return $hash
 }

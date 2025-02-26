@@ -70,6 +70,7 @@
         <!-- Key vault created under the testing resource group. Refer to test case User identity for creation instructions -->
         <keyVault id="1">
             <vaultName>placeholder</vaultName>
+            <keyvaultId>/subscriptions/{subscriptionID}/resourceGroups/{resourceGroupsName}/providers/Microsoft.KeyVault/vaults/{keyVaultName}</keyvaultId>
             <keyVaultUri>placeholder</keyVaultUri>
             <keyName>placeholder</keyName>
             <keyVersion>placeholder</keyVersion>

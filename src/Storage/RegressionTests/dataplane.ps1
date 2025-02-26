@@ -2,9 +2,9 @@
 
 BeforeAll {
     # Modify the path to your own
-    Import-Module .\utils.ps1
+    Import-Module (get-item .\utils.ps1).FullName
 
-    [xml]$config = Get-Content .\config.xml
+    [xml]$config = Get-Content (get-item .\config.xml).FullName
     $globalNode = $config.SelectSingleNode("config/section[@id='global']")
     $testNode = $config.SelectSingleNode("config/section[@id='dataplane']")
 
@@ -276,6 +276,7 @@ Describe "dataplane test" {
 
         Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $true
         sleep 120 # Set sleep time to 2 min to make sure AllowBlobPublicAccess becomes True
+
         ## regression test for Fix  Set-AzStorageContainerAcl can clean up the stored Access Policy
         New-AzStorageContainerStoredAccessPolicy -Container $containerName  -Policy 123 -Permission rw -Context $ctx
         New-AzStorageContainerStoredAccessPolicy -Container $containerName  -Policy 234 -Permission rwdl -Context $ctx
@@ -1796,7 +1797,7 @@ Describe "dataplane test" {
         # Set-AzStorageFileContent -ShareName $containerName -Path 0size -Source C:\temp\0  -Context $ctx -force 
         
         $file = Get-AzStorageFileContent -Destination $localDestFile -ShareName $shareName -Path $bigfile.ShareFileClient.Path -CheckMd5 -Context $ctx2 -force -PassThru
-        CompareFileFileMD5 $localDestFile $file
+        CompareFileFileMD5 (get-item $localDestFile).FullName $file
 
         # del $localDestFile
 
@@ -2085,7 +2086,7 @@ Describe "dataplane test" {
         $localLargeSrcFile = ".\data\testfile_307200K_0" # File of size 300M. Needs to be created beforehand
         $localDestFile = ".\created\testoauth" # test will create the file
         $localDestFileName = "testoauth"
-        $shareName = "sharefileoauth"
+        $shareName = "$(GetRandomContainerName)oauth"
         $filename = "filefileoauth"
         $dirname = "dir1"
         $filepath = "dir1\test1"
@@ -2096,9 +2097,9 @@ Describe "dataplane test" {
         #Add-AzAccount -ServicePrincipal -Tenant $globalNode.tenantId -SubscriptionId $globalNode.subscriptionId -Credential $cred 
 
         $ctxoauth = New-AzStorageContext -StorageAccountName $accountname -EnableFileBackupRequestIntent
-        $ctxkey = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $accountname).Context
+        $ctxkey = New-AzStorageContext -StorageAccountName $accountname -StorageAccountKey (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $accountname)[0].Value
         $ctxoauth2 = New-AzStorageContext -StorageAccountName $accountname2 -EnableFileBackupRequestIntent
-        $ctxkey2 = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $accountname2).Context
+        #$ctxkey2 = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $accountname2).Context
 
         New-AzStorageShare -Name $shareName -Context $ctxkey
         Set-AzStorageFileContent -ShareName $shareName -Source $localSrcFile -Path $filename -Context $ctxoauth -Force
@@ -2109,12 +2110,40 @@ Describe "dataplane test" {
         $dir = $share | Get-AzStorageFile -Path $dirname 
         $file = $share | Get-AzStorageFile -Path $filename
 
+        # share API with Oauth
+        $share2 = New-AzStorageShare -Name "$($shareName)2" -Context $ctxoauth
+        $share2.Name | should -Be "$($shareName)2"
+        $shares = Get-AzStorageShare -Context $ctxoauth
+        $shares.Count | should -BeGreaterOrEqual 2
+        $count1 = $shares.Count
+
+        $share2 =  Set-AzStorageShareQuota -Name "$($shareName)2" -Context $ctxoauth -Quota 200
+        $share2 = Get-AzStorageShare -Name "$($shareName)2" -Context $ctxoauth
+        $share2.Name | should -Be "$($shareName)2"
+        $share2.Quota | should -Be 200
+        
+        New-AzStorageShareStoredAccessPolicy -Name $shareName -Context $ctxoauth -Policy 123 -Permission rw
+        New-AzStorageShareStoredAccessPolicy -Name $shareName -Context $ctxoauth -Policy 1234 -Permission r -StartTime (Get-Date) -ExpiryTime (Get-Date).Add(1)
+        set-AzStorageShareStoredAccessPolicy -Name $shareName -Context $ctxoauth -Policy 123 -Permission rwd -StartTime (Get-Date)
+        $policy = Get-AzStorageShareStoredAccessPolicy -Name $shareName -Context $ctxoauth
+        $policy.Count | should -be 2
+        Remove-AzStorageShareStoredAccessPolicy -Name $shareName -Context $ctxoauth -Policy 123
+
+        Remove-AzStorageShare -Name "$($shareName)2" -Context $ctxoauth -Force
+        $share2.Name | should -Be "$($shareName)2"
+        $shares = Get-AzStorageShare -Context $ctxoauth
+        $shares.Count | should -Be ($count1-1)
+
+        
+
         # Set and get permission
         $permission = $testNode.permission 
-        $response = $share.ShareClient.CreatePermission($permission);
+        $inputpermission = new-object Azure.Storage.Files.Shares.Models.ShareFilePermission
+        $inputpermission.Permission = $permission
+        $response = $share.ShareClient.CreatePermission($inputpermission);
         $key = $response.Value.FilePermissionKey
         $outputPermission = $share.ShareClient.GetPermission($key)
-        $outputPermission.Value | Should -Be $permission
+        $outputPermission.Value.Permission | Should -Be $permission
 
         # file handler
         $handleCount = Close-AzStorageFileHandle -ShareName $shareName -CloseAll -Context $ctxoauth -PassThru
@@ -2214,7 +2243,7 @@ Describe "dataplane test" {
 
         New-AzStorageContainer -Name $shareName -Context $ctxoauth -ErrorAction SilentlyContinue
         $b = Set-AzStorageblobContent -Container $shareName -File $localSrcFile -blob testblob -Context $ctxoauth -Force
-        New-AzStorageShare -Name $shareName -Context $ctxkey2 -ErrorAction SilentlyContinue
+        New-AzStorageShare -Name $shareName -Context $ctxoauth2 -ErrorAction SilentlyContinue
         New-AzStorageDirectory -ShareName $shareName -Path dir1 -Context $ctxoauth2 -ErrorAction SilentlyContinue
         Set-AzStorageFileContent -ShareName $shareName -Source $localSrcFile -Path dir1/test1 -Context $ctxoauth -Force
         $Error.Clear()
@@ -2368,25 +2397,8 @@ Describe "dataplane test" {
         $stopmessage = Stop-AzStorageFileCopy -ShareFileClient $fd.ShareFileClient -Context $ctxoauth -Force -ErrorAction SilentlyContinue
         $error[0].Exception.Message | should -BeLike "There is currently no pending copy operation*"
         $error.Clear()
-
-        # should fail
+     
         $Error.Count | should -be 0
-        $error.Clear()
-        New-AzStorageShare -Name $shareName -Context $ctxoauth -ErrorAction SilentlyContinue
-        Get-AzStorageShare -Context $ctxoauth -ErrorAction SilentlyContinue
-        Get-AzStorageShare -Name $shareName -Context $ctxoauth -ErrorAction SilentlyContinue
-        Remove-AzStorageShare -Name $shareName -Context $ctxoauth -Force -ErrorAction SilentlyContinue
-        Set-AzStorageShareQuota -Name $shareName -Quota 1024 -Context $ctxoauth -ErrorAction SilentlyContinue
-        New-AzStorageShareStoredAccessPolicy -ShareName $shareName -Policy 123 -Permission rw  -Context $ctxoauth -ErrorAction SilentlyContinue
-        Set-AzStorageShareStoredAccessPolicy -ShareName $shareName -Policy 123 -Permission rw  -Context $ctxoauth -ErrorAction SilentlyContinue
-        Get-AzStorageShareStoredAccessPolicy -ShareName $shareName -Context $ctxoauth -ErrorAction SilentlyContinue
-        Remove-AzStorageShareStoredAccessPolicy -ShareName $shareName -Policy 123 -Context $ctxoauth -ErrorAction SilentlyContinue
-        $error.Count | should -be 9
-        foreach ($e in $error)
-        {
-            $e.Exception.Message | should -BeLike "*This API does not support bearer tokens. For OAuth, use the Storage Resource Provider APIs instead. Learn more: https://aka.ms/azurefiles/restapi.*"
-        }
-        $error.Clear()
 
         Set-AzStorageServiceMetricsProperty -ServiceType File -MetricsType Hour -Context $ctxoauth -ErrorAction SilentlyContinue
         $error[0].Exception.Message | should -BeLike "*Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.*"
@@ -2408,8 +2420,9 @@ Describe "dataplane test" {
             $e.Exception.Message | should -BeLike "*Create File service SAS only supported with SharedKey credential.*"
         }
         $error.Clear()
-
-        Remove-AzStorageShare -Name $shareName -Context $ctxkey -Force
+        
+        Remove-AzStorageShare -Name $shareName -Context $ctxoauth -Force
+        Remove-AzStorageShare -Name $shareName -Context $ctxoauth2 -Force
 
         $Error.Count | should -be 0
     }
@@ -2461,12 +2474,12 @@ Describe "dataplane test" {
         $f.Name | Should -Be "files..."
         $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
         $f.ShareFileClient.Name | Should -Be "files..."
-        $f.Length | Should -Be 1024
+        $f.Length | Should -Be (Get-Item .\data\testfile_1024K_0).Length
 
         $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files.1.." -Source .\data\testfile_10240K_0 -Context $ctx -PassThru -Force
         $f.Name | Should -Be "files.1.."
         $f.ShareFileClient.Path | Should -Be "test1./test2../files.1.."
-        $f.Length | Should -Be 10240
+        $f.Length | Should -Be (Get-Item .\data\testfile_10240K_0).Length
         $f.ShareFileClient.Name | Should -Be "files.1.."
 
         # download file/dir
@@ -2574,6 +2587,48 @@ Describe "dataplane test" {
         $Error.Clear()
 
 
+    }
+
+    It "Storage Account Context works on both AllowSharedKeyAccess = true/false account."  {
+        $Error.Clear()    
+        
+        # with get context with sharedkey
+        $ctx2 = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName2).Context
+
+        $result = Get-AzStorageContainer -Context $ctx -MaxCount 1
+        $result | should -Not -Be $null 
+        $result = Get-AzStorageShare -Context $ctx 
+        $result | should -Not -Be $null 
+        $result = Get-AzStorageTable -Context $ctx 
+        $result | should -Not -Be $null 
+        $result = Get-AzStorageQueue -Context $ctx 
+        $result | should -Not -Be $null 
+
+        try
+        {
+            # with get context with Oauth
+            Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName2 -AllowSharedKeyAccess $false
+        
+            $ctx2 = (Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName2).Context
+
+            $result = Get-AzStorageContainer -Context $ctx -MaxCount 1
+            $result | should -Not -Be $null 
+            New-AzStorageDirectory -ShareName $containerName -Path diroauthtest -Context $ctx -ErrorAction SilentlyContinue
+            $result = Get-AzStorageFile -ShareName $containerName -Context $ctx 
+            $result | should -Not -Be $null 
+            $result = Get-AzStorageTable -Context $ctx 
+            $result | should -Not -Be $null 
+            $result = Get-AzStorageQueue -Context $ctx 
+            $result | should -Not -Be $null 
+        }
+        catch
+        {
+           Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName2 -AllowSharedKeyAccess $true
+           throw; 
+        }
+        Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName2 -AllowSharedKeyAccess $true
+
+        $Error.Count | should -be 0
     }
 
     It "Test case name"  {

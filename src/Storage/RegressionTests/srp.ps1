@@ -3,7 +3,7 @@
 BeforeAll {
     Import-Module .\utils.ps1
 
-    [xml]$config = Get-Content .\config.xml
+    [xml]$config = Get-Content (get-item .\config.xml).FullName
     $globalNode = $config.SelectSingleNode("config/section[@id='global']")
     $testNode = $config.SelectSingleNode("config/section[@id='srp']")
     
@@ -604,11 +604,11 @@ Describe "Management plan test" {
 
         $accountNameFS = $accountName + "fs"
 
-        $account = New-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameFS -SkuName Premium_LRS -Location "westus" -Kind FileStorage  -AccessTier hot -EnableHttpsTrafficOnly $false         
+        $account = New-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameFS -SkuName Premium_LRS -Location "eastus2euap" -Kind FileStorage  -AccessTier hot -EnableHttpsTrafficOnly $false         
         $account.ResourceGroupName | should -Be $rgname
         $account.StorageAccountName | should -Be $accountNameFS
         $account.Sku.Name | should -Be "Premium_LRS"
-        $account.Location | should -Be "westus"
+        $account.Location | should -Be "eastus2euap"
         $account.Kind | should -Be "FileStorage"
 
         $share2 = New-AzRmStorageShare -ResourceGroupName $rgname -StorageAccountName $accountNameFS -Name testsharefs2 -AccessTier Premium
@@ -620,6 +620,104 @@ Describe "Management plan test" {
         $share2.ShareUsageBytes | Should -Be $null
 
         $share2 | Remove-AzRmStorageShare -Force
+
+        $share1 = New-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1 -PaidBurstingEnabled -PaidBurstingMaxBandwidthMibps 129 -PaidBurstingMaxIops 3032 
+        $share1 = get-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1
+        $share1.FileSharePaidBursting.PaidBurstingEnabled | Should -Be $true
+        $share1.FileSharePaidBursting.PaidBurstingMaxIops | Should -Be 3032
+        $share1.FileSharePaidBursting.PaidBurstingMaxBandwidthMibps | Should -Be 129
+        Update-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1 -PaidBurstingMaxBandwidthMibps 128 -PaidBurstingMaxIops 3033
+        $share1 = get-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1
+        $share1.FileSharePaidBursting.PaidBurstingEnabled | Should -Be $true
+        $share1.FileSharePaidBursting.PaidBurstingMaxIops | Should -Be 3033
+        $share1.FileSharePaidBursting.PaidBurstingMaxBandwidthMibps | Should -Be 128
+        Update-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1 -PaidBurstingEnabled $false
+        $share1 = get-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1
+        $share1.FileSharePaidBursting.PaidBurstingEnabled | Should -Be $false
+        $share1.FileSharePaidBursting.PaidBurstingMaxIops | Should -Be $null
+        $share1.FileSharePaidBursting.PaidBurstingMaxBandwidthMibps | Should -Be $null
+        Update-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1 -PaidBurstingEnabled $true -PaidBurstingMaxBandwidthMibps 130 -PaidBurstingMaxIops 3040
+        $share1 = get-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1
+        $share1.FileSharePaidBursting.PaidBurstingEnabled | Should -Be $true
+        $share1.FileSharePaidBursting.PaidBurstingMaxIops | Should -Be 3040
+        $share1.FileSharePaidBursting.PaidBurstingMaxBandwidthMibps | Should -Be 130
+
+        $share1 | Remove-AzRmStorageShare -Force
+
+        Remove-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameFS -Force -AsJob
+
+        $Error.Count | should -be 0
+    }
+    
+
+    It "File provisionV2 Account" {
+        $Error.Clear()
+
+        $accountNameFS = $accountName + "fs2"
+
+        $account = New-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameFS -SkuName PremiumV2_LRS -Kind FileStorage -Location eastus2euap         
+        $account.ResourceGroupName | should -Be $rgname
+        $account.StorageAccountName | should -Be $accountNameFS
+        $account.Sku.Name | should -Be "PremiumV2_LRS"
+        $account.Location | should -Be "eastus2euap"
+        $account.Kind | should -Be "FileStorage"
+
+        # get file service usage
+        $usage = Get-AzStorageFileServiceUsage -ResourceGroupName $rgname -StorageAccountName $accountNameFS 
+        $usage.ResourceGroupName | should -Be $rgname
+        $usage.BurstingConstantBurstFloorIops | should -BeGreaterThan 0
+        $usage.BurstingConstantBurstIoScalar | should -BeGreaterThan 0
+        $usage.BurstingConstantBurstTimeframeSecond | should -BeGreaterThan 0
+        $usage.FileShareLimitMaxProvisionedBandwidthMiBPerSec | should -BeGreaterThan 0
+        $usage.FileShareLimitMaxProvisionedIops | should -BeGreaterThan 0
+        $usage.FileShareLimitMaxProvisionedStorageGiB | should -BeGreaterThan 0
+        $usage.FileShareLimitMinProvisionedBandwidthMiBPerSec | should -BeGreaterThan 0
+        $usage.FileShareLimitMinProvisionedIops | should -BeGreaterThan 0
+        $usage.FileShareLimitMinProvisionedStorageGiB | should -BeGreaterThan 0
+        $usage.FileShareRecommendationBandwidthScalar | should -BeGreaterThan 0
+        $usage.FileShareRecommendationBaseBandwidthMiBPerSec | should -BeGreaterThan 0
+        $usage.FileShareRecommendationBaseIops | should -BeGreaterThan 0
+        $usage.FileShareRecommendationIoScalar | should -BeGreaterThan 0
+        $usage.LiveShareFileShareCount | should -Be 0
+        $usage.LiveShareProvisionedBandwidthMiBPerSec | should -Be 0
+        $usage.LiveShareProvisionedIops | should -Be 0
+        $usage.LiveShareProvisionedStorageGiB | should -Be 0
+        $usage.SoftDeletedShareFileShareCount | should -Be 0
+        $usage.SoftDeletedShareProvisionedBandwidthMiBPerSec | should -Be 0
+        $usage.SoftDeletedShareProvisionedIops | should -Be 0
+        $usage.SoftDeletedShareProvisionedStorageGiB | should -Be 0
+        $usage.StorageAccountLimitMaxFileShare | should -BeGreaterThan 0
+        $usage.StorageAccountLimitMaxProvisionedBandwidthMiBPerSec | should -BeGreaterThan 0
+        $usage.StorageAccountLimitMaxProvisionedIops | should -BeGreaterThan 0
+        $usage.StorageAccountLimitMaxProvisionedStorageGiB | should -BeGreaterThan 0
+
+        # new share properties
+        $share1 = New-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1 -ProvisionedBandwidthMibps 129 -ProvisionedIops 3032 -QuotaGiB 32
+        $share1 = Get-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1
+        $share1.ProvisionedIops | Should -Be 3032
+        $share1.ProvisionedBandwidthMibps | Should -Be 129
+        $share1.QuotaGiB | Should -Be 32
+        $share1.NextAllowedQuotaDowngradeTime | Should -Not -Be $null
+        $share1.NextAllowedProvisionedIopsDowngradeTime | Should -Not -Be $null
+        $share1.NextAllowedProvisionedBandwidthDowngradeTime | Should -Not -Be $null
+        $share1.IncludedBurstIops | should -BeGreaterThan 0
+        $share1.MaxBurstCreditsForIops | should -BeGreaterThan 0
+
+        $share1 = Update-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1 -ProvisionedBandwidthMibps 130 -ProvisionedIops 3033
+        $share1.ProvisionedIops | Should -Be 3033
+        $share1.ProvisionedBandwidthMibps | Should -Be 130
+        $share1.QuotaGiB | Should -Be 32
+        $share1 = Get-AzRmStorageShare -ResourceGroupName $rgname -AccountName $accountNameFS -ShareName testsharefs1
+        $share1.ProvisionedIops | Should -Be 3033
+        $share1.ProvisionedBandwidthMibps | Should -Be 130
+        $share1.QuotaGiB | Should -Be 32
+        $share1.NextAllowedQuotaDowngradeTime | Should -Not -Be $null
+        $share1.NextAllowedProvisionedIopsDowngradeTime | Should -Not -Be $null
+        $share1.NextAllowedProvisionedBandwidthDowngradeTime | Should -Not -Be $null
+        $share1.IncludedBurstIops | should -BeGreaterThan 0
+        $share1.MaxBurstCreditsForIops | should -BeGreaterThan 0
+
+        $share1 | Remove-AzRmStorageShare -Force
 
         Remove-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameFS -Force -AsJob
 
@@ -789,17 +887,23 @@ Describe "Management plan test" {
     It "key version" {
         $Error.Clear()
 
-        #keyversion
+        ## Prepare key vault 
+        # $keyVault = New-AzKeyVault -VaultName $vaultName -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
+        # $KeyvaultUri = $keyvault.VaultUri
+        # $key = Add-AzKeyVaultKey -VaultName $vaultName -Name $keyname -Destination 'Software' 
+        # $keyversion = $key.Version
+
         $keyVaultNode = $testNode.SelectSingleNode("keyVault[@id='1']")
         $vaultName = $keyVaultNode.vaultName
         $KeyvaultUri = $keyVaultNode.keyVaultUri
         $keyname = $keyVaultNode.keyName
         $keyversion = $keyVaultNode.keyVersion
+        $keyvaultId = $testNode.keyVault.SelectSingleNode("keyvaultId").'#text'
 
         $accountNameKeyV = $accountName + "kv"
         # Set up a new account 
         $a = New-AzStorageAccount -ResourceGroupName $rgname -Name $accountNameKeyV -AssignIdentity -SkuName Standard_LRS -Location eastus
-        Set-AzKeyVaultAccessPolicy -VaultName $vaultName -ResourceGroupName $rgname -ObjectId $a.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
+        New-AzRoleAssignment -ObjectID $a.Identity.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId #-debug
 
         $a = Set-AzStorageAccount -ResourceGroupName $rgname -Name $accountNameKeyV -StorageEncryption
         $a.Encryption.KeySource | Should -Be “Microsoft.Storage”
@@ -1395,10 +1499,12 @@ Describe "Management plan test" {
         $KeyUri = $testNode.keyVault.SelectSingleNode("keyUri[@id='1']").'#text'
         $KeyUri2 = $testNode.keyVault.SelectSingleNode("keyUri[@id='2']").'#text'
         $KeyUri3 = $testNode.keyVault.SelectSingleNode("keyUri[@id='3']").'#text'
+        $vaultName = $testNode.keyVault.SelectSingleNode("vaultName").'#text'
+        $keyvaultId = $testNode.keyVault.SelectSingleNode("keyvaultId").'#text'
 
         # Prepare storage account 
         $acc = New-AzStorageAccount -ResourceGroupName $rgname -Name $accountNameEncypScope -SkuName Standard_LRS -Location eastus -AssignIdentity
-        Set-AzKeyVaultAccessPolicy -VaultName $testNode.keyVault.vaultName -ResourceGroupName $rgname -ObjectId $acc.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
+        New-AzRoleAssignment -ObjectID $acc.Identity.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId #-debug
 
         $scope = New-AzStorageEncryptionScope -ResourceGroupName $rgname -StorageAccountName $accountNameEncypScope -EncryptionScopeName $msscopename -StorageEncryption -RequireInfrastructureEncryption 
         $scope.Name | should -be $msscopename
@@ -2585,8 +2691,8 @@ Describe "Management plan test" {
         $accountNameVLW = $testNode.SelectSingleNode("accountName[@id='1']").'#text' ## e.g. “testaccount”
 
         $ctx = (Get-AzStorageAccount -ResourceGroupName $rgname -Name $accountNameVLW).Context
-        $containerNameVLW = "vlwtest"
-        $containerNameVLW2 = "vlwtestmigration2"
+        $containerNameVLW = "$(GetRandomContainerName)vlwtest"
+        $containerNameVLW2 = "$(GetRandomContainerName)vlwtestmigration2"
         $localSrcFile = "C:\temp\testfile_10240K_0" 
         $blobname = "testvlw1"
 
