@@ -32,7 +32,8 @@ commit: 72c69a0cf561d41ae99fe6810c426a874d3a8372
 require:
   - $(this-folder)/../../readme.azure.noprofile.md
 input-file:
-  - $(repo)/specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/elasticsan.json
+#  - $(repo)/specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2024-05-01/elasticsan.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/08ae9d77c1666da8385a38c0dc7f85c262ea36f0/specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2024-07-01-preview/elasticsan.json
 
 # Normally, title is the service name
 title: ElasticSan
@@ -59,6 +60,19 @@ directive:
       model-name: ElasticSan|Volume|VolumeGroup|Snapshot
     set:
       suppress-format: true
+  # Change cmdlet name
+  - where:
+      verb: Restore
+      subject: VolumePre
+    set:
+      verb: Test
+      subject: VolumeRestore
+  - where:
+      verb: Backup
+      subject: VolumePre
+    set:
+      verb: Test
+      subject: VolumeBackup
   # Set alias for Name paramaters
   - where:
       subject: ElasticSan

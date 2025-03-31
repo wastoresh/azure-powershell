@@ -15,7 +15,7 @@ Get either a list of all volumes from a volume group or get a single volume from
 ### List (Default)
 ```
 Get-AzElasticSanVolume -ElasticSanName <String> -ResourceGroupName <String> [-SubscriptionId <String[]>]
- -VolumeGroupName <String> [-DefaultProfile <PSObject>]
+ -VolumeGroupName <String> [-XmsAccessSoftDeletedResource <String>] [-DefaultProfile <PSObject>]
  [<CommonParameters>]
 ```
 
@@ -260,6 +260,22 @@ Parameter Sets: List, Get, GetViaIdentityElasticSan
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -XmsAccessSoftDeletedResource
+Optional, returns only soft deleted volumes if set to true.
+If set to false or if not specified, returns only active volumes.
+
+```yaml
+Type: System.String
+Parameter Sets: List
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False

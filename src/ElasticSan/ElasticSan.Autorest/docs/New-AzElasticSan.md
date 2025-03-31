@@ -16,14 +16,19 @@ create ElasticSan.
 ```
 New-AzElasticSan -Name <String> -ResourceGroupName <String> -BaseSizeTiB <Int64>
  -ExtendedCapacitySizeTiB <Int64> -Location <String> -SkuName <String> [-SubscriptionId <String>]
- [-AvailabilityZone <String[]>] [-PublicNetworkAccess <String>] [-SkuTier <String>] [-Tag <Hashtable>]
- [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf] [<CommonParameters>]
+ [-AvailabilityZone <String[]>] [-PublicNetworkAccess <String>]
+ [-ScaleUpPropertyAutoScalePolicyEnforcement <String>] [-ScaleUpPropertyCapacityUnitScaleUpLimitTiB <Int64>]
+ [-ScaleUpPropertyIncreaseCapacityUnitByTiB <Int64>] [-ScaleUpPropertyUnusedSizeTiB <Int64>]
+ [-SkuTier <String>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf]
+ [<CommonParameters>]
 ```
 
 ### CreateViaIdentityExpanded
 ```
 New-AzElasticSan -InputObject <IElasticSanIdentity> -BaseSizeTiB <Int64> -ExtendedCapacitySizeTiB <Int64>
  -Location <String> -SkuName <String> [-AvailabilityZone <String[]>] [-PublicNetworkAccess <String>]
+ [-ScaleUpPropertyAutoScalePolicyEnforcement <String>] [-ScaleUpPropertyCapacityUnitScaleUpLimitTiB <Int64>]
+ [-ScaleUpPropertyIncreaseCapacityUnitByTiB <Int64>] [-ScaleUpPropertyUnusedSizeTiB <Int64>]
  [-SkuTier <String>] [-Tag <Hashtable>] [-DefaultProfile <PSObject>] [-AsJob] [-NoWait] [-Confirm] [-WhatIf]
  [<CommonParameters>]
 ```
@@ -229,6 +234,66 @@ Parameter Sets: CreateExpanded
 Aliases:
 
 Required: True
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ScaleUpPropertyAutoScalePolicyEnforcement
+Enable or Disable scale up setting on Elastic San Appliance.
+
+```yaml
+Type: System.String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ScaleUpPropertyCapacityUnitScaleUpLimitTiB
+Maximum scale up size on Elastic San appliance in TiB.
+
+```yaml
+Type: System.Int64
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ScaleUpPropertyIncreaseCapacityUnitByTiB
+Unit to increase Capacity Unit on Elastic San appliance in TiB.
+
+```yaml
+Type: System.Int64
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ScaleUpPropertyUnusedSizeTiB
+Unused size on Elastic San appliance in TiB.
+
+```yaml
+Type: System.Int64
+Parameter Sets: (All)
+Aliases:
+
+Required: False
 Position: Named
 Default value: None
 Accept pipeline input: False
