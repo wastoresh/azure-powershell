@@ -898,7 +898,7 @@ Describe "Management plan test" {
         $KeyvaultUri = $keyVaultNode.keyVaultUri
         $keyname = $keyVaultNode.keyName
         $keyversion = $keyVaultNode.keyVersion
-        $keyvaultId = $testNode.keyVault.SelectSingleNode("keyvaultId").'#text'
+        $keyvaultId = $keyVaultNode.SelectSingleNode("keyvaultId").'#text'
 
         $accountNameKeyV = $accountName + "kv"
         # Set up a new account 
@@ -1130,6 +1130,14 @@ Describe "Management plan test" {
         $blobsrc.BlobProperties.ObjectReplicationSourceProperties[0].PolicyId | should -Not -be $null 
         $blobsrc.BlobProperties.ObjectReplicationSourceProperties[0].Rules[0].RuleId | should -Not -be $null 
         $blobsrc.BlobProperties.ObjectReplicationSourceProperties[0].Rules[0].ReplicationStatus | Should -Be "Complete"
+        
+        if ($preview)
+        {
+            $destPolicy = Set-AzStorageObjectReplicationPolicy -ResourceGroupName $rgname -StorageAccountName $destAccountName -PolicyId default -SourceAccount $srcAccountName  -Rule $rule1,$rule2 -EnableMetric $true
+            $destPolicy.Metrics.Enabled | Should -Be $true
+            $sourcepolicy = Set-AzStorageObjectReplicationPolicy -ResourceGroupName $rgname -StorageAccountName $srcAccountName -InputObject $destPolicy
+            $sourcepolicy.Metrics.Enabled | Should -Be $true
+        }
 
         #remove ors policy
         Remove-AzStorageObjectReplicationPolicy -ResourceGroupName $rgname -StorageAccountName $destAccountName -PolicyId $policyId

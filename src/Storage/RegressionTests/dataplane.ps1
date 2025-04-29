@@ -18,8 +18,8 @@ BeforeAll {
     #Add-AzAccount -ServicePrincipal -Tenant $globalNode.tenantId -SubscriptionId $globalNode.subscriptionId -Credential $cred 
 
     # Connect-AzAccount
-    $ctxoauth1 = New-AzStorageContext -StorageAccountName $storageAccountName
-    $ctxoauth2 = New-AzStorageContext -StorageAccountName $storageAccountName2
+    $ctxoauth1 = New-AzStorageContext -StorageAccountName $storageAccountName -EnableFileBackupRequestIntent
+    $ctxoauth2 = New-AzStorageContext -StorageAccountName $storageAccountName2 -EnableFileBackupRequestIntent
 
     $storageAccountKey1 = (Get-AzStorageAccountKey -ResourceGroupName $resourceGroupName -Name $storageAccountName)[0].Value
     $ctx = New-AzStorageContext -StorageAccountName $storageAccountName -StorageAccountKey $storageAccountKey1
@@ -39,6 +39,8 @@ BeforeAll {
     
     $OriginalPref = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
+    Update-AzConfig -DisplaySecretsWarning $false
+    Update-AzConfig -DisplayBreakingChangeWarning $false
 }
 
 Describe "dataplane test" {
@@ -274,8 +276,8 @@ Describe "dataplane test" {
     It "Set-AzStorageContainerAcl won't clean up the stored Access Policy" -Tag "accesspolicy" {
         $Error.Clear()
 
-        Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $true
-        sleep 120 # Set sleep time to 2 min to make sure AllowBlobPublicAccess becomes True
+        #Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $true
+        #sleep 120 # Set sleep time to 2 min to make sure AllowBlobPublicAccess becomes True
 
         ## regression test for Fix  Set-AzStorageContainerAcl can clean up the stored Access Policy
         New-AzStorageContainerStoredAccessPolicy -Container $containerName  -Policy 123 -Permission rw -Context $ctx
@@ -286,7 +288,10 @@ Describe "dataplane test" {
         $policy[0].Permissions | should -Be rw
         $policy[0].ExpiryTime | should -Be $null
         $policy[0].StartTime | should -Be $null
-        Set-AzStorageContainerAcl -Container $containerName  -Permission Blob -Context $ctx
+
+        # skip Server side policy blockes AllowBlobPublicAccess be true - 2025/04/24
+        #Set-AzStorageContainerAcl -Container $containerName  -Permission Blob -Context $ctx
+
         Set-AzStorageContainerAcl -Container $containerName  -Permission Off -Context $ctx
         $policy = Get-AzStorageContainerStoredAccessPolicy -Container $containerName -Context $ctx
         $policy.Count | should -Be 2
@@ -295,7 +300,7 @@ Describe "dataplane test" {
         $sas = New-AzStorageContainerSASToken -Name $ContainerName -Policy 123  -StartTime (Get-Date) -ExpiryTime (Get-Date).AddDays(1) -Context $ctx
         $sas.Length | should -BeGreaterThan 10
 
-        Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $false
+        #Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $false
 
         $Error.Count | should -be 0
     }
@@ -744,17 +749,17 @@ Describe "dataplane test" {
         $md5 = New-Object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
         New-AzStorageEncryptionScope -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -EncryptionScopeName $scopeName1 -StorageEncryption
         New-AzStorageEncryptionScope -ResourceGroupName $resourceGroupName -StorageAccountName $storageAccountName -EncryptionScopeName $scopeName2 -StorageEncryption
-        Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $true
+        #Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $true
 
-        sleep 120 # Make sleep time 2 min to make sure AllowBlobPublicAccess is True
+        #sleep 120 # Make sleep time 2 min to make sure AllowBlobPublicAccess is True
         
         try{
 
             $containerName_es = $containerName + "es"
-            $c = New-AzStorageContainer $containerName_es -Context $ctx -DefaultEncryptionScope $scopeName2 -PreventEncryptionScopeOverride $false -Permission Blob
+            $c = New-AzStorageContainer $containerName_es -Context $ctx -DefaultEncryptionScope $scopeName2 -PreventEncryptionScopeOverride $false #-Permission Blob
             $scopeName2  | should -Be $c.BlobContainerProperties.DefaultEncryptionScope
             $false | should -Be  $c.BlobContainerProperties.PreventEncryptionScopeOverride
-            $c.Permission.PublicAccess | should -be "Blob"
+            #$c.Permission.PublicAccess | should -be "Blob"
 
              uploadblob $ctx
 
@@ -779,7 +784,7 @@ Describe "dataplane test" {
            throw; 
         }
         
-        Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $false
+        #Set-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName -AllowBlobPublicAccess $false
 
         Remove-AzStorageContainer $containerName_es -Context $ctx -Force
         $Error.Count | should -be 0
@@ -887,6 +892,30 @@ Describe "dataplane test" {
         $testctx.QueueEndPoint | should -be $PrimaryEndpoint.Queue
         $testctx.TableEndPoint | should -be $PrimaryEndpoint.Table
         Get-AzStorageContainer -Context $ctx -MaxCount 1
+
+        # Oauth context with endpoint to create UD Sas
+        $Error.Count | should -be 0
+        $Error.Clear()
+
+        ## negative
+        $testctx = New-AzStorageContext -UseConnectedAccount -BlobEndpoint $PrimaryEndpoint.Blob
+        New-AzStorageBlobSASToken -Container abc -Blob simple.sh -Permission rwdl -Context $testctx -ErrorAction SilentlyContinue
+        New-AzStorageContainerSASToken -Container abc  -Permission rwdl -Context $testctx -ErrorAction SilentlyContinue
+        New-AzDataLakeGen2SasToken -FileSystem abc  -Permission rwdl -Context $testctx -ErrorAction SilentlyContinue
+        $Error.Count | should -be 3
+        foreach ($e in $Error) {$e.Exception.Message | should -Be "Please provide '-Context' as a storage context created by cmdlet ``New-AzStorageContext`` with parameters include '-StorageAccountName'."}
+
+        ## positive
+        $testctx = New-AzStorageContext -UseConnectedAccount -BlobEndpoint $PrimaryEndpoint.Blob -StorageAccountName $name
+        $sas = New-AzStorageBlobSASToken -Container abc -Blob simple.sh -Permission rwdl -Context $testctx 
+        $ctxsas = New-AzStorageContext -SasToken $sas -BlobEndpoint $PrimaryEndpoint.Blob  
+        Set-AzStorageBlobContent  -Container abc -Blob simple.sh -File $localSmallSrcFile  -Context $ctxsas -Force
+        $sas = New-AzStorageContainerSASToken -Container abc  -Permission rwdl -Context $testctx 
+        $ctxsas = New-AzStorageContext -SasToken $sas -BlobEndpoint $PrimaryEndpoint.Blob  
+        Set-AzStorageBlobContent  -Container abc -Blob simple.sh -File $localSmallSrcFile  -Context $ctxsas -Force
+        $sas = New-AzDataLakeGen2SasToken -FileSystem abc  -Permission rwdl -Context $testctx 
+        $ctxsas = New-AzStorageContext -SasToken $sas -BlobEndpoint $PrimaryEndpoint.Blob  
+        Set-AzStorageBlobContent  -Container abc -Blob simple.sh -File $localSmallSrcFile  -Context $ctxsas -Force
 
         $Error.Count | should -be 0
     }
@@ -2430,143 +2459,146 @@ Describe "dataplane test" {
     It "Trailing dot"  {
         $Error.Clear()     
 
-        $sharename = "testsharedot"
+        $sharename = "testsharedot2"
         $share = New-AzStorageShare -Name $sharename -Context $ctx 
         $share = Get-AzStorageShare -Name $sharename -Context $ctx 
-
-        # Default: allow 
-        $f =  Get-AzStorageFile -ShareName $sharename -Context $ctx 
-        $d = New-AzStorageDirectory -ShareName $shareName -Path "test1." -Context $ctx
-        $d.Name | Should -Be "test1."
-        $d = New-AzStorageDirectory -ShareName $shareName -Path "test1./test2.." -Context $ctx 
-        $d.Name | Should -Be "test2.."
-        $d = New-AzStorageDirectory -ShareName $shareName -Path "dir1" -Context $ctx
-        $d.Name | Should -Be "dir1"
         
-        $dir = Get-AzStorageFile -ShareName $shareName -Path "test1./test2.." -Context $ctx 
-        $dir.Name | Should -Be "test2.."
-        $dir.ShareDirectoryClient.Path | Should -Be "test1./test2.."
-        $dir.ShareDirectoryClient.Name | Should -Be "test2.."
+        try {
 
-        $f = Set-AzStorageFileContent -ShareName $shareName -Path "testfile" -Source .\data\testfile_1K_0 -Context $ctx -PassThru -Force
-        $f.Name | Should -Be "testfile"
-        $f.Length | Should -Be 1024
-        $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files..." -Source .\data\testfile_1024K_0 -Context $ctx -PassThru -Force
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
-        $f.ShareFileClient.ShareName | Should -Be $shareName
+            # Default: allow 
+            $f =  Get-AzStorageFile -ShareName $sharename -Context $ctx 
+            $d = New-AzStorageDirectory -ShareName $shareName -Path "test1." -Context $ctx
+            $d.Name | Should -Be "test1."
+            $d = New-AzStorageDirectory -ShareName $shareName -Path "test1./test2.." -Context $ctx 
+            $d.Name | Should -Be "test2.."
+            $d = New-AzStorageDirectory -ShareName $shareName -Path "dir1" -Context $ctx
+            $d.Name | Should -Be "dir1"
+        
+            $dir = Get-AzStorageFile -ShareName $shareName -Path "test1./test2.." -Context $ctx 
+            $dir.Name | Should -Be "test2.."
+            $dir.ShareDirectoryClient.Path | Should -Be "test1./test2.."
+            $dir.ShareDirectoryClient.Name | Should -Be "test2.."
 
-        if ($false){
-            #  should fail
-            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1/test2/files..." -Source C:\temp\512b -Context $ctx -PassThru
-            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1/test2../files" -Source C:\temp\512b -Context $ctx -PassThru
-            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2/files" -Source C:\temp\512b -Context $ctx -PassThru
-            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1/test2/files" -Source C:\temp\512b -Context $ctx -PassThru
-        }
+            $f = Set-AzStorageFileContent -ShareName $shareName -Path "testfile" -Source .\data\testfile_1K_0 -Context $ctx -PassThru -Force
+            $f.Name | Should -Be "testfile"
+            $f.Length | Should -Be 1024
+            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files..." -Source .\data\testfile_1024K_0 -Context $ctx -PassThru -Force
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f.ShareFileClient.ShareName | Should -Be $shareName
 
-        # $f.CloudFile.FetchAttributes() # should fail
-        $f = $dir | Set-AzStorageFileContent -Path "files..." -Source .\data\testfile_1024K_0  -PassThru -Force
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
-        $f.ShareFileClient.Name | Should -Be "files..."
+            if ($false){
+                #  should fail
+                $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1/test2/files..." -Source C:\temp\512b -Context $ctx -PassThru
+                $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1/test2../files" -Source C:\temp\512b -Context $ctx -PassThru
+                $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2/files" -Source C:\temp\512b -Context $ctx -PassThru
+                $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1/test2/files" -Source C:\temp\512b -Context $ctx -PassThru
+            }
 
-        $f = $share | Set-AzStorageFileContent -Path "test1./test2../files..." -Source .\data\testfile_1024K_0 -PassThru -Force
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
-        $f.ShareFileClient.Name | Should -Be "files..."
-        $f.Length | Should -Be (Get-Item .\data\testfile_1024K_0).Length
+            # $f.CloudFile.FetchAttributes() # should fail
+            $f = $dir | Set-AzStorageFileContent -Path "files..." -Source .\data\testfile_1024K_0  -PassThru -Force
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f.ShareFileClient.Name | Should -Be "files..."
 
-        $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files.1.." -Source .\data\testfile_10240K_0 -Context $ctx -PassThru -Force
-        $f.Name | Should -Be "files.1.."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files.1.."
-        $f.Length | Should -Be (Get-Item .\data\testfile_10240K_0).Length
-        $f.ShareFileClient.Name | Should -Be "files.1.."
+            $f = $share | Set-AzStorageFileContent -Path "test1./test2../files..." -Source .\data\testfile_1024K_0 -PassThru -Force
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f.ShareFileClient.Name | Should -Be "files..."
+            $f.Length | Should -Be (Get-Item .\data\testfile_1024K_0).Length
 
-        # download file/dir
-        $f = Get-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files..." -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files.1.." -Source .\data\testfile_10240K_0 -Context $ctx -PassThru -Force
+            $f.Name | Should -Be "files.1.."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files.1.."
+            $f.Length | Should -Be (Get-Item .\data\testfile_10240K_0).Length
+            $f.ShareFileClient.Name | Should -Be "files.1.."
+
+            # download file/dir
+            $f = Get-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files..." -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
     
-        $f = $f | Get-AzStorageFileContent -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f = $f | Get-AzStorageFileContent -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
 
-        $f = $dir | Get-AzStorageFileContent -Path "files..."  -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f = $dir | Get-AzStorageFileContent -Path "files..."  -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
 
-        $f = $share | Get-AzStorageFileContent -Path "test1./test2../files..."  -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
-        $f.Name | Should -Be "files..."
-        $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
+            $f = $share | Get-AzStorageFileContent -Path "test1./test2../files..."  -Destination .\created\testtrailingdot -Context $ctx -Force -PassThru
+            $f.Name | Should -Be "files..."
+            $f.ShareFileClient.Path | Should -Be "test1./test2../files..."
 
-        $f = Get-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files.1.." -Destination .\created\testtrailingdot -Context $ctx -PassThru -Force
+            $f = Get-AzStorageFileContent -ShareName $shareName -Path "test1./test2../files.1.." -Destination .\created\testtrailingdot -Context $ctx -PassThru -Force
 
-        #get file/dir
-        $dir = Get-AzStorageFile -ShareName $shareName -Path "test1./test2.." -Context $ctx 
-        $dir.Name | Should -Be "test2.."
-        $dir.ShareDirectoryClient.Path | Should -Be "test1./test2.."
+            #get file/dir
+            $dir = Get-AzStorageFile -ShareName $shareName -Path "test1./test2.." -Context $ctx 
+            $dir.Name | Should -Be "test2.."
+            $dir.ShareDirectoryClient.Path | Should -Be "test1./test2.."
 
-        $files = $dir | Get-AzStorageFile  
-        $files.Count | Should -Be 2 
+            $files = $dir | Get-AzStorageFile  
+            $files.Count | Should -Be 2 
 
-        $files = $dir | Get-AzStorageFile -Path "files..."  
-        $files.Count | Should -Be 1 
+            $files = $dir | Get-AzStorageFile -Path "files..."  
+            $files.Count | Should -Be 1 
 
-        $files = $share | Get-AzStorageFile  
-        $files.Count | Should -Be 3
+            $files = $share | Get-AzStorageFile  
+            $files.Count | Should -Be 3
 
-        $f = $share | Get-AzStorageFile -Path "test1./test2.." 
-        $f.Name | Should -Be "test2.."
+            $f = $share | Get-AzStorageFile -Path "test1./test2.." 
+            $f.Name | Should -Be "test2.."
 
-        $file = $share | Get-AzStorageFile -Path "test1./test2../files..."
-        $file.ShareFileClient.GetProperties()
+            $file = $share | Get-AzStorageFile -Path "test1./test2../files..."
+            $file.ShareFileClient.GetProperties()
         
-        # $file.CloudFile.FetchAttributes() # should fail
+            # $file.CloudFile.FetchAttributes() # should fail
  
-    # SAS on file     
-        $sas = $file | New-AzStorageFileSASToken -Permission rw -ExpiryTime (Get-date).AddDays(6) 
-        $ctxsas = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $sas
-        $f = Get-AzStorageFile -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctxsas
-        $f.Name | Should -Be "test1.\test2..\files..."
+        # SAS on file     
+            $sas = $file | New-AzStorageFileSASToken -Permission rw -ExpiryTime (Get-date).AddDays(6) 
+            $ctxsas = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $sas
+            $f = Get-AzStorageFile -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctxsas
+            $f.Name | Should -Be "test1.\test2..\files..."
 
-        $sas = New-AzStorageFileSASToken -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctx -Permission rw -ExpiryTime (Get-date).AddDays(6) 
-        $ctxsas = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $sas
-        $f = Get-AzStorageFile -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctxsas
-        $f.Name | Should -Be "test1.\test2..\files..."
+            $sas = New-AzStorageFileSASToken -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctx -Permission rw -ExpiryTime (Get-date).AddDays(6) 
+            $ctxsas = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $sas
+            $f = Get-AzStorageFile -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctxsas
+            $f.Name | Should -Be "test1.\test2..\files..."
  
-        $sas = New-AzStorageShareSASToken -ShareName $shareName -Permission rw -ExpiryTime (Get-date).AddDays(6) -Context $ctx
-        $ctxsas = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $sas
-        $dir = Get-AzStorageFile -ShareName $shareName -Path "test1./test2.." -Context $ctxsas
-        $dir.Name | Should -Be "test2.."
+            $sas = New-AzStorageShareSASToken -ShareName $shareName -Permission rw -ExpiryTime (Get-date).AddDays(6) -Context $ctx
+            $ctxsas = New-AzStorageContext -StorageAccountName $storageAccountName -SasToken $sas
+            $dir = Get-AzStorageFile -ShareName $shareName -Path "test1./test2.." -Context $ctxsas
+            $dir.Name | Should -Be "test2.."
 
-        #file handle - test it cmdlets won't fail 
-        Get-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2.." -Context $ctx  -Recursive 
-        Get-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctx  
-        Close-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2.." -Context $ctx  -Recursive -CloseAll 
-        Close-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctx  -CloseAll
+            #file handle - test it cmdlets won't fail 
+            Get-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2.." -Context $ctx  -Recursive 
+            Get-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctx  
+            Close-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2.." -Context $ctx  -Recursive -CloseAll 
+            Close-AzStorageFileHandle   -ShareName $shareName -Path "test1.\test2..\files..." -Context $ctx  -CloseAll
  
-    #rename 
-        $f = Rename-AzStorageFile  -ShareName $shareName -SourcePath "testfile" -DestinationPath "test1.\test2..\files.2.." -Context $ctx 
-        $f.Name | Should -Be "test1.\test2..\files.2.."
-        $f = Rename-AzStorageFile  -ShareName $shareName -DestinationPath "testfile" -SourcePath "test1.\test2..\files.2.." -Context $ctx 
-        $f.Name | Should -Be "testfile"
-        $d = Rename-AzStorageDirectory  -ShareName $shareName -SourcePath "dir1" -DestinationPath "test1.\test3.." -Context $ctx 
-        $d.Name | Should -Be "test1.\test3.."
-        $d = Rename-AzStorageDirectory  -ShareName $shareName -DestinationPath "dir1" -SourcePath "test1.\test3.." -Context $ctx 
-        $d.Name | Should -Be "dir1"
-        $d = New-AzStorageDirectory -ShareName $shareName -Path "dir1.." -Context $ctx
-        $f = Set-AzStorageFileContent -ShareName $shareName -Path "test.file.." -Source .\data\testfile_1024K_0 -Context $ctx -PassThru -Force
-        $f = Rename-AzStorageFile  -ShareName $shareName -SourcePath "test.file.." -DestinationPath "test1.\test2..\files.2.." -Context $ctx 
-        $f.Name | Should -Be "test1.\test2..\files.2.."
-        $f = Rename-AzStorageFile  -ShareName $shareName -DestinationPath "test.file.." -SourcePath "test1.\test2..\files.2.." -Context $ctx 
-        $f.Name | Should -Be "test.file.."
-        $d = Rename-AzStorageDirectory  -ShareName $shareName -SourcePath "dir1.." -DestinationPath "test1.\test3.." -Context $ctx 
-        $d.Name | Should -Be "test1.\test3.."
-        $d = Rename-AzStorageDirectory  -ShareName $shareName -DestinationPath "dir1.." -SourcePath "test1.\test3.." -Context $ctx
-        $d.Name | Should -Be "dir1.." 
-
-
-        Remove-AzStorageShare -Name $sharename -Context $ctx -Force
+        #rename 
+            $f = Rename-AzStorageFile  -ShareName $shareName -SourcePath "testfile" -DestinationPath "test1.\test2..\files.2.." -Context $ctx 
+            $f.Name | Should -Be "test1.\test2..\files.2.."
+            $f = Rename-AzStorageFile  -ShareName $shareName -DestinationPath "testfile" -SourcePath "test1.\test2..\files.2.." -Context $ctx 
+            $f.Name | Should -Be "testfile"
+            $d = Rename-AzStorageDirectory  -ShareName $shareName -SourcePath "dir1" -DestinationPath "test1.\test3.." -Context $ctx 
+            $d.Name | Should -Be "test1.\test3.."
+            $d = Rename-AzStorageDirectory  -ShareName $shareName -DestinationPath "dir1" -SourcePath "test1.\test3.." -Context $ctx 
+            $d.Name | Should -Be "dir1"
+            $d = New-AzStorageDirectory -ShareName $shareName -Path "dir1.." -Context $ctx
+            $f = Set-AzStorageFileContent -ShareName $shareName -Path "test.file.." -Source .\data\testfile_1024K_0 -Context $ctx -PassThru -Force
+            $f = Rename-AzStorageFile  -ShareName $shareName -SourcePath "test.file.." -DestinationPath "test1.\test2..\files.2.." -Context $ctx 
+            $f.Name | Should -Be "test1.\test2..\files.2.."
+            $f = Rename-AzStorageFile  -ShareName $shareName -DestinationPath "test.file.." -SourcePath "test1.\test2..\files.2.." -Context $ctx 
+            $f.Name | Should -Be "test.file.."
+            $d = Rename-AzStorageDirectory  -ShareName $shareName -SourcePath "dir1.." -DestinationPath "test1.\test3.." -Context $ctx 
+            $d.Name | Should -Be "test1.\test3.."
+            $d = Rename-AzStorageDirectory  -ShareName $shareName -DestinationPath "dir1.." -SourcePath "test1.\test3.." -Context $ctx
+            $d.Name | Should -Be "dir1.." 
+        }
+        finally {
+            Remove-AzStorageShare -Name $sharename -Context $ctx -Force
+        }
         $Error.Count | should -be 0
     }
 
@@ -2631,8 +2663,165 @@ Describe "dataplane test" {
         $Error.Count | should -be 0
     }
 
+    It "NFS dataplane" -Tag "new" {
+        $Error.Clear() 
+         
+        $accountname = (GetRandomAccountName)+"nfs"
+        $shareName = $containerName+"nfs"
+
+        New-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $accountname -SkuName Premium_LRS -Location eastus2euap -Kind FileStorage -AllowSharedKeyAccess $false -EnableHttpsTrafficOnly $true 
+        #Update-AzStorageAccountNetworkRuleSet -ResourceGroupName $resourceGroupName -Name $accountname -DefaultAction Deny -IpRule (@{IPAddressOrRange="0.0.0.0/0";Action="allow"})
+
+        try 
+        {
+            $ctxfileOauth = New-AzStorageContext -StorageAccountName $accountname -UseConnectedAccount -EnableFileBackupRequestIntent
+
+            #Create Share
+            $share = New-AzStorageShare -Name $shareName -Context $ctxfileOauth -Protocol Nfs 
+            $share.ShareProperties.Protocols | should -Be NFS
+            $share.ShareProperties.EnableSnapshotVirtualDirectoryAccess | should -be $true
+
+            #Create Share
+            $share = New-AzStorageShare -Name "$($shareName)2" -Context $ctxfileOauth -Protocol Nfs -EnableSnapshotVirtualDirectoryAccess $false
+            $share.ShareProperties.Protocols | should -Be NFS
+            $share.ShareProperties.EnableSnapshotVirtualDirectoryAccess | should -be $false
+
+            # new directory
+            $dir = New-AzStorageDirectory -ShareName $shareName -Path dir1 -FileMode r-s-w-r-x -Owner 1 -Group 2  -Context $ctxfileOauth
+            $dir.ShareDirectoryProperties.PosixProperties.FileMode | should -be "r-s-w-r-x"
+            $dir.ShareDirectoryProperties.PosixProperties.Owner | should -be 1
+            $dir.ShareDirectoryProperties.PosixProperties.Group | should -be 2
+            $dir = New-AzStorageDirectory -ShareName $shareName -Path dir1/dir2 -FileMode "-wsr-Srwt" -Owner 2 -Group 0   -Context $ctxfileOauth
+            $dir.ShareDirectoryProperties.PosixProperties.FileMode | should -be "-wsr-Srwt"
+            $dir.ShareDirectoryProperties.PosixProperties.Owner | should -be 2
+            $dir.ShareDirectoryProperties.PosixProperties.Group | should -be 0
+
+            # get directory proeprties
+            $dir =Get-AzStorageFile -ShareName $shareName -Path dir1 -Context $ctxfileOauth
+            $dir.ShareDirectoryProperties.PosixProperties.FileMode | should -be "r-s-w-r-x"
+            $dir.ShareDirectoryProperties.PosixProperties.Owner | should -be 1
+            $dir.ShareDirectoryProperties.PosixProperties.Group | should -be 2
+
+            # upload file
+            $file = Set-AzStorageFileContent -ShareName $shareName -Source $localSrcFile -Path testfile -FileMode "-wsr-Srwt" -Owner 1 -Group 2 -Context $ctxfileOauth -PassThru -Force # -debug 
+            $file.ShareFileClient.Path | should -be "testfile"
+            $file.FileProperties.PosixProperties.FileMode | should -be "-wsr-Srwt"
+            $file.FileProperties.PosixProperties.Owner | should -be 1
+            $file.FileProperties.PosixProperties.Group | should -be 2
+            $file.FileProperties.PosixProperties.FileType | should -be "Regular"
+            $file.FileProperties.PosixProperties.LinkCount | should -be 1
+            $file2 = Set-AzStorageFileContent -ShareName $shareName -Source $localSrcFile -Path dir1/testfile2 -FileMode "rwsrwsrwt" -Context $ctxfileOauth -PassThru -Force  # -debug 
+            $file2.ShareFileClient.Path | should -be "dir1/testfile2"
+            $file2.FileProperties.PosixProperties.FileMode | should -be "rwsrwsrwt"
+            $file2.FileProperties.PosixProperties.FileType | should -be "Regular"
+            $file2.FileProperties.PosixProperties.LinkCount | should -be 1
+
+            #get single file properties
+            $file = Get-AzStorageFile -ShareName $shareName -Path testfile -Context $ctxfileOauth
+            $file.ShareFileClient.Path | should -be "testfile"
+            $file.FileProperties.PosixProperties.FileMode | should -be "-wsr-Srwt"
+            $file.FileProperties.PosixProperties.Owner | should -be 1
+            $file.FileProperties.PosixProperties.Group | should -be 2
+            $file.FileProperties.PosixProperties.FileType | should -be "Regular"
+
+            #create hardlink
+            $link = New-AzStorageFileHardLink -ShareName $shareName -Path filehardlink -TargetFile testfile -Context $ctxfileOauth
+            $link.ShareFileClient.Path | should -be "filehardlink"
+            $link.FileProperties.PosixProperties.FileMode.ToSymbolicFileMode() | should -be $file.FileProperties.PosixProperties.FileMode.ToSymbolicFileMode()
+            $link.FileProperties.PosixProperties.Owner | should -be $file.FileProperties.PosixProperties.Owner
+            $link.FileProperties.PosixProperties.Group | should -be $file.FileProperties.PosixProperties.Group
+            $link.FileProperties.PosixProperties.FileType | should -be $file.FileProperties.PosixProperties.FileType
+            $link.FileProperties.PosixProperties.LinkCount | should -be ($file.FileProperties.PosixProperties.LinkCount+1)
+            $link2 = New-AzStorageFileHardLink -ShareName $shareName -Path dir1/filehardlink2 -TargetFile dir1/testfile2 -Context $ctxfileOauth
+            $link2.ShareFileClient.Path | should -be "dir1/filehardlink2"
+            $link2.FileProperties.PosixProperties.FileMode.ToSymbolicFileMode() | should -be $file2.FileProperties.PosixProperties.FileMode.ToSymbolicFileMode()
+            $link2.FileProperties.PosixProperties.Owner | should -be $file2.FileProperties.PosixProperties.Owner
+            $link2.FileProperties.PosixProperties.Group | should -be $file2.FileProperties.PosixProperties.Group
+            $link2.FileProperties.PosixProperties.FileType | should -be $file2.FileProperties.PosixProperties.FileType
+            $link2.FileProperties.PosixProperties.LinkCount | should -be ($file2.FileProperties.PosixProperties.LinkCount+1)
+
+            #list files (To remove SMB header/query, need add "-ExcludeExtendedInfo", agreed in mail with feature team)
+            $files = Get-AzStorageFile -ShareName $shareName  -Context $ctxfileOauth -ExcludeExtendedInfo
+            ($files | ?{ $_.ShareFileClient -ne $null}).count | should -be 2
+            ($files | ?{ $_.shareDirectoryClient -ne $null}).count | should -be 1
+            $files = Get-AzStorageFile -ShareName $shareName -Path dir1  -Context $ctxfileOauth |Get-AzStorageFile  -Context $ctx -ExcludeExtendedInfo
+            ($files | ?{ $_.ShareFileClient -ne $null}).count | should -be 2
+            ($files | ?{ $_.shareDirectoryClient -ne $null}).count | should -be 1
+
+            # download file 
+            Get-AzStorageFileContent -ShareName $shareName -Path testfile -Destination $localdestFile -Context $ctxfileOauth -Force
+            del $localdestFile
+
+            #copy
+            $filedest1 = Start-AzStorageFileCopy -SrcShareName $shareName -SrcFilePath testfile -DestShareName $shareName -DestFilePath destfile1 -FileMode rw-rwx-wT -Owner 2 -Group 4 -Context $ctxfileOauth -FileModeCopyMode Override -OwnerCopyMode Override 
+            $filedest1.FileProperties.PosixProperties.FileMode | should -be "rw-rwx-wT"
+            $filedest1.FileProperties.PosixProperties.Owner | should -be 2
+            $filedest1.FileProperties.PosixProperties.Group | should -be 4
+            $filedest1.FileProperties.PosixProperties.FileType | should -be "Regular"
+            $filedest1.FileProperties.PosixProperties.LinkCount | should -be 1
+            $filedest2 = Start-AzStorageFileCopy -SrcShareName $shareName -SrcFilePath testfile -DestShareName $shareName -DestFilePath destfile2  -Context $ctxfileOauth  #default filemode,owner,group
+            $filedest2.FileProperties.PosixProperties            
+            $filedest2.FileProperties.PosixProperties.FileMode | should -be "rw-rw-r--"
+            $filedest2.FileProperties.PosixProperties.Owner | should -be 0
+            $filedest2.FileProperties.PosixProperties.Group | should -be 0
+            $filedest2.FileProperties.PosixProperties.FileType | should -be "Regular"
+            $filedest2.FileProperties.PosixProperties.LinkCount | should -be 1
+            $filedest3 = Start-AzStorageFileCopy -SrcShareName $shareName -SrcFilePath testfile -DestShareName $shareName -DestFilePath dir1/destfile3 -Context $ctxfileOauth -FileModeCopyMode Source -OwnerCopyMode Source
+            $filedest3.FileProperties.PosixProperties.FileMode.ToSymbolicFileMode() | should -be $file.FileProperties.PosixProperties.FileMode.ToSymbolicFileMode()
+            $filedest3.FileProperties.PosixProperties.Owner | should -be $file.FileProperties.PosixProperties.Owner
+            $filedest3.FileProperties.PosixProperties.Group | should -be $file.FileProperties.PosixProperties.Group
+            $filedest3.FileProperties.PosixProperties.FileType | should -be $file.FileProperties.PosixProperties.FileType
+            $filedest3.FileProperties.PosixProperties.LinkCount | should -be 1
+
+            #remove file
+            $fileCount = (Get-AzStorageFile -ShareName $shareName -Path dir1  -Context $ctxfileOauth |Get-AzStorageFile  -Context $ctx -ExcludeExtendedInfo).Count
+            Remove-AzStorageFile -ShareName $shareName -Path dir1/destfile3 -Context $ctxfileOauth -Verbose
+            $files = Get-AzStorageFile -ShareName $shareName -Path dir1  -Context $ctxfileOauth |Get-AzStorageFile  -Context $ctx -ExcludeExtendedInfo
+            ($files).Count | should -be ($fileCount-1)
+
+            # share snapshot
+                ## create share snapshot
+                $shareSnapshotTime = (Get-AzStorageShare -Name $shareName -Context $ctxfileOauth).ShareClient.CreateSnapshot().Value.Snapshot
+
+                # Get share snapshot
+                $sharesnapshot = Get-AzStorageShare -Name $shareName -Context $ctxfileOauth -SnapshotTime $shareSnapshotTime
+
+                # list file/dir from share snapshot 
+                ($sharesnapshot |  Get-AzStorageFile -ExcludeExtendedInfo).count | should -BeGreaterThan 1
+                ($sharesnapshot |  Get-AzStorageFile -Path dir1 | Get-AzStorageFile -ExcludeExtendedInfo).count | should -BeGreaterThan 1
+
+                # Get single file
+                $file = $sharesnapshot |  Get-AzStorageFile -Path testfile
+                $file.ShareFileClient.Path | should -be "testfile"
+                $file.FileProperties.PosixProperties.FileMode | should -be "-wsr-Srwt"
+                $file.FileProperties.PosixProperties.Owner | should -be 1
+                $file.FileProperties.PosixProperties.Group | should -be 2
+                $file.FileProperties.PosixProperties.FileType | should -be "Regular"
+
+                #download file
+                $sharesnapshot | Get-AzStorageFileContent -Path testfile -Destination $localdestFile -Force
+                del $localdestFile
+
+                # remove share snapshot
+                $sharesnapshot | Remove-AzStorageShare -Force
+
+
+            # REmove Share 
+            Remove-AzStorageShare -Name $shareName -Context $ctxfileOauth -Force
+
+
+        }
+        finally
+        {
+            Remove-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $accountname -Force -AsJob
+        }
+
+        $Error.Count | should -be 0
+    }
+
     It "Test case name"  {
-        $Error.Clear()    
+        $Error.Clear()   
+       
 
         $Error.Count | should -be 0
     }
@@ -2642,5 +2831,7 @@ Describe "dataplane test" {
         Remove-AzStorageShare -Name $containerName -Force -Context $ctx -PassThru
         Remove-AzStorageContainer -Name $containerName -Force -Context $ctx -PassThru
         Remove-AzStorageContainer -Name $containerName -Context $ctxoauth2 -Force
+        Update-AzConfig -DisplaySecretsWarning $true
+        Update-AzConfig -DisplayBreakingChangeWarning $true
     }
 }
