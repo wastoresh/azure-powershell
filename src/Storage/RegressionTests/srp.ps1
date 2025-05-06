@@ -1720,37 +1720,37 @@ Describe "Management plan test" {
                  $cred = New-Object System.Management.Automation.PSCredential ($globalNode.applicationId, $secpasswd)
                  Add-AzAccount -ServicePrincipal -Tenant $globalNode.tenantId -SubscriptionId $globalNode.subscriptionId -Credential $cred 
 
-            # prepare keyvault  
                 $location =  'eastus2'; 
+                # $rgName = "weitry"
+
+            # prepare keyvault  
 
                 $keyVault = New-AzKeyVault -VaultName $keyvaultName -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
-  
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text' -PermissionsToKeys backup,create,delete,get,import,get,list,update,restore 
-                $key = Add-AzKeyVaultKey -VaultName $keyvaultName -Name $keyname2 -Destination 'Software'    
-                $keyversion2 = $key.Version
+                $keyvaultId = $keyvault.ResourceId
+                New-AzRoleAssignment -ObjectID $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text' -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+                $key = Add-AzKeyVaultKey -VaultName $keyvaultName -Name $keyname -Destination 'Software'    
+                $keyversion = $key.Version
+                $keyvaultUri = "https://$($keyvaultName).vault.azure.net:443"
 
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='2']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='3']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
-    
-                $keyVault = New-AzKeyVault -VaultName $keyvaultName2 -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
-
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName2 -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text'-PermissionsToKeys backup,create,delete,get,import,get,list,update,restore 
-                $key = Add-AzKeyVaultKey -VaultName $keyvaultName2 -Name $keyname2 -Destination 'Software'    
-                $keyversion2 = $key.Version
-
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName2 -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='2']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName2 -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='3']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
+                $keyVault2 = New-AzKeyVault -VaultName $keyvaultName2 -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
+                $keyvaultId2 = $keyvault2.ResourceId
+                New-AzRoleAssignment -ObjectID $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text' -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId2
+                $key2 = Add-AzKeyVaultKey -VaultName $keyvaultName2 -Name $keyname2 -Destination 'Software'    
+                $keyversion2 = $key2.Version
+                $keyvaultUri2 = "https://$($keyvaultName2).vault.azure.net:443"
 
                 # remove-AzKeyVault -VaultName $keyvaultName -ResourceGroupName $rgName
 
-            # create 2 User identity, and give them access to keyvault
-                $userId3 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name regressiontestid3 -Location $location
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $userId3.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
-                $useridentity= $userId3.Id
-                $userId4 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name regressiontestid4 -Location $location
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $userId4.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
-                $useridentity2= $userId4.Id
-                # Remove-AzUserAssignedIdentity -ResourceGroupName $rgName -Name regressiontestid3
+
+             # create 2 User identity, and give them access to keyvault
+                $userId1 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name weitestid1 -Location $location
+                New-AzRoleAssignment -ObjectID $userId1.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+                New-AzRoleAssignment -ObjectID $userId1.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId2
+                $useridentity= $userId1.Id
+                $userId2 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name weitestid2 -Location $location
+                New-AzRoleAssignment -ObjectID $userId2.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+                New-AzRoleAssignment -ObjectID $userId2.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId2
+                $useridentity2= $userId2.Id
         }
 
         # Create Account with UAI (SystemAssignedUserAssigned)
@@ -1776,9 +1776,9 @@ Describe "Management plan test" {
         $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri
         $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
             
-        if($false)
+        if($true)
         {
-        Sleep 600
+        Sleep 10
     
         $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -KeyVaultUri $keyvaultUri2 -KeyName $keyname2 -KeyVersion $keyversion2 
         $account.Identity.UserAssignedIdentities.Count | should -Be 1
@@ -1800,7 +1800,9 @@ Describe "Management plan test" {
             $account.Encryption.KeySource | Should -Be Microsoft.Storage
 
             # update to CMK with SAI
-            Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $account.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
+            Sleep 30 
+            New-AzRoleAssignment -ObjectID $account.Identity.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+            #Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $account.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType SystemAssigned -KeyName $keyname -KeyVaultUri $keyvaultUri   
             $account.Identity.Type | should -be "SystemAssigned"
             $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
@@ -1818,7 +1820,7 @@ Describe "Management plan test" {
             (New-Object -TypeName System.Uri -ArgumentList $account.Encryption.KeyVaultProperties.KeyVaultUri).Host | should -Be (New-Object -TypeName System.Uri -ArgumentList $keyvaultUri).Host
             $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
                 
-            if($false)
+            if($true)
             {
         #9. CMK1 with UAI -> CMK2 with UAI
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -KeyName $keyname2 -KeyVaultUri $keyvaultUri2 
@@ -1838,7 +1840,7 @@ Describe "Management plan test" {
             $storageAccountName = $accountNamePrefix+"33"
             $account = New-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Kind StorageV2 -SkuName Standard_LRS -Location eastus2 -AssignIdentity
 
-            Sleep 60
+            #Sleep 60
 
             # update to CMK with UAI
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType UserAssigned -UserAssignedIdentityId $useridentity -KeyName $keyname -KeyVaultUri $keyvaultUri -KeyVaultUserAssignedIdentityId $useridentity 
@@ -1852,8 +1854,9 @@ Describe "Management plan test" {
 
         # 4. CMK with UAI -> CMK with SAI
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName  -IdentityType SystemAssignedUserAssigned
-            $account.Identity.Type | should -be "SystemAssigned,UserAssigned" 
-            Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgname -ObjectId $account.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
+            $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
+            Sleep 30 
+            New-AzRoleAssignment -ObjectID $account.Identity.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
 
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType SystemAssignedUserAssigned -KeyName $keyname -KeyVaultUri $keyvaultUri -KeyVaultUserAssignedIdentityId "" 
             $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
