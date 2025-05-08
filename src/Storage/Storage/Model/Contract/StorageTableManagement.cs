@@ -55,7 +55,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
         {
             get
             {
-                return internalStorageContext.StorageAccount.Credentials.IsToken;
+                return (internalStorageContext.StorageAccount.Credentials.IsToken || internalStorageContext.Track2OauthToken != null);
             }
         }
 
@@ -77,6 +77,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
             else
             {
                 tableServiceClient = new TableServiceClient(context.StorageAccount.TableEndpoint, context.Track2OauthToken, clientOptions);
+            }
+            // sas + oauth, need add sas + token
+            if (context != null && context.StorageAccount != null && context.StorageAccount.Credentials != null && context.StorageAccount.Credentials.IsSAS && context.Track2OauthToken != null)
+            {
+                // TODO: Need update, since task SDK not align with other SDK, not include SAS in tableServiceClient.Uri. Need check with SDK team if can include that info to Uri.
+                //tableServiceClient = new TableServiceClient(internalStorageContext.TableStorageAccount.ToString(true), clientOptions);
+                tableServiceClient = new TableServiceClient(new Uri(String.Format("{0}?{1}", context.StorageAccount.TableEndpoint, context.StorageAccount.Credentials.SASToken)), context.Track2OauthToken, clientOptions);
             }
         }
 
