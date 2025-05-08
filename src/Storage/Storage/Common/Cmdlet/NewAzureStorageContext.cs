@@ -181,6 +181,9 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
         [Parameter(HelpMessage = "Use OAuth storage account", Mandatory = false, ParameterSetName = OAuthParameterSet)]
         [Parameter(HelpMessage = "Use OAuth storage account", Mandatory = false, ParameterSetName = OAuthEnvironmentParameterSet)]
         [Parameter(HelpMessage = "Use OAuth storage account", Mandatory = false, ParameterSetName = OAuthServiceEndpointParameterSet)]
+        [Parameter(HelpMessage = "Use OAuth storage account", Mandatory = false, ParameterSetName = SasTokenParameterSet)]
+        [Parameter(HelpMessage = "Use OAuth storage account", Mandatory = false, ParameterSetName = SasTokenEnvironmentParameterSet)]
+        [Parameter(HelpMessage = "Use OAuth storage account", Mandatory = false, ParameterSetName = SasTokenServiceEndpointParameterSet)]
         public SwitchParameter UseConnectedAccount
         {
             get { return isOAuth; }
@@ -642,7 +645,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common.Cmdlet
                     throw new ArgumentException(Resources.DefaultStorageCredentialsNotFound);
             }
 
-            AzureStorageContext context = new AzureStorageContext(account, GetRealAccountName(StorageAccountName), DefaultContext, WriteDebug);
+            AzureStorageContext context = new AzureStorageContext(account, GetRealAccountName(StorageAccountName), DefaultContext, WriteDebug, this.isOAuth);
             if (this.EnableFileBackupRequestIntent.IsPresent)
             {
                 context.ShareTokenIntent = ShareTokenIntent.Backup;

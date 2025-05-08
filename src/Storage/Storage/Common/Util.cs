@@ -749,6 +749,11 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                 }
                 shareServiceClient = new ShareServiceClient(connectionString, options);
             }
+            // sas + token, need add token to the serive client
+            if (context != null && context.StorageAccount != null && context.StorageAccount.Credentials != null && context.StorageAccount.Credentials.IsSAS && context.Track2OauthToken != null)
+            {
+                shareServiceClient = new ShareServiceClient(shareServiceClient.Uri, context.Track2OauthToken, options);
+            }
             return shareServiceClient;
         }
 
