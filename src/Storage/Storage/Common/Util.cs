@@ -729,14 +729,13 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             {
                 throw new ArgumentException(Resources.DefaultStorageCredentialsNotFound);
             }
-
+            if (context.ShareTokenIntent != null)
+            {
+                options.ShareTokenIntent = context.ShareTokenIntent.Value;
+            }
             ShareServiceClient shareServiceClient;
             if (context.StorageAccount!= null && context.StorageAccount.Credentials != null && context.StorageAccount.Credentials.IsToken) //Oauth
             {
-                if (context.ShareTokenIntent != null)
-                {
-                    options.ShareTokenIntent = context.ShareTokenIntent.Value;   
-                }
                 shareServiceClient = new ShareServiceClient(context.StorageAccount.FileEndpoint, context.Track2OauthToken, options);
             }
             else  //sas , key or Anonymous, use connection string
