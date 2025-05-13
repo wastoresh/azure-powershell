@@ -973,6 +973,10 @@
     "module": "Carbon"
   },
   {
+    "module": "FileShares",
+    "alias": "FileShares"
+  },
+  {
     "module": "FileShare",
     "alias": "FileShare"
   }
