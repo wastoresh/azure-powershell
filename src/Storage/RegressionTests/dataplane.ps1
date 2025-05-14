@@ -904,6 +904,7 @@ Describe "dataplane test" {
         New-AzDataLakeGen2SasToken -FileSystem abc  -Permission rwdl -Context $testctx -ErrorAction SilentlyContinue
         $Error.Count | should -be 3
         foreach ($e in $Error) {$e.Exception.Message | should -Be "Please provide '-Context' as a storage context created by cmdlet ``New-AzStorageContext`` with parameters include '-StorageAccountName'."}
+        $Error.Clear()
 
         ## positive
         $testctx = New-AzStorageContext -UseConnectedAccount -BlobEndpoint $PrimaryEndpoint.Blob -StorageAccountName $name
