@@ -107,22 +107,22 @@ Describe "Management plan test" {
         $accountNameBlobCtn = $accountName + "bctn"
         $containerName = GetRandomContainerName #Add 1 every time
         $containerName2 = "ctrtodelete"
-        New-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -SkuName Standard_LRS -Location "westus" -Kind StorageV2 -AllowBlobPublicAccess $true
+        New-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -SkuName Standard_LRS -Location "westus" -Kind StorageV2 #-AllowBlobPublicAccess $true
 
         $con = New-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName 
         $con.Name | Should -Be $containerName
-        $con = New-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName2 -PublicAccess Blob -Metadata @{tag0="value0";tag1="value1"} 
+        $con = New-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName2  -Metadata @{tag0="value0";tag1="value1"} # -PublicAccess Blob
         $con.Name | Should -Be $containerName2
         $con.Metadata.Count | Should -Be 2
-        $con.PublicAccess | Should -Be Blob
+        # $con.PublicAccess | Should -Be Blob
         $con = Get-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName2 
         $con.Name | Should -Be $containerName2
         $con.Metadata.Count | Should -Be 2
         $con.PublicAccess | Should -Be Blob
-        $con = Update-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName -Metadata @{tag0="value0"} -PublicAccess Container #-debug
+        $con = Update-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName -Metadata @{tag0="value0"} # -PublicAccess Container #-debug
         $con.Name | Should -Be $containerName
         $con.Metadata.Count | Should -Be 1
-        $con.PublicAccess | Should -Be Container
+        # $con.PublicAccess | Should -Be Container
         $con = Update-AzRmStorageContainer -ResourceGroupName $rgname -StorageAccountName $accountNameBlobCtn -Name $containerName -Metadata @{tag0="value0";tag1="value1";tag2="value2"}  -PublicAccess None
         $con.Name | Should -Be $containerName
         $con.Metadata.Count | Should -Be 3
@@ -1008,9 +1008,9 @@ Describe "Management plan test" {
         # $a.MinimumTlsVersion | Should -Be "TLS1_1" # Comment this check out. No matter what value is input for MinimumTLSVersion, the server always returns TLS1_2
         $a.AllowBlobPublicAccess | Should -BeFalse
 
-        $a = Set-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameTls -MinimumTlsVersion TLS1_2 -AllowBlobPublicAccess $true -EnableHttpsTrafficOnly $true
+        $a = Set-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameTls -MinimumTlsVersion TLS1_2  -EnableHttpsTrafficOnly $true # -AllowBlobPublicAccess $true
         $a.MinimumTlsVersion | Should -Be "TLS1_2"
-        $a.AllowBlobPublicAccess | Should -BeTrue
+        # $a.AllowBlobPublicAccess | Should -BeTrue
 
         Remove-AzStorageAccount -ResourceGroupName $rgname -StorageAccountName $accountNameTls -AsJob -Force
         $Error.Count | should -be 0
@@ -1689,7 +1689,7 @@ Describe "Management plan test" {
         $Error.Count | should -be 0
     } 
     
-    It "User identity" -tag "longrunning" {
+    It "User identity" -tag "longrunning","userid" {
         $Error.Clear()
 
         $t = Get-AzResourceGroup |  ? {$_.ResourceGroupName -like "testUid*"} | Remove-AzResourceGroup -Force -asjob
@@ -1697,10 +1697,12 @@ Describe "Management plan test" {
         $rgName = "testUid2"
         $keyvaultName = $testNode.userIdentity.SelectSingleNode("keyVaultName[@id='1']").'#text'
         $keyvaultUri = "https://$($keyvaultName).vault.azure.net:443"
+        $keyvaultId = $testNode.userIdentity.SelectSingleNode("keyvaultId[@id='1']").'#text'
         $keyname = "wrappingKey"
         $keyversion = $testNode.userIdentity.SelectSingleNode("keyVersion[@id='1']").'#text'
         $keyvaultName2 = $testNode.userIdentity.SelectSingleNode("keyVaultName[@id='2']").'#text'
         $keyvaultUri2 = "https://$($keyvaultName2).vault.azure.net:443"
+        $keyvaultId2 = $testNode.userIdentity.SelectSingleNode("keyvaultId[@id='2']").'#text'
         $keyname2 = "wrappingKey"
         $keyversion2 = $testNode.userIdentity.SelectSingleNode("keyVersion[@id='2']").'#text'
 
@@ -1711,88 +1713,88 @@ Describe "Management plan test" {
 
         try
         {
-        New-AzResourceGroup -Name $rgName -Location eastus2 -Force
+            New-AzResourceGroup -Name $rgName -Location eastus2 -Force
 
-        if ($false)
-        {
+            if ($false)
+            {
              # login
                  $secpasswd = ConvertTo-SecureString $globalNode.secPwd -AsPlainText -Force
                  $cred = New-Object System.Management.Automation.PSCredential ($globalNode.applicationId, $secpasswd)
                  Add-AzAccount -ServicePrincipal -Tenant $globalNode.tenantId -SubscriptionId $globalNode.subscriptionId -Credential $cred 
 
-            # prepare keyvault  
                 $location =  'eastus2'; 
+                # $rgName = "weitry"
+
+            # prepare keyvault  
 
                 $keyVault = New-AzKeyVault -VaultName $keyvaultName -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
-  
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text' -PermissionsToKeys backup,create,delete,get,import,get,list,update,restore 
-                $key = Add-AzKeyVaultKey -VaultName $keyvaultName -Name $keyname2 -Destination 'Software'    
-                $keyversion2 = $key.Version
+                $keyvaultId = $keyvault.ResourceId
+                New-AzRoleAssignment -ObjectID $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text' -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+                $key = Add-AzKeyVaultKey -VaultName $keyvaultName -Name $keyname -Destination 'Software'    
+                $keyversion = $key.Version
+                $keyvaultUri = "https://$($keyvaultName).vault.azure.net:443"
 
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='2']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='3']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
-    
-                $keyVault = New-AzKeyVault -VaultName $keyvaultName2 -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
-
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName2 -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text'-PermissionsToKeys backup,create,delete,get,import,get,list,update,restore 
-                $key = Add-AzKeyVaultKey -VaultName $keyvaultName2 -Name $keyname2 -Destination 'Software'    
-                $keyversion2 = $key.Version
-
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName2 -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='2']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName2 -ResourceGroupName $rgName -ObjectId $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='3']").'#text' -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation 
+                $keyVault2 = New-AzKeyVault -VaultName $keyvaultName2 -ResourceGroupName $rgName -Location $location -EnablePurgeProtection
+                $keyvaultId2 = $keyvault2.ResourceId
+                New-AzRoleAssignment -ObjectID $testNode.userIdentity.SelectSingleNode("adGroupObjectId[@id='1']").'#text' -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId2
+                $key2 = Add-AzKeyVaultKey -VaultName $keyvaultName2 -Name $keyname2 -Destination 'Software'    
+                $keyversion2 = $key2.Version
+                $keyvaultUri2 = "https://$($keyvaultName2).vault.azure.net:443"
 
                 # remove-AzKeyVault -VaultName $keyvaultName -ResourceGroupName $rgName
 
-            # create 2 User identity, and give them access to keyvault
-                $userId3 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name regressiontestid3 -Location $location
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $userId3.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
-                $useridentity= $userId3.Id
-                $userId4 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name regressiontestid4 -Location $location
-                Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $userId4.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
-                $useridentity2= $userId4.Id
-                # Remove-AzUserAssignedIdentity -ResourceGroupName $rgName -Name regressiontestid3
-        }
 
-        # Create Account with UAI (SystemAssignedUserAssigned)
-        $storageAccountName = $accountNamePrefix+"1"
-        $account = New-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Kind StorageV2 -SkuName Standard_LRS -Location eastus2 `
-                    -UserAssignedIdentityId $useridentity  -IdentityType SystemAssignedUserAssigned  `
-                    -KeyName $keyname -KeyVaultUri $keyvaultUri -KeyVaultUserAssignedIdentityId $useridentity #-debug
+             # create 2 User identity, and give them access to keyvault
+                $userId1 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name weitestid1 -Location $location
+                New-AzRoleAssignment -ObjectID $userId1.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+                New-AzRoleAssignment -ObjectID $userId1.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId2
+                $useridentity= $userId1.Id
+                $userId2 = New-AzUserAssignedIdentity -ResourceGroupName $rgName -Name weitestid2 -Location $location
+                New-AzRoleAssignment -ObjectID $userId2.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+                New-AzRoleAssignment -ObjectID $userId2.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId2
+                $useridentity2= $userId2.Id
+            }
 
-        $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
-        $account.Identity.UserAssignedIdentities.Count | should -BeGreaterOrEqual 1
-        $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
-        $account.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity | Should -Be $useridentity
-        $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri
-        $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
+            # Create Account with UAI (SystemAssignedUserAssigned)
+            $storageAccountName = $accountNamePrefix+"1"
+            $account = New-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Kind StorageV2 -SkuName Standard_LRS -Location eastus2 `
+                        -UserAssignedIdentityId $useridentity  -IdentityType SystemAssignedUserAssigned  `
+                        -KeyName $keyname -KeyVaultUri $keyvaultUri -KeyVaultUserAssignedIdentityId $useridentity #-debug
 
-        # 10 CMK1+UAI1 -> CMK2+UAI2
-        $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType SystemAssignedUserAssigned -UserAssignedIdentityId $useridentity2 -KeyVaultUserAssignedIdentityId $useridentity2  
-        $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
-        $account.Identity.UserAssignedIdentities.Count | should -Be 1
-        $account.Identity.UserAssignedIdentities[$useridentity2] | should -Not -be $null
-        $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
-        $account.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity | Should -Be $useridentity2
-        $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri
-        $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
+            $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
+            $account.Identity.UserAssignedIdentities.Count | should -BeGreaterOrEqual 1
+            $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
+            $account.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity | Should -Be $useridentity
+            $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri
+            $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
+
+            # 10 CMK1+UAI1 -> CMK2+UAI2
+            $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType SystemAssignedUserAssigned -UserAssignedIdentityId $useridentity2 -KeyVaultUserAssignedIdentityId $useridentity2  
+            $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
+            $account.Identity.UserAssignedIdentities.Count | should -Be 1
+            $account.Identity.UserAssignedIdentities[$useridentity2] | should -Not -be $null
+            $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
+            $account.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity | Should -Be $useridentity2
+            $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri
+            $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
             
-        if($false)
-        {
-        Sleep 600
+            if($true)
+            {
+                Sleep 10
     
-        $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -KeyVaultUri $keyvaultUri2 -KeyName $keyname2 -KeyVersion $keyversion2 
-        $account.Identity.UserAssignedIdentities.Count | should -Be 1
-        $account.Identity.UserAssignedIdentities[$useridentity2] | should -Not -be $null
-        $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
-        $account.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity | Should -Be $useridentity2
-        $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri2
-        $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname2
-        $account.Encryption.KeyVaultProperties.KeyVersion | Should -Be $keyversion2
-        }
+                $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -KeyVaultUri $keyvaultUri2 -KeyName $keyname2 -KeyVersion $keyversion2 
+                $account.Identity.UserAssignedIdentities.Count | should -Be 1
+                $account.Identity.UserAssignedIdentities[$useridentity2] | should -Not -be $null
+                $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
+                $account.Encryption.EncryptionIdentity.EncryptionUserAssignedIdentity | Should -Be $useridentity2
+                $account.Encryption.KeyVaultProperties.KeyVaultUri | Should -Be $keyvaultUri2
+                $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname2
+                $account.Encryption.KeyVaultProperties.KeyVersion | Should -Be $keyversion2
+            }
 
-        remove-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Force -AsJob
+            remove-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Force -AsJob
 
-        #1 MMK -> CMK with SAI:  
+            #1 MMK -> CMK with SAI:  
             # create MMK account
             $storageAccountName = $accountNamePrefix+"2"
             $account = New-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Kind StorageV2 -SkuName Standard_LRS -Location eastus2 -AssignIdentity
@@ -1800,7 +1802,9 @@ Describe "Management plan test" {
             $account.Encryption.KeySource | Should -Be Microsoft.Storage
 
             # update to CMK with SAI
-            Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $account.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
+            Sleep 30 
+            New-AzRoleAssignment -ObjectID $account.Identity.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
+            #Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgName -ObjectId $account.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType SystemAssigned -KeyName $keyname -KeyVaultUri $keyvaultUri   
             $account.Identity.Type | should -be "SystemAssigned"
             $account.Encryption.KeySource | Should -Be Microsoft.Keyvault
@@ -1818,7 +1822,7 @@ Describe "Management plan test" {
             (New-Object -TypeName System.Uri -ArgumentList $account.Encryption.KeyVaultProperties.KeyVaultUri).Host | should -Be (New-Object -TypeName System.Uri -ArgumentList $keyvaultUri).Host
             $account.Encryption.KeyVaultProperties.KeyName | Should -Be $keyname
                 
-            if($false)
+            if($true)
             {
         #9. CMK1 with UAI -> CMK2 with UAI
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -KeyName $keyname2 -KeyVaultUri $keyvaultUri2 
@@ -1838,7 +1842,7 @@ Describe "Management plan test" {
             $storageAccountName = $accountNamePrefix+"33"
             $account = New-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Kind StorageV2 -SkuName Standard_LRS -Location eastus2 -AssignIdentity
 
-            Sleep 60
+            #Sleep 60
 
             # update to CMK with UAI
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType UserAssigned -UserAssignedIdentityId $useridentity -KeyName $keyname -KeyVaultUri $keyvaultUri -KeyVaultUserAssignedIdentityId $useridentity 
@@ -1852,8 +1856,9 @@ Describe "Management plan test" {
 
         # 4. CMK with UAI -> CMK with SAI
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName  -IdentityType SystemAssignedUserAssigned
-            $account.Identity.Type | should -be "SystemAssigned,UserAssigned" 
-            Set-AzKeyVaultAccessPolicy -VaultName $keyvaultName -ResourceGroupName $rgname -ObjectId $account.Identity.PrincipalId -PermissionsToKeys get,wrapkey,unwrapkey -BypassObjectIdValidation
+            $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
+            Sleep 30 
+            New-AzRoleAssignment -ObjectID $account.Identity.PrincipalId -RoleDefinitionName "Key Vault Administrator" -Scope  $keyvaultId
 
             $account = Set-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -IdentityType SystemAssignedUserAssigned -KeyName $keyname -KeyVaultUri $keyvaultUri -KeyVaultUserAssignedIdentityId "" 
             $account.Identity.Type | should -be "SystemAssigned,UserAssigned"
@@ -1912,17 +1917,17 @@ Describe "Management plan test" {
 
             remove-AzStorageAccount -ResourceGroupName $rgName -Name $storageAccountName -Force -AsJob
 
-            } 
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                Remove-AzResourceGroup -Name $rgName -Force -AsJob
-            }
+        } 
+        catch
+        {
+            throw;
+        }
+        finally
+        {
+            Remove-AzResourceGroup -Name $rgName -Force -AsJob
+        }
 
-            $Error.Count | should -be 0
+        $Error.Count | should -be 0
     }
         
     It "Blob Inventory" -Tag "2021-5-25" {

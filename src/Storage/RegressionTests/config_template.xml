@@ -97,10 +97,13 @@
             <!-- Key vault is created before tests. Creation steps are in the test case  -->
             <keyVaultName id="1">placeholder</keyVaultName>
             <keyVaultName id="2">placeholder</keyVaultName>
+            <keyvaultId id="1">placeholder</keyvaultId>
+            <keyvaultId id="2">placeholder</keyvaultId>
             <keyVersion id="1">placeholder</keyVersion>
             <keyVersion id="2">placeholder</keyVersion>
             <userIdentity id="1">placeholder</userIdentity>
             <userIdentity id="2">placeholder</userIdentity>
+			<!-- Client ID of the logon account with Add-AzAccount -->	
             <adGroupObjectId id="1">placeholder</adGroupObjectId>
             <!-- ID of /subscriptions/{SubscriptionId}/resourceGroups/weitry/providers/Microsoft.ManagedIdentity/userAssignedIdentities/weitestid1 -->
             <adGroupObjectId id="2">placeholder</adGroupObjectId>
