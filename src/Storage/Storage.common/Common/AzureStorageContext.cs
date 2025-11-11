@@ -149,7 +149,8 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
         /// <param name="accountName">Storage account name</param>
         /// <param name="DefaultContext"></param>
         /// <param name="logWriter"></param>
-        public AzureStorageContext(CloudStorageAccount account, string accountName = null, IAzureContext DefaultContext = null, DebugLogWriter logWriter = null)
+        /// <param name="isOAuth"></param>
+        public AzureStorageContext(CloudStorageAccount account, string accountName = null, IAzureContext DefaultContext = null, DebugLogWriter logWriter = null, bool isOAuth = false)
         {
             StorageAccount = account;
             TableStorageAccount = XTable.CloudStorageAccount.Parse(StorageAccount.ToString(true));
@@ -195,7 +196,7 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
                     StorageAccountName = "[Anonymous]";
                 }
             }
-            if (account.Credentials != null && account.Credentials.IsToken)
+            if ((account.Credentials != null && account.Credentials.IsToken) || isOAuth)
             {
                 Track2OauthToken = new AzureSessionCredential(DefaultContext, logWriter);
             }

@@ -14,23 +14,24 @@
 
 namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
 {
-    using Microsoft.WindowsAzure.Commands.Common.Storage;
-    using Microsoft.WindowsAzure.Commands.Storage.Common;
+    using global::Azure.Storage;
+    using global::Azure.Storage.Blobs;
+    using global::Azure.Storage.Blobs.Specialized;
+    using Microsoft.Azure.Cosmos.Table;
     using Microsoft.Azure.Storage;
-    using XSCL = Microsoft.Azure.Storage;
     using Microsoft.Azure.Storage.Blob;
     using Microsoft.Azure.Storage.File;
     using Microsoft.Azure.Storage.File.Protocol;
     using Microsoft.Azure.Storage.Queue;
-    using XSCLProtocol = Microsoft.Azure.Storage.Shared.Protocol;
-    using XTable = Microsoft.Azure.Cosmos.Table;
-    using Microsoft.Azure.Cosmos.Table;
+    using Microsoft.WindowsAzure.Commands.Common.Storage;
+    using Microsoft.WindowsAzure.Commands.Storage.Common;
     using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using global::Azure.Storage.Blobs;
-    using global::Azure.Storage;
+    using XSCL = Microsoft.Azure.Storage;
+    using XSCLProtocol = Microsoft.Azure.Storage.Shared.Protocol;
+    using XTable = Microsoft.Azure.Cosmos.Table;
 
     /// <summary>
     /// Blob management
@@ -179,7 +180,14 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Model.Contract
                 }
                 else //sas, Anonymous
                 {
-                    blobServiceClient = new BlobServiceClient(this.StorageContext.StorageAccount.BlobEndpoint, options);
+                    if (this.StorageContext != null && this.StorageContext.Track2OauthToken != null)
+                    {
+                        blobServiceClient = new BlobServiceClient(this.StorageContext.StorageAccount.BlobEndpoint, this.StorageContext.Track2OauthToken, options);
+                    }
+                    else
+                    {
+                        blobServiceClient = new BlobServiceClient(this.StorageContext.StorageAccount.BlobEndpoint, options);
+                    }
                 }
             }
             return blobServiceClient;

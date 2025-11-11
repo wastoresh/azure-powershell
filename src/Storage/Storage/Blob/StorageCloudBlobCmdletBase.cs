@@ -921,7 +921,15 @@ namespace Microsoft.WindowsAzure.Commands.Storage
                 {
                     fullUri = fullUri + "?" + sas;
                 }
-                blobClient = new BlobClient(new Uri(fullUri), options);
+
+                if (context != null && context.Track2OauthToken != null)
+                {
+                    blobClient = new BlobClient(new Uri(fullUri), options);
+                }
+                else
+                {
+                    blobClient = new BlobClient(new Uri(fullUri), context.Track2OauthToken, options);
+                }
             }
             else if (cloubBlob.ServiceClient.Credentials.IsSharedKey) //Shared Key
             {

@@ -487,21 +487,46 @@ namespace Microsoft.WindowsAzure.Commands.Storage.Common
             {
                 if (blobType == null)
                 {
-                    blobClient = new BlobBaseClient(blobUri, options);
+                    if (context != null && context.Track2OauthToken != null)
+                    {
+                        blobClient = new BlobBaseClient(blobUri, context.Track2OauthToken, options);
+                    }
+                    else
+                    {
+                        blobClient = new BlobBaseClient(blobUri, options);
+                    }
                 }
                 else
                 {
-                    switch (blobType.Value)
+                    if (context != null && context.Track2OauthToken != null)
                     {
-                        case global::Azure.Storage.Blobs.Models.BlobType.Page:
-                            blobClient = new PageBlobClient(blobUri, options);
-                            break;
-                        case global::Azure.Storage.Blobs.Models.BlobType.Append:
-                            blobClient = new AppendBlobClient(blobUri, options);
-                            break;
-                        default: //Block
-                            blobClient = new BlockBlobClient(blobUri, options);
-                            break;
+                        switch (blobType.Value)
+                        {
+                            case global::Azure.Storage.Blobs.Models.BlobType.Page:
+                                blobClient = new PageBlobClient(blobUri, context.Track2OauthToken, options);
+                                break;
+                            case global::Azure.Storage.Blobs.Models.BlobType.Append:
+                                blobClient = new AppendBlobClient(blobUri, context.Track2OauthToken, options);
+                                break;
+                            default: //Block
+                                blobClient = new BlockBlobClient(blobUri, context.Track2OauthToken, options);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (blobType.Value)
+                        {
+                            case global::Azure.Storage.Blobs.Models.BlobType.Page:
+                                blobClient = new PageBlobClient(blobUri, options);
+                                break;
+                            case global::Azure.Storage.Blobs.Models.BlobType.Append:
+                                blobClient = new AppendBlobClient(blobUri, options);
+                                break;
+                            default: //Block
+                                blobClient = new BlockBlobClient(blobUri, options);
+                                break;
+                        }
                     }
                 }
             }

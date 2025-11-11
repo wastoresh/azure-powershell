@@ -474,7 +474,15 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
                 {
                     fullUri = fullUri + "?" + sas;
                 }
-                blobClient = new BlobClient(new Uri(fullUri), options);
+
+                if (context != null && context.Track2OauthToken != null)
+                {
+                    blobClient = new BlobClient(new Uri(fullUri), context.Track2OauthToken, options);
+                }
+                else
+                {
+                    blobClient = new BlobClient(new Uri(fullUri), options);
+                }
             }
             else if (cloubBlob.ServiceClient.Credentials.IsSharedKey) //Shared Key
             {
@@ -509,7 +517,14 @@ namespace Microsoft.WindowsAzure.Commands.Common.Storage.ResourceModel
             }
             else //Anonymous or SAS
             {
-                blobClient = new BlobClient(blobBaseClient.Uri, options);
+                if (context != null && context.Track2OauthToken != null)
+                {
+                    blobClient = new BlobClient(blobBaseClient.Uri, context.Track2OauthToken, options);
+                }
+                else
+                {
+                    blobClient = new BlobClient(blobBaseClient.Uri, options);
+                }
             }
 
             return blobClient;
