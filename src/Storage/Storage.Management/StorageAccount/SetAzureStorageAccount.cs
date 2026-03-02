@@ -639,7 +639,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Parameter(
             Mandatory = false,
-            HelpMessage = "Indicate whether shared key access is enabled for Blob service of the account.")]
+            HelpMessage = "Indicates whether shared key access is enabled for Blob service of the account.")]
         [ValidateNotNullOrEmpty]
         public bool AllowSharedKeyAccessForBlob
         {
@@ -656,7 +656,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Parameter(
             Mandatory = false,
-            HelpMessage = "Indicate whether shared key access is enabled for File service of the account.")]
+            HelpMessage = "Indicates whether shared key access is enabled for File service of the account.")]
         [ValidateNotNullOrEmpty]
         public bool AllowSharedKeyAccessForFile
         {
@@ -673,7 +673,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Parameter(
             Mandatory = false,
-            HelpMessage = "Indicate whether shared key access is enabled for Table service of the account.")]
+            HelpMessage = "Indicates whether shared key access is enabled for Table service of the account.")]
         [ValidateNotNullOrEmpty]
         public bool AllowSharedKeyAccessForTable
         {
@@ -690,7 +690,7 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
         [Parameter(
             Mandatory = false,
-            HelpMessage = "Indicate whether shared key access is enabled for Queue service of the account.")]
+            HelpMessage = "Indicates whether shared key access is enabled for Queue service of the account.")]
         [ValidateNotNullOrEmpty]
         public bool AllowSharedKeyAccessForQueue
         {

@@ -80,7 +80,10 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.Zone = storageAccount.Zones is null ? null : storageAccount.Zones.ToArray();
             this.ZonePlacementPolicy = storageAccount.Placement is null ? null : storageAccount.Placement.ZonePlacementPolicy;
             this.GeoPriorityReplicationStatus = storageAccount.GeoPriorityReplicationStatus is null ? null : new PSGeoPriorityReplicationStatus(storageAccount.GeoPriorityReplicationStatus);
+            this.allowSharedKeyAccessForServices = storageAccount.AllowSharedKeyAccessForServices is null ? null : new PSStorageAccountSharedKeyAccessProperties(storageAccount.AllowSharedKeyAccessForServices);
         }
+
+        public PSStorageAccountSharedKeyAccessProperties allowSharedKeyAccessForServices { get; set; }
         public bool? AllowCrossTenantReplication { get; set; }          
 
         public PSKeyCreationTime KeyCreationTime { get; set; }
@@ -246,6 +249,31 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             return new CustomDomain(this.Name, this.UseSubDomain);
         }
     }
+    public class PSStorageAccountSharedKeyAccessProperties
+    {
+        public PSServiceSharedKeyAccessProperties Blob { get; set; }
+        public PSServiceSharedKeyAccessProperties File { get; set; }
+        public PSServiceSharedKeyAccessProperties Queue { get; set; }
+        public PSServiceSharedKeyAccessProperties Table { get; set; }
+
+        public PSStorageAccountSharedKeyAccessProperties(StorageAccountSharedKeyAccessProperties input)
+        {
+            this.Blob = input.Blob is null ? null : new PSServiceSharedKeyAccessProperties(input.Blob);
+            this.File = input.File is null ? null : new PSServiceSharedKeyAccessProperties(input.File);
+            this.Queue = input.Queue is null ? null : new PSServiceSharedKeyAccessProperties(input.Queue);
+            this.Table = input.Table is null ? null : new PSServiceSharedKeyAccessProperties(input.Table);
+        }
+    }
+
+    public class PSServiceSharedKeyAccessProperties
+    {
+        public bool? Enabled { get; set; }
+
+        public PSServiceSharedKeyAccessProperties(ServiceSharedKeyAccessProperties input)
+        {
+            this.Enabled = input.Enabled;
+        }
+    } 
 
     public class PSSku
     {
