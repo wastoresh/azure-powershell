@@ -637,6 +637,74 @@ namespace Microsoft.Azure.Commands.Management.Storage
         }
         private bool? enableBlobGeoPriorityReplication = null;
 
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicate whether shared key access is enabled for Blob service of the account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowSharedKeyAccessForBlob
+        {
+            get
+            {
+                return allowSharedKeyAccessForBlob != null ? allowSharedKeyAccessForBlob.Value : false;
+            }
+            set
+            {
+                allowSharedKeyAccessForBlob = value;
+            }
+        }
+        private bool? allowSharedKeyAccessForBlob = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicate whether shared key access is enabled for File service of the account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowSharedKeyAccessForFile
+        {
+            get
+            {
+                return allowSharedKeyAccessForFile != null ? allowSharedKeyAccessForFile.Value : false;
+            }
+            set
+            {
+                allowSharedKeyAccessForFile = value;
+            }
+        }
+        private bool? allowSharedKeyAccessForFile = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicate whether shared key access is enabled for Table service of the account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowSharedKeyAccessForTable
+        {
+            get
+            {
+                return allowSharedKeyAccessForTable != null ? allowSharedKeyAccessForTable.Value : false;
+            }
+            set
+            {
+                allowSharedKeyAccessForTable = value;
+            }
+        }
+        private bool? allowSharedKeyAccessForTable = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicate whether shared key access is enabled for Queue service of the account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowSharedKeyAccessForQueue
+        {
+            get
+            {
+                return allowSharedKeyAccessForQueue != null ? allowSharedKeyAccessForQueue.Value : false;
+            }
+            set
+            {
+                allowSharedKeyAccessForQueue = value;
+            }
+        }
+        private bool? allowSharedKeyAccessForQueue = null;
+
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
 
@@ -1023,6 +1091,26 @@ namespace Microsoft.Azure.Commands.Management.Storage
                     if (this.enableBlobGeoPriorityReplication != null)
                     {
                         updateParameters.GeoPriorityReplicationStatus = new GeoPriorityReplicationStatus(this.enableBlobGeoPriorityReplication);
+                    }
+                    if (this.allowSharedKeyAccessForBlob != null || this.allowSharedKeyAccessForFile != null || this.allowSharedKeyAccessForTable != null || this.allowSharedKeyAccessForQueue != null)
+                    {
+                        updateParameters.AllowSharedKeyAccessForServices = new StorageAccountSharedKeyAccessProperties();
+                        if (this.allowSharedKeyAccessForBlob != null)
+                        {
+                            updateParameters.AllowSharedKeyAccessForServices.Blob = new ServiceSharedKeyAccessProperties(this.allowSharedKeyAccessForBlob);
+                        }
+                        if (this.allowSharedKeyAccessForFile != null)
+                        {
+                            updateParameters.AllowSharedKeyAccessForServices.File = new ServiceSharedKeyAccessProperties(this.allowSharedKeyAccessForFile);
+                        }
+                        if (this.allowSharedKeyAccessForTable != null)
+                        {
+                            updateParameters.AllowSharedKeyAccessForServices.Table = new ServiceSharedKeyAccessProperties(this.allowSharedKeyAccessForTable);
+                        }
+                        if (this.allowSharedKeyAccessForQueue != null)
+                        {
+                            updateParameters.AllowSharedKeyAccessForServices.Queue = new ServiceSharedKeyAccessProperties(this.allowSharedKeyAccessForQueue);
+                        }
                     }
 
                     var updatedAccountResponse = this.StorageClient.StorageAccounts.Update(
