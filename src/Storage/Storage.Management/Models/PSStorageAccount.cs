@@ -81,6 +81,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
             this.ZonePlacementPolicy = storageAccount.Placement is null ? null : storageAccount.Placement.ZonePlacementPolicy;
             this.GeoPriorityReplicationStatus = storageAccount.GeoPriorityReplicationStatus is null ? null : new PSGeoPriorityReplicationStatus(storageAccount.GeoPriorityReplicationStatus);
             this.allowSharedKeyAccessForServices = storageAccount.AllowSharedKeyAccessForServices is null ? null : new PSStorageAccountSharedKeyAccessProperties(storageAccount.AllowSharedKeyAccessForServices);
+            this.DataCollaborationPolicyProperties = storageAccount.DataCollaborationPolicyProperties is null ? null : new PSStorageDataCollaborationPolicyProperties(storageAccount.DataCollaborationPolicyProperties);
         }
 
         public PSStorageAccountSharedKeyAccessProperties allowSharedKeyAccessForServices { get; set; }
@@ -180,6 +181,7 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         public string[] Zone { get; set; }
         public string ZonePlacementPolicy { get; set; }
         public PSGeoPriorityReplicationStatus GeoPriorityReplicationStatus { get; set; }
+        public PSStorageDataCollaborationPolicyProperties DataCollaborationPolicyProperties { get; set; }
 
 
         public static PSStorageAccount Create(StorageModels.StorageAccount storageAccount, IStorageManagementClient client, IAzureContext DefaultContext)
@@ -411,5 +413,38 @@ namespace Microsoft.Azure.Commands.Management.Storage.Models
         }
 
         public bool? IsBlobEnabled { get; set; }
+    }
+
+    /// <summary>
+    /// wrapper class for StorageDataCollaborationPolicyProperties
+    /// </summary>
+    public class PSStorageDataCollaborationPolicyProperties
+    {
+        public PSStorageDataCollaborationPolicyProperties()
+        { }
+
+        public PSStorageDataCollaborationPolicyProperties(StorageDataCollaborationPolicyProperties dataCollaborationPolicyProperties)
+        {
+            if (dataCollaborationPolicyProperties != null)
+            {
+                this.AllowStorageConnectors = dataCollaborationPolicyProperties.AllowStorageConnectors;
+                this.AllowStorageDataShares = dataCollaborationPolicyProperties.AllowStorageDataShares;
+                this.AllowCrossTenantDataSharing = dataCollaborationPolicyProperties.AllowCrossTenantDataSharing;
+            }
+        }
+
+        public bool? AllowStorageConnectors { get; set; }
+        public bool? AllowStorageDataShares { get; set; }
+        public bool? AllowCrossTenantDataSharing { get; set; }
+
+        public StorageDataCollaborationPolicyProperties ParseStorageDataCollaborationPolicyProperties()
+        {
+            return new StorageDataCollaborationPolicyProperties
+            {
+                AllowStorageConnectors = this.AllowStorageConnectors,
+                AllowStorageDataShares = this.AllowStorageDataShares,
+                AllowCrossTenantDataSharing = this.AllowCrossTenantDataSharing
+            };
+        }
     }
 }

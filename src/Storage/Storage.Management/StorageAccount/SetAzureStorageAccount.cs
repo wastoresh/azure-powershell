@@ -705,6 +705,57 @@ namespace Microsoft.Azure.Commands.Management.Storage
         }
         private bool? allowSharedKeyAccessForQueue = null;
 
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicates whether storage connector is allowed to be created or managed on the storage account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowStorageConnector
+        {
+            get
+            {
+                return allowStorageConnector != null ? allowStorageConnector.Value : false;
+            }
+            set
+            {
+                allowStorageConnector = value;
+            }
+        }
+        private bool? allowStorageConnector = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicates whether data share is allowed to be created or managed on the storage account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowStorageDataShare
+        {
+            get
+            {
+                return allowStorageDataShare != null ? allowStorageDataShare.Value : false;
+            }
+            set
+            {
+                allowStorageDataShare = value;
+            }
+        }
+        private bool? allowStorageDataShare = null;
+
+        [Parameter(
+            Mandatory = false,
+            HelpMessage = "Indicates whether cross-entra tenant data sharing is allowed on the storage account.")]
+        [ValidateNotNullOrEmpty]
+        public bool AllowCrossTenantDataSharing
+        {
+            get
+            {
+                return allowCrossTenantDataSharing != null ? allowCrossTenantDataSharing.Value : false;
+            }
+            set
+            {
+                allowCrossTenantDataSharing = value;
+            }
+        }
+        private bool? allowCrossTenantDataSharing = null;
+
         [Parameter(Mandatory = false, HelpMessage = "Run cmdlet in the background")]
         public SwitchParameter AsJob { get; set; }
 
@@ -1111,6 +1162,13 @@ namespace Microsoft.Azure.Commands.Management.Storage
                         {
                             updateParameters.AllowSharedKeyAccessForServices.Queue = new ServiceSharedKeyAccessProperties(this.allowSharedKeyAccessForQueue);
                         }
+                    }
+                    if (this.allowStorageConnector != null || this.allowStorageDataShare != null || this.allowCrossTenantDataSharing != null)
+                    {
+                        updateParameters.DataCollaborationPolicyProperties = new StorageDataCollaborationPolicyProperties(
+                            allowStorageConnectors: this.allowStorageConnector,
+                            allowStorageDataShares: this.allowStorageDataShare,
+                            allowCrossTenantDataSharing: this.allowCrossTenantDataSharing);
                     }
 
                     var updatedAccountResponse = this.StorageClient.StorageAccounts.Update(
