@@ -26,20 +26,20 @@ Update-AzStorageBlobServiceProperty [-ResourceGroupName] <String> [-StorageAccou
 ```
 Update-AzStorageBlobServiceProperty -StorageAccount <PSStorageAccount> [-DefaultServiceVersion <String>]
  [-EnableChangeFeed <Boolean>] [-ChangeFeedRetentionInDays <Int32>] [-IsVersioningEnabled <Boolean>]
- [-CorsRule <PSCorsRule[]>] [-EnableStaticWebsite <Boolean>]
- [-StaticWebsiteIndexDocument <String>] [-StaticWebsiteDefaultIndexDocumentPath <String>]
- [-StaticWebsiteErrorDocument404Path <String>] [-DefaultProfile <IAzureContextContainer>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-CorsRule <PSCorsRule[]>] [-EnableStaticWebsite <Boolean>] [-StaticWebsiteIndexDocument <String>]
+ [-StaticWebsiteDefaultIndexDocumentPath <String>] [-StaticWebsiteErrorDocument404Path <String>]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ### BlobServicePropertiesResourceId
 ```
 Update-AzStorageBlobServiceProperty [-ResourceId] <String> [-DefaultServiceVersion <String>]
  [-EnableChangeFeed <Boolean>] [-ChangeFeedRetentionInDays <Int32>] [-IsVersioningEnabled <Boolean>]
- [-CorsRule <PSCorsRule[]>] [-EnableStaticWebsite <Boolean>]
- [-StaticWebsiteIndexDocument <String>] [-StaticWebsiteDefaultIndexDocumentPath <String>]
- [-StaticWebsiteErrorDocument404Path <String>] [-DefaultProfile <IAzureContextContainer>]
- [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-CorsRule <PSCorsRule[]>] [-EnableStaticWebsite <Boolean>] [-StaticWebsiteIndexDocument <String>]
+ [-StaticWebsiteDefaultIndexDocumentPath <String>] [-StaticWebsiteErrorDocument404Path <String>]
+ [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -317,36 +317,6 @@ Accept pipeline input: True (ByPropertyName)
 Accept wildcard characters: False
 ```
 
-### -StorageAccount
-Storage account object
-
-```yaml
-Type: Microsoft.Azure.Commands.Management.Storage.Models.PSStorageAccount
-Parameter Sets: AccountObject
-Aliases:
-
-Required: True
-Position: Named
-Default value: None
-Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -StorageAccountName
-Storage Account Name.
-
-```yaml
-Type: System.String
-Parameter Sets: AccountName
-Aliases: AccountName, Name
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -StaticWebsiteDefaultIndexDocumentPath
 The absolute path where the default index file is present. This absolute path is mutually exclusive to IndexDocument and it is case-sensitive.
 
@@ -387,6 +357,36 @@ Aliases:
 
 Required: False
 Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -StorageAccount
+Storage account object
+
+```yaml
+Type: Microsoft.Azure.Commands.Management.Storage.Models.PSStorageAccount
+Parameter Sets: AccountObject
+Aliases:
+
+Required: True
+Position: Named
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -StorageAccountName
+Storage Account Name.
+
+```yaml
+Type: System.String
+Parameter Sets: AccountName
+Aliases: AccountName, Name
+
+Required: True
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

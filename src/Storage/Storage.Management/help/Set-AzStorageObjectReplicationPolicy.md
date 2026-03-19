@@ -16,23 +16,25 @@ Creates or updates the specified object replication policy in a Storage account.
 ```
 Set-AzStorageObjectReplicationPolicy [-ResourceGroupName] <String> [-StorageAccountName] <String>
  [-PolicyId <String>] -SourceAccount <String> [-DestinationAccount <String>] [-EnableMetric <Boolean>]
- [-EnablePriorityReplication <Boolean>] -Rule <PSObjectReplicationPolicyRule[]>
- [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-EnablePriorityReplication <Boolean>] [-EnableTagsReplication <Boolean>]
+ -Rule <PSObjectReplicationPolicyRule[]> [-DefaultProfile <IAzureContextContainer>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### PolicyObject
 ```
 Set-AzStorageObjectReplicationPolicy [-ResourceGroupName] <String> [-StorageAccountName] <String>
- -InputObject <PSObjectReplicationPolicy> [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm]
- [<CommonParameters>]
+ -InputObject <PSObjectReplicationPolicy> [-DefaultProfile <IAzureContextContainer>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AccountObject
 ```
 Set-AzStorageObjectReplicationPolicy -StorageAccount <PSStorageAccount> [-PolicyId <String>]
  -SourceAccount <String> [-DestinationAccount <String>] [-EnableMetric <Boolean>]
- [-EnablePriorityReplication <Boolean>] -Rule <PSObjectReplicationPolicyRule[]>
- [-DefaultProfile <IAzureContextContainer>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-EnablePriorityReplication <Boolean>] [-EnableTagsReplication <Boolean>]
+ -Rule <PSObjectReplicationPolicyRule[]> [-DefaultProfile <IAzureContextContainer>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -120,6 +122,21 @@ Accept wildcard characters: False
 ### -EnablePriorityReplication
 Indicates whether object replication priority replication feature is enabled for the policy. 
 This feature provides enhanced replication performance and reduces recovery time objectives (RTO) for critical data replication scenarios.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: AccountName, AccountObject
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -EnableTagsReplication
+Indicates whether object replication tags replication feature is enabled for the policy.
 
 ```yaml
 Type: System.Boolean

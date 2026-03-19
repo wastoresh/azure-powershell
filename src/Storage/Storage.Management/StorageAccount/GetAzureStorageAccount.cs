@@ -128,6 +128,8 @@ namespace Microsoft.Azure.Commands.Management.Storage
 
                 WriteStorageAccount(storageAccount, DefaultContext);
             }
+
+            //this.StorageClient.Connectors.Create(this.ResourceGroupName, this.Name, "default");
         }
     }
 }

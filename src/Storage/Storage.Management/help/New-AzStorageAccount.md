@@ -30,8 +30,10 @@ New-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-SkuName] <
  [-DefaultSharePermission <String>] [-EdgeZone <String>] [-PublicNetworkAccess <String>]
  [-EnableAccountLevelImmutability] [-ImmutabilityPeriod <Int32>] [-ImmutabilityPolicyState <String>]
  [-AllowedCopyScope <String>] [-DnsEndpointType <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [<CommonParameters>]
 ```
 
 ### AzureActiveDirectoryKerberosForFile
@@ -52,8 +54,10 @@ New-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-SkuName] <
  [-EdgeZone <String>] [-PublicNetworkAccess <String>] [-EnableAccountLevelImmutability]
  [-ImmutabilityPeriod <Int32>] [-ImmutabilityPolicyState <String>] [-AllowedCopyScope <String>]
  [-DnsEndpointType <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [<CommonParameters>]
 ```
 
 ### ActiveDirectoryDomainServicesForFile
@@ -77,8 +81,10 @@ New-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-SkuName] <
  [-EdgeZone <String>] [-PublicNetworkAccess <String>] [-EnableAccountLevelImmutability]
  [-ImmutabilityPeriod <Int32>] [-ImmutabilityPolicyState <String>] [-AllowedCopyScope <String>]
  [-DnsEndpointType <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -455,7 +461,7 @@ the *AccessTier* parameter.
 Type: System.String
 Parameter Sets: (All)
 Aliases:
-Accepted values: Hot, Cool, Cold
+Accepted values: Hot, Cool, Cold, Smart
 
 Required: False
 Position: Named
@@ -631,6 +637,66 @@ Accept wildcard characters: False
 
 ### -AllowSharedKeyAccess
 Indicates whether the storage account permits requests to be authorized with the account access key via Shared Key. If false, then all requests, including shared access signatures, must be authorized with Microsoft Entra ID. The default value is null, which is equivalent to true.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForBlob
+Indicates whether shared key access is enabled for Blob service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForFile
+Indicates whether shared key access is enabled for File service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForQueue
+Indicates whether shared key access is enabled for Queue service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForTable
+Indicates whether shared key access is enabled for Table service of the account.
 
 ```yaml
 Type: System.Boolean

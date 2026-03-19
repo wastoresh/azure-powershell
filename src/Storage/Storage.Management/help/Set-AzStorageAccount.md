@@ -27,8 +27,12 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-AllowCrossTenantReplication <Boolean>] [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>]
  [-ImmutabilityPeriod <Int32>] [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>]
  [-EnableLocalUser <Boolean>] [-AllowedCopyScope <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-AllowStorageConnector <Boolean>]
+ [-AllowStorageDataShare <Boolean>] [-AllowCrossTenantDataSharing <Boolean>] [-AsJob]
+ [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### KeyvaultEncryption
@@ -46,8 +50,12 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-AllowCrossTenantReplication <Boolean>] [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>]
  [-ImmutabilityPeriod <Int32>] [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>]
  [-EnableLocalUser <Boolean>] [-AllowedCopyScope <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-AllowStorageConnector <Boolean>]
+ [-AllowStorageDataShare <Boolean>] [-AllowCrossTenantDataSharing <Boolean>] [-AsJob]
+ [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### AzureActiveDirectoryKerberosForFile
@@ -65,8 +73,12 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>] [-ImmutabilityPeriod <Int32>]
  [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>]
  [-AllowedCopyScope <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-AllowStorageConnector <Boolean>]
+ [-AllowStorageDataShare <Boolean>] [-AllowCrossTenantDataSharing <Boolean>] [-AsJob]
+ [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ### ActiveDirectoryDomainServicesForFile
@@ -87,8 +99,12 @@ Set-AzStorageAccount [-ResourceGroupName] <String> [-Name] <String> [-Force] [-S
  [-DefaultSharePermission <String>] [-PublicNetworkAccess <String>] [-ImmutabilityPeriod <Int32>]
  [-ImmutabilityPolicyState <String>] [-EnableSftp <Boolean>] [-EnableLocalUser <Boolean>]
  [-AllowedCopyScope <String>] [-Zone <String[]>] [-ZonePlacementPolicy <String>]
- [-EnableBlobGeoPriorityReplication <Boolean>] [-AsJob] [-DefaultProfile <IAzureContextContainer>]
- [-RoutingChoice <String>] [-ProgressAction <ActionPreference>] [-WhatIf] [-Confirm] [<CommonParameters>]
+ [-EnableBlobGeoPriorityReplication <Boolean>] [-AllowSharedKeyAccessForBlob <Boolean>]
+ [-AllowSharedKeyAccessForFile <Boolean>] [-AllowSharedKeyAccessForTable <Boolean>]
+ [-AllowSharedKeyAccessForQueue <Boolean>] [-AllowStorageConnector <Boolean>]
+ [-AllowStorageDataShare <Boolean>] [-AllowCrossTenantDataSharing <Boolean>] [-AsJob]
+ [-DefaultProfile <IAzureContextContainer>] [-RoutingChoice <String>]
+ [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -502,7 +518,7 @@ If the Storage account has Kind as Storage, do not specify the *AccessTier* para
 Type: System.String
 Parameter Sets: (All)
 Aliases:
-Accepted values: Hot, Cool, Cold
+Accepted values: Hot, Cool, Cold, Smart
 
 Required: False
 Position: Named
@@ -646,6 +662,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -AllowCrossTenantDataSharing
+Indicates whether cross-entra tenant data sharing is allowed on the storage account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -AllowCrossTenantReplication
 Gets or sets allow or disallow cross Microsoft Entra tenant object replication. The default interpretation is true for this property.
 
@@ -678,6 +709,96 @@ Accept wildcard characters: False
 
 ### -AllowSharedKeyAccess
 Indicates whether the storage account permits requests to be authorized with the account access key via Shared Key. If false, then all requests, including shared access signatures, must be authorized with Microsoft Entra ID. The default value is null, which is equivalent to true.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForBlob
+Indicates whether shared key access is enabled for Blob service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForFile
+Indicates whether shared key access is enabled for File service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForQueue
+Indicates whether shared key access is enabled for Queue service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowSharedKeyAccessForTable
+Indicates whether shared key access is enabled for Table service of the account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowStorageConnector
+Indicates whether storage connector is allowed to be created or managed on the storage account.
+
+```yaml
+Type: System.Boolean
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowStorageDataShare
+Indicates whether data share is allowed to be created or managed on the storage account.
 
 ```yaml
 Type: System.Boolean

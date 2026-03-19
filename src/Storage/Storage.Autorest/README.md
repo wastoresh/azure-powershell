@@ -28,12 +28,13 @@ For information on how to develop for `Az.Storage`, see [how-to.md](how-to.md).
 
 ``` yaml
 # Please specify the commit id that includes your features to make sure generated codes stable.
-commit: ec3df311a63c6e653824b4018bb1a39d483bf9fc
+commit: 65f0837de45992d8d4917b74489bb0760b70d406
 require:
 # readme.azure.noprofile.md is the common configuration file
   - $(this-folder)/../../readme.azure.noprofile.md
 input-file:
-  - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/openapi.json
+  - D:\code\swagger\specification\storage\resource-manager\Microsoft.Storage\stable\2025-08-01\openapi.json
+  #- $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-08-01/openapi.json
   # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/storage.json
   # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/file.json
   # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/storageTaskAssignments.json
@@ -48,6 +49,9 @@ nested-object-to-string: true
 identity-correction-for-post: true 
 
 directive:
+  - from: swagger-document 
+    where: $.definitions.StorageConnectorDataSourceType
+    transform: delete $["enum"]
   - where:
       variant: ^(Create|Update)(?!.*?Expanded|JsonFilePath|JsonString)
     remove: true
@@ -177,4 +181,31 @@ directive:
       model-name: ^SkuInformation$
     set:
       suppress-format: true
+  # Add model
+  - no-inline:
+      - StorageConnectorSource
+      - StorageConnectorSourceUpdate
+      - StorageConnectorConnection
+      - StorageConnectorAuthProperties
+      - StorageConnectorAuthPropertiesUpdate
+  - model-cmdlet:
+    - model-name: StorageDataShareAccessPolicy
+      cmdlet-name: New-AzStorageDataShareAccessPolicyObject
+    - model-name: StorageDataShareAsset
+      cmdlet-name: New-AzStorageDataShareAssetObject
+    - model-name: DataShareSource
+      cmdlet-name: New-AzStorageDataShareSourceObject
+    - model-name: DataShareSourceUpdate
+      cmdlet-name: New-AzStorageDataShareSourceUpdateObject
+    - model-name: DataShareConnection
+      cmdlet-name: New-AzStorageDataShareConnectionObject
+    - model-name: ManagedIdentityAuthProperties
+      cmdlet-name: New-AzStorageManagedIdentityAuthPropertyObject
+    - model-name: ManagedIdentityAuthPropertiesUpdate
+      cmdlet-name: New-AzStorageManagedIdentityAuthPropertypdateObject
+  - where:
+      verb: New
+      subject: 1Connector
+      parameter-name: DataSourceType
+    hide: true
 ```

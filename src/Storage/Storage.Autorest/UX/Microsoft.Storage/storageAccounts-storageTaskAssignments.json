@@ -1,6 +1,6 @@
 {
   "resourceType": "storageAccounts/storageTaskAssignments",
-  "apiVersion": "2025-06-01",
+  "apiVersion": "2025-08-01",
   "learnMore": {
     "url": "https://learn.microsoft.com/powershell/module/az.storage"
   },
@@ -70,6 +70,49 @@
       "examples": [
         {
           "description": "Delete the storage task assignment sub-resource",
+          "parameters": [
+            {
+              "name": "-AccountName",
+              "value": "[Path.accountName]"
+            },
+            {
+              "name": "-Name",
+              "value": "[Path.storageTaskAssignmentName]"
+            },
+            {
+              "name": "-ResourceGroupName",
+              "value": "[Path.resourceGroupName]"
+            },
+            {
+              "name": "-SubscriptionId",
+              "value": "[Path.subscriptionId]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Stop-AzStorageTaskAssignment",
+      "description": "Stops any active running storage action for the storage task assignment",
+      "path": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}/stopAssignment",
+      "help": {
+        "learnMore": {
+          "url": "https://learn.microsoft.com/powershell/module/az.storage/stop-azstoragetaskassignment"
+        },
+        "parameterSets": [
+          {
+            "parameters": [
+              "-AccountName <String>",
+              "-Name <String>",
+              "-ResourceGroupName <String>",
+              "[-SubscriptionId <String>]"
+            ]
+          }
+        ]
+      },
+      "examples": [
+        {
+          "description": "Stops any active running storage action for the storage task assignment",
           "parameters": [
             {
               "name": "-AccountName",

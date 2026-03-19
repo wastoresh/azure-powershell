@@ -125,6 +125,9 @@ Gets service properties for Azure Storage Blob services.
 ### [Get-AzStorageBlobTag](Get-AzStorageBlobTag.md)
 Get blob tags of a specific blob.
 
+### [Get-AzStorageConnector](Get-AzStorageConnector.md)
+Get the specified Storage Connector.
+
 ### [Get-AzStorageContainer](Get-AzStorageContainer.md)
 Lists the storage containers.
 
@@ -133,6 +136,9 @@ Gets the stored access policy or policies for an Azure storage container.
 
 ### [Get-AzStorageCORSRule](Get-AzStorageCORSRule.md)
 Gets CORS rules for a Storage service type.
+
+### [Get-AzStorageDataShare](Get-AzStorageDataShare.md)
+Get the specified Storage DataShare.
 
 ### [Get-AzStorageEncryptionScope](Get-AzStorageEncryptionScope.md)
 Get or list encryption scopes from a Storage account.
@@ -269,6 +275,10 @@ Creates a Blob Range object to restores a Storage account.
 ### [New-AzStorageBlobSASToken](New-AzStorageBlobSASToken.md)
 Generates a SAS token for an Azure storage blob.
 
+### [New-AzStorageConnector](New-AzStorageConnector.md)
+Create a Storage Connector if it does not already exist; otherwise, error out.
+This API will not allow you to replace an already existing resource.
+
 ### [New-AzStorageContainer](New-AzStorageContainer.md)
 Creates an Azure storage container.
 
@@ -280,6 +290,25 @@ Creates a stored access policy for an Azure storage container.
 
 ### [New-AzStorageContext](New-AzStorageContext.md)
 Creates an Azure Storage context.
+
+### [New-AzStorageDataShare](New-AzStorageDataShare.md)
+Create a Storage DataShare if it does not already exist; otherwise, error out.
+This API will not allow you to replace an already existing resource.
+
+### [New-AzStorageDataShareAccessPolicyObject](New-AzStorageDataShareAccessPolicyObject.md)
+Create an in-memory object for StorageDataShareAccessPolicy.
+
+### [New-AzStorageDataShareAssetObject](New-AzStorageDataShareAssetObject.md)
+Create an in-memory object for StorageDataShareAsset.
+
+### [New-AzStorageDataShareConnectionObject](New-AzStorageDataShareConnectionObject.md)
+Create an in-memory object for DataShareConnection.
+
+### [New-AzStorageDataShareSourceObject](New-AzStorageDataShareSourceObject.md)
+Create an in-memory object for DataShareSource.
+
+### [New-AzStorageDataShareSourceUpdateObject](New-AzStorageDataShareSourceUpdateObject.md)
+Create an in-memory object for DataShareSourceUpdate.
 
 ### [New-AzStorageDirectory](New-AzStorageDirectory.md)
 Creates a directory.
@@ -304,6 +333,12 @@ Regenerate SSH password of a specified local user in a storage account.
 
 ### [New-AzStorageLocalUserSshPublicKey](New-AzStorageLocalUserSshPublicKey.md)
 Creates a SSH public key object, which can be used in Set-AzStorageLocalUser.
+
+### [New-AzStorageManagedIdentityAuthPropertyObject](New-AzStorageManagedIdentityAuthPropertyObject.md)
+Create an in-memory object for ManagedIdentityAuthProperties.
+
+### [New-AzStorageManagedIdentityAuthPropertypdateObject](New-AzStorageManagedIdentityAuthPropertypdateObject.md)
+Create an in-memory object for ManagedIdentityAuthPropertiesUpdate.
 
 ### [New-AzStorageObjectReplicationPolicyRule](New-AzStorageObjectReplicationPolicyRule.md)
 Creates an object replication policy rule.
@@ -376,6 +411,9 @@ Removes ImmutabilityPolicy of a Storage blob.
 ### [Remove-AzStorageBlobInventoryPolicy](Remove-AzStorageBlobInventoryPolicy.md)
 Removes blob inventory policy from a Storage account.
 
+### [Remove-AzStorageConnector](Remove-AzStorageConnector.md)
+Delete a Storage Connector.
+
 ### [Remove-AzStorageContainer](Remove-AzStorageContainer.md)
 Removes the specified storage container.
 
@@ -384,6 +422,9 @@ Removes a stored access policy from an Azure storage container.
 
 ### [Remove-AzStorageCORSRule](Remove-AzStorageCORSRule.md)
 Removes CORS for a Storage service.
+
+### [Remove-AzStorageDataShare](Remove-AzStorageDataShare.md)
+Delete a Storage DataShare.
 
 ### [Remove-AzStorageDirectory](Remove-AzStorageDirectory.md)
 Deletes a directory.
@@ -531,6 +572,13 @@ Stops a copy operation.
 ### [Stop-AzStorageFileCopy](Stop-AzStorageFileCopy.md)
 Stops a copy operation to the specified destination file.
 
+### [Stop-AzStorageTaskAssignment](Stop-AzStorageTaskAssignment.md)
+Stops any active running storage action for the storage task assignment
+
+### [Test-AzStorageConnectorExistingConnection](Test-AzStorageConnectorExistingConnection.md)
+This method is used to verify that the connection to the backing data store works.\nThis API is designed to be used for monitoring and debugging purposes.
+From the caller's perspective,\nthis method does the following: Calls List on the backing data store, attempting to list up to one blob/object/etc.\nIf the above succeeds, and if a blob/object/etc is found, calls Get on that object, attempting to download one byte.
+
 ### [Update-AzDataLakeGen2AclRecursive](Update-AzDataLakeGen2AclRecursive.md)
 Update ACL recursively on the specified path. 
 
@@ -548,6 +596,12 @@ Update the NetworkRule property of a Storage account
 
 ### [Update-AzStorageBlobServiceProperty](Update-AzStorageBlobServiceProperty.md)
 Modifies the service properties for the Azure Storage Blob service.
+
+### [Update-AzStorageConnector](Update-AzStorageConnector.md)
+Update a Storage Connector.
+
+### [Update-AzStorageDataShare](Update-AzStorageDataShare.md)
+Update a Storage DataShare.
 
 ### [Update-AzStorageEncryptionScope](Update-AzStorageEncryptionScope.md)
 Modify an encryption scope for a Storage account.
