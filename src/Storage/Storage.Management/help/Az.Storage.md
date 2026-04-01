@@ -101,6 +101,9 @@ Checks the availability of a Storage account name.
 ### [Get-AzStorageAccountNetworkRuleSet](Get-AzStorageAccountNetworkRuleSet.md)
 Get the NetWorkRule property of a Storage account
 
+### [Get-AzStorageAdvancedPlatformMetric](Get-AzStorageAdvancedPlatformMetric.md)
+Get the advanced platform metrics rule for the storage account by rule type.
+
 ### [Get-AzStorageBlob](Get-AzStorageBlob.md)
 Lists blobs in a container.
 
@@ -125,6 +128,9 @@ Gets service properties for Azure Storage Blob services.
 ### [Get-AzStorageBlobTag](Get-AzStorageBlobTag.md)
 Get blob tags of a specific blob.
 
+### [Get-AzStorageConnector](Get-AzStorageConnector.md)
+Get the specified Storage Connector.
+
 ### [Get-AzStorageContainer](Get-AzStorageContainer.md)
 Lists the storage containers.
 
@@ -133,6 +139,9 @@ Gets the stored access policy or policies for an Azure storage container.
 
 ### [Get-AzStorageCORSRule](Get-AzStorageCORSRule.md)
 Gets CORS rules for a Storage service type.
+
+### [Get-AzStorageDataShare](Get-AzStorageDataShare.md)
+Get the specified Storage DataShare.
 
 ### [Get-AzStorageEncryptionScope](Get-AzStorageEncryptionScope.md)
 Get or list encryption scopes from a Storage account.
@@ -257,6 +266,9 @@ Creates a ManagementPolicy rule object, which can be used in Set-AzStorageAccoun
 ### [New-AzStorageAccountSASToken](New-AzStorageAccountSASToken.md)
 Creates an account-level SAS token.
 
+### [New-AzStorageAdvancedPlatformMetric](New-AzStorageAdvancedPlatformMetric.md)
+Create the advanced platform metrics rule for the storage account.
+
 ### [New-AzStorageBlobInventoryPolicyRule](New-AzStorageBlobInventoryPolicyRule.md)
 Creates a blob inventory policy rule object, which can be used in Set-AzStorageBlobInventoryPolicy.
 
@@ -269,6 +281,10 @@ Creates a Blob Range object to restores a Storage account.
 ### [New-AzStorageBlobSASToken](New-AzStorageBlobSASToken.md)
 Generates a SAS token for an Azure storage blob.
 
+### [New-AzStorageConnector](New-AzStorageConnector.md)
+Create a Storage Connector if it does not already exist; otherwise, error out.
+This API will not allow you to replace an already existing resource.
+
 ### [New-AzStorageContainer](New-AzStorageContainer.md)
 Creates an Azure storage container.
 
@@ -280,6 +296,10 @@ Creates a stored access policy for an Azure storage container.
 
 ### [New-AzStorageContext](New-AzStorageContext.md)
 Creates an Azure Storage context.
+
+### [New-AzStorageDataShare](New-AzStorageDataShare.md)
+Create a Storage DataShare if it does not already exist; otherwise, error out.
+This API will not allow you to replace an already existing resource.
 
 ### [New-AzStorageDirectory](New-AzStorageDirectory.md)
 Creates a directory.
@@ -367,6 +387,9 @@ Removes the management policy of an Azure Storage account.
 ### [Remove-AzStorageAccountNetworkRule](Remove-AzStorageAccountNetworkRule.md)
 Remove IpRules or VirtualNetworkRules from the NetWorkRule property of a Storage account
 
+### [Remove-AzStorageAdvancedPlatformMetric](Remove-AzStorageAdvancedPlatformMetric.md)
+Delete the advanced platform metrics rule for the storage account by rule type.
+
 ### [Remove-AzStorageBlob](Remove-AzStorageBlob.md)
 Removes the specified storage blob.
 
@@ -376,6 +399,9 @@ Removes ImmutabilityPolicy of a Storage blob.
 ### [Remove-AzStorageBlobInventoryPolicy](Remove-AzStorageBlobInventoryPolicy.md)
 Removes blob inventory policy from a Storage account.
 
+### [Remove-AzStorageConnector](Remove-AzStorageConnector.md)
+Delete a Storage Connector.
+
 ### [Remove-AzStorageContainer](Remove-AzStorageContainer.md)
 Removes the specified storage container.
 
@@ -384,6 +410,9 @@ Removes a stored access policy from an Azure storage container.
 
 ### [Remove-AzStorageCORSRule](Remove-AzStorageCORSRule.md)
 Removes CORS for a Storage service.
+
+### [Remove-AzStorageDataShare](Remove-AzStorageDataShare.md)
+Delete a Storage DataShare.
 
 ### [Remove-AzStorageDirectory](Remove-AzStorageDirectory.md)
 Deletes a directory.
@@ -456,6 +485,9 @@ Modifies a Storage account.
 
 ### [Set-AzStorageAccountManagementPolicy](Set-AzStorageAccountManagementPolicy.md)
 Creates or modifies the management policy of an Azure Storage account.
+
+### [Set-AzStorageAdvancedPlatformMetric](Set-AzStorageAdvancedPlatformMetric.md)
+Update the advanced platform metrics rule for the storage account.
 
 ### [Set-AzStorageBlobContent](Set-AzStorageBlobContent.md)
 Uploads a local file to an Azure Storage blob.
@@ -531,6 +563,13 @@ Stops a copy operation.
 ### [Stop-AzStorageFileCopy](Stop-AzStorageFileCopy.md)
 Stops a copy operation to the specified destination file.
 
+### [Stop-AzStorageTaskAssignment](Stop-AzStorageTaskAssignment.md)
+Stops any active running storage action for the storage task assignment
+
+### [Test-AzStorageConnectorExistingConnection](Test-AzStorageConnectorExistingConnection.md)
+This method is used to verify that the connection to the backing data store works.\nThis API is designed to be used for monitoring and debugging purposes.
+From the caller's perspective,\nthis method does the following: Calls List on the backing data store, attempting to list up to one blob/object/etc.\nIf the above succeeds, and if a blob/object/etc is found, calls Get on that object, attempting to download one byte.
+
 ### [Update-AzDataLakeGen2AclRecursive](Update-AzDataLakeGen2AclRecursive.md)
 Update ACL recursively on the specified path. 
 
@@ -546,8 +585,17 @@ Modifies a Storage file share.
 ### [Update-AzStorageAccountNetworkRuleSet](Update-AzStorageAccountNetworkRuleSet.md)
 Update the NetworkRule property of a Storage account
 
+### [Update-AzStorageAdvancedPlatformMetric](Update-AzStorageAdvancedPlatformMetric.md)
+Update the advanced platform metrics rule for the storage account.
+
 ### [Update-AzStorageBlobServiceProperty](Update-AzStorageBlobServiceProperty.md)
 Modifies the service properties for the Azure Storage Blob service.
+
+### [Update-AzStorageConnector](Update-AzStorageConnector.md)
+Update a Storage Connector.
+
+### [Update-AzStorageDataShare](Update-AzStorageDataShare.md)
+Update a Storage DataShare.
 
 ### [Update-AzStorageEncryptionScope](Update-AzStorageEncryptionScope.md)
 Modify an encryption scope for a Storage account.

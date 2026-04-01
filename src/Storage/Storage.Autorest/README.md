@@ -1,39 +1,51 @@
 <!-- region Generated -->
+
 # Az.Storage
+
 This directory contains the PowerShell module for the Storage service.
 
 ---
+
 ## Info
+
 - Modifiable: yes
 - Generated: all
 - Committed: yes
 - Packaged: yes
 
 ---
+
 ## Detail
+
 This module was primarily generated via [AutoRest](https://github.com/Azure/autorest) using the [PowerShell](https://github.com/Azure/autorest.powershell) extension.
 
 ## Module Requirements
+
 - [Az.Accounts module](https://www.powershellgallery.com/packages/Az.Accounts/), version 2.7.5 or greater
 
 ## Authentication
+
 AutoRest does not generate authentication code for the module. Authentication is handled via Az.Accounts by altering the HTTP payload before it is sent.
 
 ## Development
+
 For information on how to develop for `Az.Storage`, see [how-to.md](how-to.md).
+
 <!-- endregion -->
 
 ### AutoRest Configuration
+
 > see https://aka.ms/autorest
 
-``` yaml
+```yaml
 # Please specify the commit id that includes your features to make sure generated codes stable.
 commit: ec3df311a63c6e653824b4018bb1a39d483bf9fc
 require:
-# readme.azure.noprofile.md is the common configuration file
+  # readme.azure.noprofile.md is the common configuration file
   - $(this-folder)/../../readme.azure.noprofile.md
 input-file:
-  - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/openapi.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/15ed9dcc086ee5a64296ebb904d589ee5e627c0b/specification/storage/resource-manager/Microsoft.Storage/stable/2026-04-01/openapi.json
+  # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/openapi.json
   # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/storage.json
   # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/file.json
   # - $(repo)/specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/storageTaskAssignments.json
@@ -45,7 +57,7 @@ module-version: 5.9.1
 title: Storage
 subject-prefix: $(service-name)
 nested-object-to-string: true
-identity-correction-for-post: true 
+identity-correction-for-post: true
 
 directive:
   - where:
@@ -55,7 +67,7 @@ directive:
       variant: ^CreateViaIdentity.*$
     remove: true
   - from: swagger-document
-    where: $.paths.["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/startAccountMigration"].post.operationId    
+    where: $.paths.["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/startAccountMigration"].post.operationId
     transform: return "StartAccountMigration"
   - remove-operation: StorageAccounts_Update
   - remove-operation: FileShares_Lease
@@ -84,13 +96,13 @@ directive:
       subject: ^FileServiceUsage$
       parameter-name: AccountName
     set:
-      parameter-name: StorageAccountName  
+      parameter-name: StorageAccountName
   - where:
       property-name: BurstingConstantBurstFloorIop
     set:
       property-name: BurstingConstantBurstFloorIops
   - where:
-      property-name: FileShareLimitMaxProvisionedIop 
+      property-name: FileShareLimitMaxProvisionedIop
     set:
       property-name: FileShareLimitMaxProvisionedIops
   - where:
@@ -124,15 +136,15 @@ directive:
       parameter-name: ParameterInterval
     set:
       parameter-name: Interval
-  - where: 
+  - where:
       parameter-name: ParameterIntervalUnit
     set:
       parameter-name: IntervalUnit
-  - where: 
+  - where:
       parameter-name: ParameterStartFrom
     set:
       parameter-name: StartFrom
-  - where: 
+  - where:
       parameter-name: ParameterStartOn
     set:
       parameter-name: StartOn
@@ -158,18 +170,18 @@ directive:
       property-name: StartOn
   - from: openapi.json
     where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/reports"].get
-    transform: > 
+    transform: >
       $["operationId"] = "StorageTaskAssignmentInstancesReport_List"
-  # Renaming the operationId to StorageTaskAssignmentInstancesReport_Get, but the operation actually lists all the reports under a specific storage task assignment. 
+  # Renaming the operationId to StorageTaskAssignmentInstancesReport_Get, but the operation actually lists all the reports under a specific storage task assignment.
   - from: openapi.json
     where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}/reports"].get
-    transform: > 
+    transform: >
       $["operationId"] = "StorageTaskAssignmentInstancesReport_Get"
   - from: openapi.json
     where: $.paths["/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/storageTaskAssignments/{storageTaskAssignmentName}/reports"].get
-    transform: > 
+    transform: >
       $["operationId"] = "StorageTaskAssignmentInstancesReport_Get"
-  - where: 
+  - where:
       model-name: StorageTaskReportInstance
     set:
       suppress-format: true
@@ -177,4 +189,12 @@ directive:
       model-name: ^SkuInformation$
     set:
       suppress-format: true
+  - where:
+      verb: New
+      subject: AdvancedPlatformMetric
+    hide: true
+  - where:
+      verb: Update
+      subject: AdvancedPlatformMetric
+    hide: true
 ```

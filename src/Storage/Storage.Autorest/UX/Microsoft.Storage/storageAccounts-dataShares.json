@@ -1,17 +1,17 @@
 {
-  "resourceType": "storageAccounts/networkSecurityPerimeterConfigurations",
+  "resourceType": "storageAccounts/dataShares",
   "apiVersion": "2026-04-01",
   "learnMore": {
     "url": "https://learn.microsoft.com/powershell/module/az.storage"
   },
   "commands": [
     {
-      "name": "Get-AzStorageNetworkSecurityPerimeterConfiguration",
-      "description": "Gets effective NetworkSecurityPerimeterConfiguration for association",
-      "path": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}",
+      "name": "Get-AzStorageDataShare",
+      "description": "Get the specified Storage DataShare.",
+      "path": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/dataShares/{dataShareName}",
       "help": {
         "learnMore": {
-          "url": "https://learn.microsoft.com/powershell/module/az.storage/get-azstoragenetworksecurityperimeterconfiguration"
+          "url": "https://learn.microsoft.com/powershell/module/az.storage/get-azstoragedatashare"
         },
         "parameterSets": [
           {
@@ -26,7 +26,7 @@
       },
       "examples": [
         {
-          "description": "Gets effective NetworkSecurityPerimeterConfiguration for association",
+          "description": "Get the specified Storage DataShare.",
           "parameters": [
             {
               "name": "-AccountName",
@@ -34,7 +34,7 @@
             },
             {
               "name": "-Name",
-              "value": "[Path.networkSecurityPerimeterConfigurationName]"
+              "value": "[Path.dataShareName]"
             },
             {
               "name": "-ResourceGroupName",
@@ -49,18 +49,18 @@
       ]
     },
     {
-      "name": "Invoke-AzStorageReconcileNetworkSecurityPerimeterConfiguration",
-      "description": "Refreshes any information about the association.",
-      "path": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/networkSecurityPerimeterConfigurations/{networkSecurityPerimeterConfigurationName}/reconcile",
+      "name": "Remove-AzStorageDataShare",
+      "description": "Delete a Storage DataShare.",
+      "path": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/dataShares/{dataShareName}",
       "help": {
         "learnMore": {
-          "url": "https://learn.microsoft.com/powershell/module/az.storage/invoke-azstoragereconcilenetworksecurityperimeterconfiguration"
+          "url": "https://learn.microsoft.com/powershell/module/az.storage/remove-azstoragedatashare"
         },
         "parameterSets": [
           {
             "parameters": [
               "-AccountName <String>",
-              "-NetworkSecurityPerimeterConfigurationName <String>",
+              "-Name <String>",
               "-ResourceGroupName <String>",
               "[-SubscriptionId <String>]"
             ]
@@ -69,15 +69,15 @@
       },
       "examples": [
         {
-          "description": "Refreshes any information about the association.",
+          "description": "Delete a Storage DataShare.",
           "parameters": [
             {
               "name": "-AccountName",
               "value": "[Path.accountName]"
             },
             {
-              "name": "-NetworkSecurityPerimeterConfigurationName",
-              "value": "[Path.networkSecurityPerimeterConfigurationName]"
+              "name": "-Name",
+              "value": "[Path.dataShareName]"
             },
             {
               "name": "-ResourceGroupName",
